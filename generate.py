@@ -525,8 +525,6 @@ class FlattenIATIData():
         region_req = requests.get(REGIONS_CODELIST_URL)
         sector_req = requests.get(SECTORS_CODELIST_URL)
         sector_groups_req = requests.get(SECTOR_GROUPS_URL)
-        #FIXME remove
-        m49_req = requests.get(M49_CODELIST_URL)
 
         self.countries = list(map(lambda country: country['code'], country_req.json()["data"]))
         self.regions = list(map(lambda region: region['code'], region_req.json()["data"]))
@@ -534,8 +532,6 @@ class FlattenIATIData():
         self.countries += self.regions
         self.category_group = dict(map(lambda code: (code['category_code'], code['group_code']), sector_groups_req.json()))
         self.sector_groups = dict(map(lambda code: (code['group_code'], code['group_name']), sector_groups_req.json()))
-        # FIXME remove
-        iso2_iso3 = dict(map(lambda code: (code['codeforiati:iso-alpha-2-code'], code['codeforiati:iso-alpha-3-code']), m49_req.json()["data"]))
 
         self.country_names = dict(map(lambda country: (country['code'], country['name']), country_req.json()["data"]))
         self.region_names = dict(map(lambda region: (region['code'], region['name']), region_req.json()["data"]))
@@ -603,25 +599,20 @@ class FlattenIATIData():
     def run_for_publishers(self):
         print("BEGINNING PROCESS AT {}".format(datetime.datetime.utcnow()))
         beginning = time.time()
-        #FIXME
-        for publisher in ['fcdo']: #self.publishers:
+        for publisher in self.publishers:
             if publisher in EXCLUDED_PUBLISHERS: continue
             start = time.time()
             try:
                 print("Processing {}".format(publisher))
                 packages = os.listdir(os.path.join(IATI_DUMP_DIR, "data", "{}".format(publisher)))
                 packages.sort()
-                #FIXME
-                #packages = ['fcdo-ng.xml']
                 for package in packages:
-                    #try:
-                    if package.endswith(".xml"):
-                        self.process_package(publisher, package)
-                        #FIXME
-                        #break
-                    #except Exception:
-                    #    print("Exception with package {}".format(package))
-                    #    continue #raise Exception
+                    try:
+                        if package.endswith(".xml"):
+                            self.process_package(publisher, package)
+                    except Exception:
+                        print("Exception with package {}".format(package))
+                        continue #raise Exception
             except NotADirectoryError:
                 continue
             end = time.time()
