@@ -28,7 +28,7 @@ jobs:
           unzip iati-data-dump.zip -d iati-data-dump
       - name: Download data
         run: |
-          python run.py
+          python generate.py
         env:
           MORPH_IO_API_KEY: ${{ secrets.MORPH_IO_API_KEY }}
       - name: Deploy 🚀
