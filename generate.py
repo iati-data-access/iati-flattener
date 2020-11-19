@@ -464,7 +464,7 @@ class FlatIATITransaction():
                 if len(activity_data_regions) != 0:
                     activity_data['recipient_regions'] = activity_data_regions
 
-        if not hasattr(self, countries):
+        if not hasattr(self, 'countries'):
             return
 
         # Get sectors - try first from transaction and then from activity
@@ -592,7 +592,7 @@ class FlattenIATIData():
     def run_for_publishers(self):
         print("BEGINNING PROCESS AT {}".format(datetime.datetime.utcnow()))
         beginning = time.time()
-        for publisher in ['fcdo']: #self.publishers:
+        for publisher in self.publishers:
             if publisher in EXCLUDED_PUBLISHERS: continue
             start = time.time()
             try:
@@ -600,13 +600,13 @@ class FlattenIATIData():
                 packages = os.listdir(os.path.join(IATI_DUMP_DIR, "data", "{}".format(publisher)))
                 packages.sort()
                 for package in packages:
-                    #try:
-                    if package.endswith(".xml"):
-                        self.process_package(publisher, package)
-                    #except Exception as e:
-                    #    print("Exception with package {}".format(package))
-                    #    print("Exception was {}".format(e))
-                    #    continue #raise Exception
+                    try:
+                        if package.endswith(".xml"):
+                            self.process_package(publisher, package)
+                    except Exception as e:
+                        print("Exception with package {}".format(package))
+                        print("Exception was {}".format(e))
+                        continue
             except NotADirectoryError:
                 continue
             end = time.time()
