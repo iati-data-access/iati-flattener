@@ -1,0 +1,6 @@
+output/xlsx/*.xlsx
+output/csv/*.csv
+pyenv
+*.pyc
+.DS_Store
+rates.csv
