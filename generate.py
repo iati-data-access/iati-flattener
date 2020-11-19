@@ -55,7 +55,7 @@ _DTYPES = [str, str, str, str,
                  str, np.float64, str, str,
                  str, str,
                  np.int32, str, str, np.int32,
-                 np.int32, np.int32]
+                 str, np.int32]
 
 CSV_HEADER_DTYPES = dict(map(lambda csv_header: (csv_header[1], _DTYPES[csv_header[0]]), enumerate(CSV_HEADERS)))
 
@@ -89,7 +89,7 @@ def get_date(_date):
 
 def get_fy_fq(_date):
     date = get_date(_date)
-    return date.year, math.ceil(date.month/3)
+    return date.year, "Q{}".format(math.ceil(date.month/3))
 
 
 def get_first(args, default=None):
