@@ -576,30 +576,23 @@ class FlattenIATIData():
 
     def process_package(self, publisher, package):
         print("Processing package {}".format(package))
-        starting = time.time()
         self.csv_files = {}
         doc = etree.parse(os.path.join(IATI_DUMP_DIR, "data", "{}".format(publisher), "{}".format(package)))
         if doc.getroot().get("version") not in ['2.01', '2.02', '2.03']: return
         transactions = doc.xpath("//transaction")
         #print("There are {} transactions for {}".format(len(transactions), package))
 
-        start = time.time()
         self.activity_data = {}
         for transaction in transactions:
             self.process_transaction(transaction.getparent(), transaction)
-        end = time.time()
-        print("TRANSACTIONS {} TOOK {}".format(package, end-start))
 
         self.write_csv_files()
-
-        ending = time.time()
-        print("PROCESSING {} TOOK {}".format(package, ending-starting))
 
 
     def run_for_publishers(self):
         print("BEGINNING PROCESS AT {}".format(datetime.datetime.utcnow()))
         beginning = time.time()
-        for publisher in self.publishers:
+        for publisher in ['fcdo']: #self.publishers:
             if publisher in EXCLUDED_PUBLISHERS: continue
             start = time.time()
             try:
@@ -607,12 +600,13 @@ class FlattenIATIData():
                 packages = os.listdir(os.path.join(IATI_DUMP_DIR, "data", "{}".format(publisher)))
                 packages.sort()
                 for package in packages:
-                    try:
-                        if package.endswith(".xml"):
-                            self.process_package(publisher, package)
-                    except Exception:
-                        print("Exception with package {}".format(package))
-                        continue #raise Exception
+                    #try:
+                    if package.endswith(".xml"):
+                        self.process_package(publisher, package)
+                    #except Exception as e:
+                    #    print("Exception with package {}".format(package))
+                    #    print("Exception was {}".format(e))
+                    #    continue #raise Exception
             except NotADirectoryError:
                 continue
             end = time.time()
@@ -641,7 +635,6 @@ class FlattenIATIData():
             conditions, outputs = self.make_conditions_outputs(codelist, dataframe)
             res = np.select(conditions, outputs, '')
             dataframe[cl_key] = pd.Series(res)
-            #dataframe[cl_key] = dataframe.apply(lambda row: "{} - {}".format(float_int_string(row[cl_key]), get_if_exists(_from=cl_items, _item=row[cl_key])), axis=1)
         return dataframe
 
 
