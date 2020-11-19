@@ -684,7 +684,7 @@ class FlattenIATIData():
     def __init__(self, refresh_rates=False):
         self.publishers = os.listdir(os.path.join(IATI_DUMP_DIR, "data"))
         self.publishers.sort()
-        self.setup_codelists(refesh_rates=refresh_rates)
+        self.setup_codelists(refresh_rates=refresh_rates)
         self.setup_countries()
         self.run_for_publishers()
         self.group_data()
