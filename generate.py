@@ -575,7 +575,6 @@ class FlattenIATIData():
 
 
     def process_package(self, publisher, package):
-        print("Processing package {}".format(package))
         self.csv_files = {}
         doc = etree.parse(os.path.join(IATI_DUMP_DIR, "data", "{}".format(publisher), "{}".format(package)))
         if doc.getroot().get("version") not in ['2.01', '2.02', '2.03']: return
