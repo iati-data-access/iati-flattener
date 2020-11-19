@@ -681,7 +681,7 @@ class FlattenIATIData():
         print("FINISHED PROCESS AT {}".format(datetime.datetime.utcnow()))
 
 
-    def __init__(self, refesh_rates=False):
+    def __init__(self, refresh_rates=False):
         self.publishers = os.listdir(os.path.join(IATI_DUMP_DIR, "data"))
         self.publishers.sort()
         self.setup_codelists(refesh_rates=refresh_rates)
