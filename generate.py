@@ -2,6 +2,8 @@ from lxml import etree
 import os
 import requests
 import csv
+import json
+import re
 import time
 import datetime
 import math
@@ -651,25 +653,37 @@ class FlattenIATIData():
         wb.save(filename)
 
 
-    def group_results(self, country):
-        country_name, _ = country.split(".")
-        df = pd.read_csv("output/csv/{}.csv".format(country_name), dtype=CSV_HEADER_DTYPES)
+    def group_results(self, country_code):
+        df = pd.read_csv("output/csv/{}.csv".format(country_code), dtype=CSV_HEADER_DTYPES)
         if (not "reporting_org" in df.columns.values) or (len(df)==0):
             return
         out = df.fillna("").groupby(GROUP_BY_HEADERS)
         out = out["value_usd"].agg("sum").reset_index().fillna("")
         out = self.relabel_dataframe(out)
-        self.write_dataframe_to_excel(out, "output/xlsx/{}.xlsx".format(country_name))
+        self.write_dataframe_to_excel(out, "output/xlsx/{}.xlsx".format(country_code))
 
     def group_data(self):
         csv_files = os.listdir("output/csv/")
         csv_files.sort()
         print("BEGINNING PROCESS AT {}".format(datetime.datetime.utcnow()))
+        list_of_files = []
         for country in csv_files:
             start = time.time()
-            if country.endswith(".csv"): self.group_results(country)
+            if country.endswith(".csv"):
+                country_code, _ = country.split(".")
+                country_name = self.country_names.get(country_code)
+                country_or_region = {True: 'region', False: 'country'}[re.match('^\d*$', country_code) is not None]
+                self.group_results(country_code)
+                list_of_files.append({
+                    'country_code': country_code,
+                    'country_name': country_name,
+                    'country_or_region': country_or_region,
+                    'filename': "{}.xlsx".format(country_code)
+                })
             end = time.time()
             print("Processing {} took {}s".format(country, end-start))
+            with open('output/xlsx/index.json', 'w') as json_file:
+                json.dump(list_of_files, json_file)
         print("FINISHED PROCESS AT {}".format(datetime.datetime.utcnow()))
 
 
