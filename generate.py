@@ -55,7 +55,7 @@ _DTYPES = [str, str, str, str,
                  str, np.float64, str, str,
                  str, str,
                  np.int32, str, str, np.int32,
-                 str, np.int32]
+                 np.int32, str]
 
 CSV_HEADER_DTYPES = dict(map(lambda csv_header: (csv_header[1], _DTYPES[csv_header[0]]), enumerate(CSV_HEADERS)))
 
