@@ -200,6 +200,7 @@ def get_org(activity_data, transaction_or_activity, provider=True):
     provider_receiver = {True: 'provider', False: 'receiver'}[provider]
     if (transaction_or_activity.tag == 'transaction'):
         transaction = transaction_or_activity
+        activity = transaction.getparent()
         transaction_type = transaction.find("transaction-type").get("code")
         if transaction.find('{}-org'.format(provider_receiver)) is not None:
             _el = transaction.find('{}-org'.format(provider_receiver))
