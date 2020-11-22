@@ -918,7 +918,10 @@ class FlattenIATIData():
             end = time.time()
             print("Processing {} took {}s".format(country, end-start))
             with open('output/xlsx/index.json', 'w') as json_file:
-                json.dump(list_of_files, json_file)
+                json.dump({
+                    'lastUpdated': datetime.datetime.utcnow().date().isoformat(),
+                    'countries': list_of_files
+                }, json_file)
         print("FINISHED PROCESS AT {}".format(datetime.datetime.utcnow()))
 
 
