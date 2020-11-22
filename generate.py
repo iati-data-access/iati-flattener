@@ -74,7 +74,8 @@ TRANSACTION_TYPES_RULES = {
     "8": {'provider': 'reporter', 'receiver': '4'},
     "11": {'provider': '1', 'receiver': 'reporter'},
     "12": {'provider': 'reporter', 'receiver': '4'},
-    "13": {'provider': '1', 'receiver': 'reporter'}
+    "13": {'provider': '1', 'receiver': 'reporter'},
+    "activity": {'provider': 'reporter', 'receiver': '4'}
 }
 REGIONS_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Region.json"
 COUNTRIES_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Country.json"
@@ -92,6 +93,10 @@ def get_date(_date):
 def get_fy_fq(_date):
     date = get_date(_date)
     return date.year, "Q{}".format(math.ceil(date.month/3))
+
+
+def get_fy_fq_numeric(_date):
+    return _date.year, math.ceil(_date.month/3)
 
 
 def get_first(args, default=None):
@@ -176,7 +181,7 @@ def get_narrative_text(element):
     return None
 
 
-def get_org(activity_data, transaction, provider=True):
+def get_org(activity_data, transaction_or_activity, provider=True):
     def _make_org_output(_text, _ref, _type):
         _display = ""
         if (_ref is not None) and (_ref != ""):
@@ -192,18 +197,23 @@ def get_org(activity_data, transaction, provider=True):
             'display': _display
         }
 
-    transaction_type = transaction.find("transaction-type").get("code")
     provider_receiver = {True: 'provider', False: 'receiver'}[provider]
-    if transaction.find('{}-org'.format(provider_receiver)) is not None:
-        _el = transaction.find('{}-org'.format(provider_receiver))
-        _text = get_org_name(
-            ref=_el.get("ref"),
-            text=get_narrative(_el)
-        )
-        _ref = _el.get("ref")
-        _type = _el.get("type")
-        if (_ref is not None) or (_text is not None):
-            return _make_org_output(_text, _ref, _type)
+    if (transaction_or_activity.tag == 'transaction'):
+        transaction = transaction_or_activity
+        transaction_type = transaction.find("transaction-type").get("code")
+        if transaction.find('{}-org'.format(provider_receiver)) is not None:
+            _el = transaction.find('{}-org'.format(provider_receiver))
+            _text = get_org_name(
+                ref=_el.get("ref"),
+                text=get_narrative(_el)
+            )
+            _ref = _el.get("ref")
+            _type = _el.get("type")
+            if (_ref is not None) or (_text is not None):
+                return _make_org_output(_text, _ref, _type)
+    else:
+        activity = transaction_or_activity
+        transaction_type = 'activity'
 
     role = {
         True: TRANSACTION_TYPES_RULES[transaction_type]['provider'],
@@ -213,7 +223,10 @@ def get_org(activity_data, transaction, provider=True):
         or (provider==False and transaction_type in ['1', '11', '13'])):
 
         if activity_data.get('reporting_org') is None:
-            _ro = transaction.getparent().find("reporting-org")
+            if transaction_or_activity == 'transaction':
+                _ro = transaction.getparent().find("reporting-org")
+            else:
+                _ro = activity.find("reporting-org")
             _text = get_narrative(_ro)
             _type = _ro.get('type')
             _ref = _ro.get('ref')
@@ -227,7 +240,10 @@ def get_org(activity_data, transaction, provider=True):
         return activity_data.get('reporting_org')
 
     if activity_data.get("participating_org_{}".format(role)) is None:
-        activity_participating = transaction.getparent().findall("participating-org[@role='{}']".format(role))
+        if transaction_or_activity == 'transaction':
+            activity_participating = transaction.getparent().findall("participating-org[@role='{}']".format(role))
+        else:
+            activity_participating = activity.findall("participating-org[@role='{}']".format(role))
         if len(activity_participating) == 1:
             _text = get_org_name(
                     activity_participating[0].get('ref'),
@@ -303,10 +319,12 @@ def clean_countries(tr_countries, tr_regions=[]):
         'code': item.get('code')
     } for item in tr_countries]
 
+
 def get_countries(activity, transaction):
     recipient_c = get_first((transaction.xpath("recipient-country"), activity.xpath("recipient-country")), [])
     recipient_r = get_first((transaction.xpath("recipient-region[not(@vocabulary) or @vocabulary='1']"), activity.xpath("recipient-region[not(@vocabulary) or @vocabulary='1']")), [])
     return clean_countries(recipient_c, recipient_r)
+
 
 def get_sectors(activity, transaction):
     recipient_s = get_first((transaction.xpath("sector[not(@vocabulary) or @vocabulary='1']"), activity.xpath("sector[not(@vocabulary) or @vocabulary='1']")), [])
@@ -315,17 +333,202 @@ def get_sectors(activity, transaction):
         return tr_sectors
     return [{'percentage': 100.0, 'code': ''}]
 
+
 def get_sector_category(code, category_group):
     if code == None: return ""
     return category_group.get(code[0:3], "")
 
 
-class FlatIATITransaction():
-    def transaction_data(self, country, sector, sector_category):
-        transaction = {
-            'iati_identifier': self.iati_identifier
-        }
+class FlatIATIBudget():
 
+    def budget_data(self, country, sector, sector_category, budget):
+        for k, v in budget.items():
+            setattr(self, k, v)
+
+        if self.value_date == None:
+            raise Exception("No value date for {}: {}".format(self.iati_identifier, etree.tostring(self.transaction)))
+        if self.currency_original == None:
+            raise Exception("No currency for {}: {}".format(self.iati_identifier, etree.tostring(self.transaction)))
+        if self.value_original == None:
+            raise Exception("No value for {}: {}".format(self.iati_identifier, etree.tostring(self.transaction)))
+
+        return ([
+            self.iati_identifier,
+            self.title,
+            self.reporting_org.get('display'),
+            self.reporting_org.get('type'),
+            self.aid_type.get('code', ''),
+            self.finance_type.get('code', ''),
+            self.provider_org.get('display'),
+            self.provider_org.get('type'),
+            self.receiver_org.get('display'),
+            self.receiver_org.get('type'),
+            'budget', #self.transaction_type,
+            (self.value_original*(country['percentage']/100)*(sector['percentage']/100)),
+            self.currency_original,
+            (self.value_usd*(country['percentage']/100)*(sector['percentage']/100)),
+            self.value_date.isoformat(),
+            self.exchange_rate,
+            "{}-{}-01".format(self.fiscal_year, (self.fiscal_quarter-1)*3), #self.transaction_date,
+            country['code'],
+            self.multi_country,
+            sector_category,
+            sector['code'],
+            0, #self.covid_19,
+            self.fiscal_year,
+            "Q{}".format(self.fiscal_quarter)
+        ])
+
+
+    def output_transaction(self):
+        for sector in self.sectors:
+            sector_category = get_sector_category(sector.get('code'), self.flattener.category_group)
+            for country in self.countries:
+                if (country['code'] not in self.flattener.countries):
+                    continue
+                if country['code'] not in self.flattener.csv_files_budgets:
+                    _file = open('output/csv/budget-{}.csv'.format(country['code']), 'a')
+                    self.flattener.csv_files_budgets[country['code']] = {'file': _file, 'csv': csv.writer(_file), 'rows': []}
+                for budget in self.budgets:
+                    self.flattener.csv_files_budgets[country['code']]['rows'].append(
+                        self.budget_data(country, sector, sector_category, budget))
+
+
+    def get_budget_data(self, budget_element, default_currency, original_revised):
+        budget_currency = budget_element.find('value').get('currency')
+        if budget_currency is not None:
+            currency = budget_currency
+        else:
+            currency = default_currency
+        period_start = get_date(budget_element.find('period-start').get('iso-date'))
+        period_end = get_date(budget_element.find('period-end').get('iso-date'))
+        return ((period_start, period_end), {
+            'period_start': period_start,
+            'period_end': period_end,
+            'currency_original': currency,
+            'value_original': float(budget_element.find('value').text),
+            'value_date': get_date(budget_element.find('value').get('value-date')),
+            'original_revised': original_revised
+        })
+
+
+    def get_budget_periods(self, budgets):
+        out = []
+        for budget in budgets:
+            if (budget['value_original'] == 0): continue
+            period_start_fy, period_start_fq = get_fy_fq_numeric(budget['period_start'])
+            period_end_fy, period_end_fq = get_fy_fq_numeric(budget['period_end'])
+            year_range = range(period_start_fy, period_end_fy+1)
+
+            closest_exchange_rate = self.flattener.exchange_rates.closest_rate(
+                budget['currency_original'], budget['value_date']
+            )
+            exchange_rate = closest_exchange_rate.get('conversion_rate')
+            value_usd = budget['value_original'] / exchange_rate
+            for year in year_range:
+                if (year == period_start_fy) and (year==period_end_fy):
+                    quarter_range = range(period_start_fq, period_end_fq+1)
+                elif year == period_start_fy:
+                    quarter_range = range(period_start_fq, 4+1)
+                elif year == period_end_fy:
+                    quarter_range = range(1, period_end_fq+1)
+                else:
+                    quarter_range = range(1, 4+1)
+                for quarter in quarter_range:
+                    out.append({
+                        'fiscal_year': year,
+                        'fiscal_quarter': quarter,
+                        'value_usd': value_usd/len(quarter_range)/len(year_range),
+                        'value_original': budget['value_original']/len(quarter_range)/len(year_range),
+                        'value_date': budget['value_date'],
+                        'exchange_rate': exchange_rate,
+                        'currency_original': budget['currency_original'],
+                        'original_revised': budget['original_revised']
+                    })
+        return out
+
+
+    def get_budgets(self):
+        original_budget_els = self.activity.findall("budget[@type='1']")
+        revised_budget_els = self.activity.findall("budget[@type='2']")
+
+        original_budgets = dict(map(lambda budget: self.get_budget_data(budget, self.currency_original, 'original'), original_budget_els))
+        revised_budgets = dict(map(lambda budget: self.get_budget_data(budget, self.currency_original, 'revised'), revised_budget_els))
+
+        revised_budget_start_dates = list(map(lambda budget: budget[0], revised_budgets))
+        def filter_budgets(budget_item):
+            for start_date in revised_budget_start_dates:
+                if (budget_item[0][0] <= start_date) and (budget_item[0][0] >= start_date): return False
+            return True
+
+        budgets = list(dict(filter(filter_budgets, original_budgets.items())).values())
+        budgets += list(revised_budgets.values())
+
+        return self.get_budget_periods(budgets)
+
+
+    def process_activity(self):
+        activity = self.activity
+        self.iati_identifier = self.activity.find('iati-identifier').text
+        if self.iati_identifier not in self.flattener.activity_data:
+            self.flattener.activity_data[self.iati_identifier] = {}
+        activity_data = self.flattener.activity_data[self.iati_identifier]
+        ActivityDataSetter(self)
+
+        self.budgets = self.get_budgets()
+
+        activity_data_sectors = activity_data.get('sectors', [])
+        if (len(activity_data_sectors) != 0):
+            self.sectors = clean_sectors(activity_data_sectors)
+        else:
+            activity_data_sectors = activity.xpath("sector[not(@vocabulary) or @vocabulary='1']")
+            if (len(activity_data_sectors) != 0):
+                self.sectors = clean_sectors(activity_data_sectors)
+                activity_data['sectors'] = activity_data_sectors
+            else:
+                # Eventually: get from transactions
+                self.sectors = [{'percentage': 100.0, 'code': ''}]
+                activity_data['sectors'] = self.sectors
+
+        activity_data_countries = activity_data.get('recipient_countries', [])
+        activity_data_regions = activity_data.get('recipient_regions', [])
+        if (len(activity_data_countries) != 0) or (len(activity_data_regions) != 0):
+            self.countries = clean_countries(activity_data_countries, activity_data_regions)
+        else:
+            activity_data_countries = activity.xpath('recipient-country')
+            activity_data_regions = activity.xpath("recipient-region[not(@vocabulary) or @vocabulary='1']")
+            if (len(activity_data_countries) != 0) or (len(activity_data_regions) != 0):
+                self.countries = clean_countries(activity_data_countries, activity_data_regions)
+            if len(activity_data_countries) != 0:
+                activity_data['recipient_countries'] = activity_data_countries
+            if len(activity_data_regions) != 0:
+                activity_data['recipient_regions'] = activity_data_regions
+
+        if not hasattr(self, 'countries'):
+            return
+        self.multi_country = {True: 1, False: 0}[len(self.countries)>1]
+
+        self.provider_org = get_org(activity_data, activity)
+        self.receiver_org = get_org(activity_data, activity, False)
+
+        self.output_transaction()
+
+
+    def set_headers(self):
+        for header in CSV_HEADERS:
+            setattr(self, header, None)
+        self.value_date = None
+
+
+    def __init__(self, flattener, activity):
+        self.flattener = flattener
+        self.activity = activity
+        self.set_headers()
+        self.process_activity()
+
+
+class ActivityDataSetter():
+    def set_data(self):
         def get_data(attr):
             if attr == 'title': return get_activity_title()
             if attr == 'reporting_org': return get_reporting_org()
@@ -370,18 +573,31 @@ class FlatIATITransaction():
 
         # This section reads from data for the activity in order to speed things up.
         for key in activity_functions:
-            if getattr(self, key) is not None: continue
+            if getattr(self.transaction_budget, key) is not None: continue
             if self.iati_identifier in self.flattener.activity_data:
                 if self.flattener.activity_data.get(self.iati_identifier).get(key) is not None:
-                    setattr(self, key, self.flattener.activity_data.get(self.iati_identifier).get(key))
+                    setattr(self.transaction_budget, key, self.flattener.activity_data.get(self.iati_identifier).get(key))
                 else:
-                    setattr(self, key, get_data(key))
-                    self.flattener.activity_data[self.iati_identifier][key] = getattr(self, key)
+                    setattr(self.transaction_budget, key, get_data(key))
+                    self.flattener.activity_data[self.iati_identifier][key] = getattr(self.transaction_budget, key)
             else:
-                setattr(self, key, get_data(key))
+                setattr(self.transaction_budget, key, get_data(key))
                 self.flattener.activity_data[self.iati_identifier] = {
-                    key: getattr(self, key)
+                    key: getattr(self.transaction_budget, key)
                 }
+
+    def __init__(self, transaction_or_budget_flattener):
+        self.iati_identifier = transaction_or_budget_flattener.iati_identifier
+        self.activity = transaction_or_budget_flattener.activity
+        self.transaction_budget = transaction_or_budget_flattener
+        self.flattener = transaction_or_budget_flattener.flattener
+        self.set_data()
+
+
+class FlatIATITransaction():
+    def transaction_data(self, country, sector, sector_category):
+
+        ActivityDataSetter(self)
 
         if self.value_date == None:
             raise Exception("No value date for {}: {}".format(self.iati_identifier, etree.tostring(self.transaction)))
@@ -431,10 +647,10 @@ class FlatIATITransaction():
             for country in self.countries:
                 if (country['code'] not in self.flattener.countries):
                     continue
-                if country['code'] not in self.flattener.csv_files:
+                if country['code'] not in self.flattener.csv_files_transactions:
                     _file = open('output/csv/{}.csv'.format(country['code']), 'a')
-                    self.flattener.csv_files[country['code']] = {'file': _file, 'csv': csv.writer(_file), 'rows': []}
-                self.flattener.csv_files[country['code']]['rows'].append(self.transaction_data(country, sector, sector_category))
+                    self.flattener.csv_files_transactions[country['code']] = {'file': _file, 'csv': csv.writer(_file), 'rows': []}
+                self.flattener.csv_files_transactions[country['code']]['rows'].append(self.transaction_data(country, sector, sector_category))
 
 
     def process_transaction(self):
@@ -554,6 +770,7 @@ class FlattenIATIData():
         for _cl in required_codelists.items():
             req = requests.get(generic_codelists_url.format(_cl[1]))
             self.column_codelist[_cl[0]] = dict(map(lambda item: (item['code'], item['name']), req.json()["data"]))
+        self.column_codelist['transaction_type']['budget'] = 'Budget'
         self.column_codelist['sector_category'] = self.sector_groups
         self.column_codelist['country_code'] = self.country_names
 
@@ -564,28 +781,44 @@ class FlattenIATIData():
             with open('output/csv/{}.csv'.format(country), 'w') as csvfile:
                 csvwriter = csv.writer(csvfile)
                 csvwriter.writerow(CSV_HEADERS)
+            with open('output/csv/budget-{}.csv'.format(country), 'w') as csvfile:
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(CSV_HEADERS)
 
 
     def process_transaction(self, activity, transaction):
         FlatIATITransaction(self, activity, transaction)
 
+
+    def process_activity_for_budgets(self, activity):
+        FlatIATIBudget(self, activity)
+
+
     def write_csv_files(self):
-        for _file in self.csv_files.values():
+        for _file in self.csv_files_transactions.values():
+            #print("Writing file {}".format(_file['file'].name))
+            _file['csv'].writerows(_file['rows'])
+            _file['file'].close()
+        for _file in self.csv_files_budgets.values():
             #print("Writing file {}".format(_file['file'].name))
             _file['csv'].writerows(_file['rows'])
             _file['file'].close()
 
 
     def process_package(self, publisher, package):
-        self.csv_files = {}
+        self.csv_files_transactions = {}
+        self.csv_files_budgets = {}
         doc = etree.parse(os.path.join(IATI_DUMP_DIR, "data", "{}".format(publisher), "{}".format(package)))
         if doc.getroot().get("version") not in ['2.01', '2.02', '2.03']: return
-        transactions = doc.xpath("//transaction")
-        #print("There are {} transactions for {}".format(len(transactions), package))
-
         self.activity_data = {}
+
+        transactions = doc.xpath("//transaction")
         for transaction in transactions:
             self.process_transaction(transaction.getparent(), transaction)
+
+        activities = doc.xpath("//iati-activity[budget]")
+        for activity in activities:
+            self.process_activity_for_budgets(activity)
 
         self.write_csv_files()
 
@@ -674,6 +907,7 @@ class FlattenIATIData():
                 country_name = self.country_names.get(country_code)
                 country_or_region = {True: 'region', False: 'country'}[re.match('^\d*$', country_code) is not None]
                 self.group_results(country_code)
+                if country.startswith("budget-"): continue
                 list_of_files.append({
                     'country_code': country_code,
                     'country_name': country_name,
