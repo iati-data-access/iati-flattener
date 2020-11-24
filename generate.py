@@ -339,9 +339,117 @@ def get_sector_category(code, category_group):
     return category_group.get(code[0:3], "")
 
 
+def value_in_usd(value, currency, value_date, exchange_rates):
+    closest_exchange_rate = exchange_rates.closest_rate(
+        currency, value_date
+    )
+    exchange_rate = closest_exchange_rate.get('conversion_rate')
+    value_usd = value / exchange_rate
+    return value_usd
+
+
+def get_codes_from_transactions(transactions, exchange_rates):
+    # If there is only one code, we just return that one as 100%
+    unique_codes = set(list(map(lambda transaction: transaction[0], transactions)))
+    if len(unique_codes) == 1:
+        return [{'percentage': 100.0, 'code': next(iter(unique_codes))}]
+    # If there is only one currency, we can just split by value, ignoring currency conversion
+    unique_currencies = set(list(map(lambda transaction: transaction[1], transactions)))
+    if len(unique_currencies) != 1:
+        transactions = list(map(lambda transaction: (
+            transaction[0],
+            'USD',
+            value_in_usd(
+                value=transaction[2],
+                currency=t[1],
+                value_date=get_date(value_date=t[3]),
+                exchange_rates=exchange_rates
+            ),
+            transaction[3]
+        ), transactions))
+
+    transactionSum = sum(map(lambda t: float(t[2]), transactions))
+    _out = defaultdict(dict)
+    for code, transaction_currency, transaction_value, transaction_value_date in transactions:
+        if _out.get(code) is None:
+            _out[code] = 0
+        _out[code] += (transaction_value/transactionSum)*100.0
+
+    return list(map(lambda _code: {'code': _code[0], 'percentage': _code[1]}, _out.items()))
+
+
+def get_sectors_from_transactions(activity,
+        default_currency, exchange_rates):
+    transactions_with_sectors = activity.xpath(
+        "transaction[sector[not(@vocabulary) or @vocabulary='1']][transaction-type/@code='2']"
+    )
+    # If there are no transactions, return
+    if len(transactions_with_sectors) == 0: return [{'code': '', 'percentage': 100.0}]
+    transactions = list(map(lambda transaction: (
+        transaction.xpath("sector[not(@vocabulary) or @vocabulary='1']")[0].get('code'),
+        transaction.find("value").get('currency', default_currency),
+        float(transaction.find("value").text),
+        transaction.find("value").get('value-date'),
+    ), transactions_with_sectors))
+
+    return get_codes_from_transactions(transactions, exchange_rates)
+
+
+def get_countries_from_transactions(activity,
+        default_currency, exchange_rates):
+    transactions_with_countries = activity.xpath(
+        "transaction[recipient-country or recipient-region[not(@vocabulary) or @vocabulary='1']][transaction-type/@code='2']"
+    )
+    # If there are no transactions, return
+    if len(transactions_with_countries) == 0: return []
+    transactions = list(map(lambda transaction: (
+        get_first((
+            transaction.xpath("recipient-country"),
+            transaction.xpath("recipient-region[not(@vocabulary) or @vocabulary='1']")
+        ))[0].get('code'),
+        transaction.find("value").get('currency', default_currency),
+        float(transaction.find("value").text),
+        transaction.find("value").get('value-date'),
+    ), transactions_with_countries))
+
+    return get_codes_from_transactions(transactions, exchange_rates)
+
+
+def get_aid_type_from_transactions(activity,
+    default_currency, exchange_rates):
+    transactions_with_aid_types = activity.xpath(
+        "transaction[aid-type[not(@vocabulary) or @vocabulary='1']][transaction-type/@code='2']"
+    )
+    if len(transactions_with_aid_types) == 0: return [{'code': '', 'percentage': 100.0}]
+    transactions = list(map(lambda transaction: (
+        transaction.xpath("aid-type[not(@vocabulary) or @vocabulary='1']")[0].get('code'),
+        transaction.find("value").get('currency', default_currency),
+        float(transaction.find("value").text),
+        transaction.find("value").get('value-date'),
+    ), transactions_with_aid_types))
+
+    return get_codes_from_transactions(transactions, exchange_rates)
+
+
+def get_finance_type_from_transactions(activity,
+    default_currency, exchange_rates):
+    transactions_with_finance_types = activity.xpath(
+        "transaction[finance-type][transaction-type/@code='2']"
+    )
+    if len(transactions_with_finance_types) == 0: return [{'code': '', 'percentage': 100.0}]
+    transactions = list(map(lambda transaction: (
+        transaction.find("finance-type").get('code'),
+        transaction.find("value").get('currency', default_currency),
+        float(transaction.find("value").text),
+        transaction.find("value").get('value-date'),
+    ), transactions_with_finance_types))
+
+    return get_codes_from_transactions(transactions, exchange_rates)
+
+
 class FlatIATIBudget():
 
-    def budget_data(self, country, sector, sector_category, budget):
+    def budget_data(self, country, sector, sector_category, aid_type, finance_type, budget):
         for k, v in budget.items():
             setattr(self, k, v)
 
@@ -352,21 +460,45 @@ class FlatIATIBudget():
         if self.value_original == None:
             raise Exception("No value for {}: {}".format(self.iati_identifier, etree.tostring(self.transaction)))
 
+        value_usd = (
+            self.value_usd*(
+                country['percentage']/100
+            )*(
+                sector['percentage']/100
+            )*(
+                aid_type['percentage']/100
+            )*(
+                finance_type['percentage']/100
+            )
+        )
+        value_original = (
+            self.value_original*(
+                country['percentage']/100
+            )*(
+                sector['percentage']/100
+            )*(
+                aid_type['percentage']/100
+            )*(
+                finance_type['percentage']/100
+            )
+        )
+
+
         return ([
             self.iati_identifier,
             self.title,
             self.reporting_org.get('display'),
             self.reporting_org.get('type'),
-            self.aid_type.get('code', ''),
-            self.finance_type.get('code', ''),
+            aid_type.get('code', ''),
+            finance_type.get('code', ''),
             self.provider_org.get('display'),
             self.provider_org.get('type'),
             self.receiver_org.get('display'),
             self.receiver_org.get('type'),
             'budget', #self.transaction_type,
-            (self.value_original*(country['percentage']/100)*(sector['percentage']/100)),
+            value_original,
             self.currency_original,
-            (self.value_usd*(country['percentage']/100)*(sector['percentage']/100)),
+            value_usd,
             self.value_date.isoformat(),
             self.exchange_rate,
             "{}-{}-01".format(self.fiscal_year, (self.fiscal_quarter-1)*3), #self.transaction_date,
@@ -389,9 +521,11 @@ class FlatIATIBudget():
                 if country['code'] not in self.flattener.csv_files_budgets:
                     _file = open('output/csv/budget-{}.csv'.format(country['code']), 'a')
                     self.flattener.csv_files_budgets[country['code']] = {'file': _file, 'csv': csv.writer(_file), 'rows': []}
-                for budget in self.budgets:
-                    self.flattener.csv_files_budgets[country['code']]['rows'].append(
-                        self.budget_data(country, sector, sector_category, budget))
+                for aid_type in self.aid_type:
+                    for finance_type in self.finance_type:
+                        for budget in self.budgets:
+                            self.flattener.csv_files_budgets[country['code']]['rows'].append(
+                                self.budget_data(country, sector, sector_category, aid_type, finance_type, budget))
 
 
     def get_budget_data(self, budget_element, default_currency, original_revised):
@@ -449,7 +583,7 @@ class FlatIATIBudget():
 
 
     def get_budgets(self):
-        original_budget_els = self.activity.findall("budget[@type='1']")
+        original_budget_els = self.activity.xpath("budget[not(@type) or @type='1']")
         revised_budget_els = self.activity.findall("budget[@type='2']")
 
         original_budgets = dict(map(lambda budget: self.get_budget_data(budget, self.currency_original, 'original'), original_budget_els))
@@ -484,11 +618,14 @@ class FlatIATIBudget():
             activity_data_sectors = activity.xpath("sector[not(@vocabulary) or @vocabulary='1']")
             if (len(activity_data_sectors) != 0):
                 self.sectors = clean_sectors(activity_data_sectors)
-                activity_data['sectors'] = activity_data_sectors
             else:
-                # Eventually: get from transactions
-                self.sectors = [{'percentage': 100.0, 'code': ''}]
-                activity_data['sectors'] = self.sectors
+                # Look at commitment transactions with DAC sectors
+                transaction_data_sectors = get_sectors_from_transactions(
+                    activity,
+                    self.currency_original,
+                    self.flattener.exchange_rates
+                )
+                self.sectors = transaction_data_sectors
 
         activity_data_countries = activity_data.get('recipient_countries', [])
         activity_data_regions = activity_data.get('recipient_regions', [])
@@ -499,14 +636,40 @@ class FlatIATIBudget():
             activity_data_regions = activity.xpath("recipient-region[not(@vocabulary) or @vocabulary='1']")
             if (len(activity_data_countries) != 0) or (len(activity_data_regions) != 0):
                 self.countries = clean_countries(activity_data_countries, activity_data_regions)
-            if len(activity_data_countries) != 0:
-                activity_data['recipient_countries'] = activity_data_countries
-            if len(activity_data_regions) != 0:
-                activity_data['recipient_regions'] = activity_data_regions
+            else:
+                transaction_data_countries = get_countries_from_transactions(
+                    activity,
+                    self.currency_original,
+                    self.flattener.exchange_rates
+                )
+                if len(transaction_data_countries) != 0:
+                    self.countries = transaction_data_countries
 
         if not hasattr(self, 'countries'):
             return
         self.multi_country = {True: 1, False: 0}[len(self.countries)>1]
+
+        if self.aid_type == {}:
+            self.aid_type = get_aid_type_from_transactions(
+                activity,
+                self.currency_original,
+                self.flattener.exchange_rates)
+        else:
+            self.aid_type = [{
+                'code': self.aid_type.get('code', ''),
+                'percentage': 100.0
+            }]
+
+        if self.finance_type == {}:
+            self.finance_type = get_finance_type_from_transactions(
+                activity,
+                self.currency_original,
+                self.flattener.exchange_rates)
+        else:
+            self.finance_type = [{
+                'code': self.finance_type.get('code', ''),
+                'percentage': 100.0
+            }]
 
         self.provider_org = get_org(activity_data, activity)
         self.receiver_org = get_org(activity_data, activity, False)
@@ -910,20 +1073,20 @@ class FlattenIATIData():
                 country_name = self.country_names.get(country_code)
                 country_or_region = {True: 'region', False: 'country'}[re.match('^\d*$', country_code) is not None]
                 self.group_results(country_code)
-                if country.startswith("budget-"): continue
-                list_of_files.append({
-                    'country_code': country_code,
-                    'country_name': country_name,
-                    'country_or_region': country_or_region,
-                    'filename': "{}.xlsx".format(country_code)
-                })
+                if not country.startswith("budget-"):
+                    list_of_files.append({
+                        'country_code': country_code,
+                        'country_name': country_name,
+                        'country_or_region': country_or_region,
+                        'filename': "{}.xlsx".format(country_code)
+                    })
             end = time.time()
             print("Processing {} took {}s".format(country, end-start))
-            with open('output/xlsx/index.json', 'w') as json_file:
-                json.dump({
-                    'lastUpdated': datetime.datetime.utcnow().date().isoformat(),
-                    'countries': list_of_files
-                }, json_file)
+        with open('output/xlsx/index.json', 'w') as json_file:
+            json.dump({
+                'lastUpdated': datetime.datetime.utcnow().date().isoformat(),
+                'countries': list_of_files
+            }, json_file)
         print("FINISHED PROCESS AT {}".format(datetime.datetime.utcnow()))
 
 
