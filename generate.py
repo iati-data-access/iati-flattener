@@ -83,6 +83,7 @@ SECTORS_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Sector.jso
 M49_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/RegionM49.json"
 SECTOR_GROUPS_URL = "https://morph.io/codeforIATI/dac-sector-groups/data.json?key={}&query=select+%2A+from+%22swdata%22".format(
             MORPH_IO_API_KEY)
+PUBLISHER_NAMES_URL = "https://github.com/devinit/D-Portal/blob/master/dstore/json/publishers.json?raw=true"
 IATI_DUMP_DIR = os.path.join("iati-data-dump")
 
 
@@ -162,15 +163,12 @@ def get_narrative(container):
 
 
 def get_org_name(ref, text=None):
-    if (text == None):
-        return ""
-    return text
-    # Pass for now - consider including laterr
     if (ref == None) or (ref.strip() == ""):
         return text
-        return check_encoding(text)
     if ref in ORGANISATIONS:
         return ORGANISATIONS[ref]
+    if (text == None):
+        return ""
     return text
 
 
@@ -756,6 +754,9 @@ class FlattenIATIData():
         self.region_names = dict(map(lambda region: (region['code'], region['name']), region_req.json()["data"]))
         self.country_names.update(self.region_names)
         self.sector_names = dict(map(lambda country: (country['code'], country['name']), sector_req.json()["data"]))
+
+        publishers_req = requests.get(PUBLISHER_NAMES_URL)
+        ORGANISATIONS = dict(map(lambda org: (org['publisher_iati_id'], org['title']), publishers_req.json().values()))
 
         required_codelists = {
             'reporting_org_type': 'OrganisationType',
