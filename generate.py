@@ -227,7 +227,10 @@ def get_org(activity_data, transaction_or_activity, provider=True):
                 _ro = transaction.getparent().find("reporting-org")
             else:
                 _ro = activity.find("reporting-org")
-            _text = get_narrative(_ro)
+            _text = get_org_name(
+                ref=_ro.get("ref"),
+                text=get_narrative(_ro)
+            )
             _type = _ro.get('type')
             _ref = _ro.get('ref')
             _display = "{} - {}".format(_ref, _text)
@@ -704,7 +707,10 @@ class ActivityDataSetter():
 
         def get_reporting_org():
             _ro = self.activity.find("reporting-org")
-            _text = get_narrative(_ro)
+            _text = get_org_name(
+                ref=_ro.get("ref"),
+                text=get_narrative(_ro)
+            )
             _type = _ro.get('type')
             _ref = _ro.get('ref')
             _display = "{} - {}".format(_ref, _text)
@@ -1060,6 +1066,7 @@ class FlattenIATIData():
         out = out["value_usd"].agg("sum").reset_index().fillna("")
         out = self.relabel_dataframe(out)
         self.write_dataframe_to_excel(out, "output/xlsx/{}.xlsx".format(country_code))
+
 
     def group_data(self):
         csv_files = os.listdir("output/csv/")
