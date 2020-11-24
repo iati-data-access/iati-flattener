@@ -1097,6 +1097,96 @@ class FlattenIATIData():
         print("FINISHED PROCESS AT {}".format(datetime.datetime.utcnow()))
 
 
+    def data_quality_report(self):
+        def write_dataframe_to_excel(headers, values, filename):
+            """
+            Function to write a pandas dataframe to Excel.
+            This uses pyExcelerate, which is about 2x as fast as the built-in
+            pandas library.
+            """
+            wb = Workbook()
+            values.insert(0, headers)
+            ws = wb.new_sheet("Data", data=values)
+            wb.save(filename)
+
+        def group_one(filename, values):
+            df = pd.read_excel("output/xlsx/{}".format(filename))
+            if not "reporting_org" in df.columns.values:
+                return values
+            this_year = datetime.datetime.now().year
+            required_years = list(range(this_year-2, this_year+3))
+            df = df[df.fiscal_year.isin(required_years)]
+            out = df.fillna("").groupby([
+                       'reporting_org',
+                       'reporting_org_type',
+                       'transaction_type',
+                       'fiscal_year',
+                       'fiscal_quarter'])
+            out = out["value_usd"].agg("sum").reset_index()
+            values += out.values.tolist()
+            return values
+
+        def group_all():
+            xlsx_files = os.listdir("output/xlsx/")
+            xlsx_files.sort()
+            headers = ['reporting_org',
+                       'reporting_org_type',
+                       'transaction_type',
+                       'fiscal_year',
+                       'fiscal_quarter',
+                       'value_usd']
+            values = []
+            for xlsx_file in xlsx_files:
+                if xlsx_file.endswith(".xlsx"):
+                    #try:
+                    print("Summarising {}".format(xlsx_file))
+                    values = group_one(xlsx_file, values)
+                    #except Exception:
+                    #    print("Exception with file {}".format(xlsx_file))
+            df = pd.DataFrame(values, columns=headers)
+            year_summaries = df.pivot_table(
+                index=['reporting_org', 'reporting_org_type'],
+                columns=['transaction_type',
+                'fiscal_year'],
+                values='value_usd',
+                aggfunc=sum).fillna(0.0).to_dict(orient='index')
+            year_summaries = dict(map(lambda org: (org[0][0], {
+                'type': org[0][1],
+                'data': list(map(lambda year_transaction_type: {
+                    'transaction_type': year_transaction_type[0][0],
+                    'year': year_transaction_type[0][1],
+                    'value': year_transaction_type[1]
+                }, org[1].items()))
+            }), year_summaries.items()))
+
+            with open('output/xlsx/summary_year.json', 'w') as json_file:
+                json.dump({
+                    'summary': year_summaries
+                }, json_file)
+
+            last_year = datetime.datetime.now().year-1
+            df = pd.DataFrame(values, columns=headers)
+            quarter_summaries = df[df.fiscal_year==last_year].pivot_table(
+                index=['reporting_org', 'reporting_org_type'],
+                columns=['transaction_type',
+                'fiscal_year', 'fiscal_quarter'],
+                values='value_usd',
+                aggfunc=sum).fillna(0.0).to_dict(orient='index')
+            quarter_summaries = dict(map(lambda org: (org[0][0], {
+                'type': org[0][1],
+                'data': list(map(lambda year_transaction_type: {
+                    'transaction_type': year_transaction_type[0][0],
+                    'year': year_transaction_type[0][1],
+                    'value': year_transaction_type[1]
+                }, org[1].items()))
+            }), quarter_summaries.items()))
+            with open('output/xlsx/summary_quarter.json', 'w') as json_file:
+                json.dump({
+                    'summary': quarter_summaries
+                }, json_file)
+        group_all()
+
+
     def __init__(self, refresh_rates=False):
         self.publishers = os.listdir(os.path.join(IATI_DUMP_DIR, "data"))
         self.publishers.sort()
@@ -1104,6 +1194,7 @@ class FlattenIATIData():
         self.setup_countries()
         self.run_for_publishers()
         self.group_data()
+        self.data_quality_report()
 
 
 FlattenIATIData(refresh_rates=True)
