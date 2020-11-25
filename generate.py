@@ -85,6 +85,7 @@ SECTOR_GROUPS_URL = "https://morph.io/codeforIATI/dac-sector-groups/data.json?ke
             MORPH_IO_API_KEY)
 PUBLISHER_NAMES_URL = "https://github.com/devinit/D-Portal/blob/master/dstore/json/publishers.json?raw=true"
 IATI_DUMP_DIR = os.path.join("iati-data-dump")
+global ORGANISATIONS
 ORGANISATIONS = {}
 
 
@@ -926,6 +927,7 @@ class FlattenIATIData():
         self.sector_names = dict(map(lambda country: (country['code'], country['name']), sector_req.json()["data"]))
 
         publishers_req = requests.get(PUBLISHER_NAMES_URL)
+        global ORGANISATIONS
         ORGANISATIONS = dict(map(lambda org: (org['publisher_iati_id'], org['title']), publishers_req.json().values()))
 
         required_codelists = {
