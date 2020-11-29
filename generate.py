@@ -50,6 +50,26 @@ GROUP_BY_HEADERS = [
    'covid_19',
    'fiscal_year',
    'fiscal_quarter']
+OUTPUT_HEADERS = [
+   'IATI Identifier',
+   'Title',
+   'Reporting Organisation',
+   'Reporting Organisation Type',
+   'Aid Type',
+   'Finance Type',
+   'Provider Organisation',
+   'Provider Organisation Type',
+   'Receiver Organisation',
+   'Receiver Organisation Type',
+   'Transaction Type',
+   'Recipient Country',
+   'Multi Country',
+   'Sector Category',
+   'Sector',
+   'COVID 19',
+   'Calendar Year',
+   'Calendar Quarter',
+   'Value (USD)']
 
 _DTYPES = [str, str, str, str,
                  str, str, str, str,
@@ -1053,7 +1073,7 @@ class FlattenIATIData():
         pandas library.
         """
         wb = Workbook()
-        headers = dataframe.columns.tolist()
+        headers = OUTPUT_HEADERS
         data = dataframe.values.tolist()
         data.insert(0, headers)
         ws = wb.new_sheet("Data", data=data)
@@ -1113,30 +1133,30 @@ class FlattenIATIData():
 
         def group_one(filename, values):
             df = pd.read_excel("output/xlsx/{}".format(filename))
-            if not "reporting_org" in df.columns.values:
+            if not "Reporting Organisation" in df.columns.values:
                 return values
             this_year = datetime.datetime.now().year
             required_years = list(range(this_year-2, this_year+3))
-            df = df[df.fiscal_year.isin(required_years)]
+            df = df[df["Calendar Year"].isin(required_years)]
             out = df.fillna("").groupby([
-                       'reporting_org',
-                       'reporting_org_type',
-                       'transaction_type',
-                       'fiscal_year',
-                       'fiscal_quarter'])
-            out = out["value_usd"].agg("sum").reset_index()
+                       'Reporting Organisation',
+                       'Reporting Organisation Type',
+                       'Transaction Type',
+                       'Calendar Year',
+                       'Calendar Quarter'])
+            out = out["Value (USD)"].agg("sum").reset_index()
             values += out.values.tolist()
             return values
 
         def group_all():
             xlsx_files = os.listdir("output/xlsx/")
             xlsx_files.sort()
-            headers = ['reporting_org',
-                       'reporting_org_type',
-                       'transaction_type',
-                       'fiscal_year',
-                       'fiscal_quarter',
-                       'value_usd']
+            headers = ['Reporting Organisation',
+                       'Reporting Organisation Type',
+                       'Transaction Type',
+                       'Calendar Year',
+                       'Calendar Quarter',
+                       'Value (USD)']
             values = []
             for xlsx_file in xlsx_files:
                 if xlsx_file.endswith(".xlsx"):
@@ -1147,10 +1167,10 @@ class FlattenIATIData():
                     #    print("Exception with file {}".format(xlsx_file))
             df = pd.DataFrame(values, columns=headers)
             year_summaries = df.pivot_table(
-                index=['reporting_org', 'reporting_org_type'],
-                columns=['transaction_type',
-                'fiscal_year'],
-                values='value_usd',
+                index=['Reporting Organisation', 'Reporting Organisation Type'],
+                columns=['Transaction Type',
+                'Calendar Year'],
+                values='Value (USD)',
                 aggfunc=sum).fillna(0.0).to_dict(orient='index')
             year_summaries = dict(map(lambda org: (org[0][0], {
                 'type': org[0][1],
@@ -1168,11 +1188,11 @@ class FlattenIATIData():
 
             last_year = datetime.datetime.now().year-1
             df = pd.DataFrame(values, columns=headers)
-            quarter_summaries = df[df.fiscal_year==last_year].pivot_table(
-                index=['reporting_org', 'reporting_org_type'],
-                columns=['transaction_type',
-                'fiscal_year', 'fiscal_quarter'],
-                values='value_usd',
+            quarter_summaries = df[df["Calendar Year"]==last_year].pivot_table(
+                index=['Reporting Organisation', 'Reporting Organisation Type'],
+                columns=['Transaction Type',
+                'Calendar Year', 'Calendar Quarter'],
+                values='Value (USD)',
                 aggfunc=sum).fillna(0.0).to_dict(orient='index')
             quarter_summaries = dict(map(lambda org: (org[0][0], {
                 'type': org[0][1],
