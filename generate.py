@@ -1,5 +1,6 @@
 from lxml import etree
 import os
+import shutil
 import requests
 import csv
 import json
@@ -1119,6 +1120,10 @@ class FlattenIATIData():
         print("FINISHED PROCESS AT {}".format(datetime.datetime.utcnow()))
 
 
+    def cleanup_data(self):
+        shutil.rmtree('output/csv/')
+
+
     def data_quality_report(self):
         def write_dataframe_to_excel(headers, values, filename):
             """
@@ -1216,6 +1221,7 @@ class FlattenIATIData():
         self.setup_countries()
         self.run_for_publishers()
         self.group_data()
+        self.cleanup_data()
         self.data_quality_report()
 
 
