@@ -1,5 +1,6 @@
 from .iati_helpers import value_in_usd
 from .utils import get_first
+from collections import defaultdict
 
 def get_codes_from_transactions(transactions, exchange_rates):
     # If there is only one code, we just return that one as 100%
