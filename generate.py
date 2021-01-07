@@ -5,7 +5,7 @@ from iatiflattener.group_data import GroupFlatIATIData
 from iatiflattener.data_quality import report as data_quality_report
 
 if __name__ == "__main__":
-	iatikit.download.data()
+    iatikit.download.data()
     os.makedirs('output/csv/')
     FlattenIATIData(refresh_rates=True)
     GroupFlatIATIData()
