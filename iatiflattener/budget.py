@@ -152,7 +152,6 @@ class FlatIATIBudget():
                     self.countries = transaction_data_countries
 
         if not hasattr(self, 'countries'):
-            print("not countries")
             return
 
         self.multi_country = {True: 1, False: 0}[len(self.countries)>1]
