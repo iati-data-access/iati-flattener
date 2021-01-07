@@ -126,7 +126,7 @@ class FlattenIATIData():
                     try:
                         if package.endswith(".xml"):
                             self.process_package(publisher, package)
-                    except UnicodeEncodeError as e: #Exception as e:
+                    except Exception as e:
                         print("Exception with package {}".format(package))
                         print("Exception was {}".format(e))
                         continue
