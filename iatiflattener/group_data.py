@@ -12,13 +12,11 @@ from iatiflattener.lib.variables import CSV_HEADERS, GROUP_BY_HEADERS, OUTPUT_HE
 
 CSV_HEADER_DTYPES = dict(map(lambda csv_header: (csv_header[1], _DTYPES[csv_header[0]]), enumerate(CSV_HEADERS)))
 
-MORPH_IO_API_KEY = os.environ['MORPH_IO_API_KEY']
 REGIONS_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Region.json"
 COUNTRIES_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Country.json"
 SECTORS_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Sector.json"
 M49_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/RegionM49.json"
-SECTOR_GROUPS_URL = "https://morph.io/codeforIATI/dac-sector-groups/data.json?key={}&query=select+%2A+from+%22swdata%22".format(
-            MORPH_IO_API_KEY)
+SECTOR_GROUPS_URL = "https://codelists.codeforiati.org/api/json/en/SectorGroup.json"
 
 class GroupFlatIATIData():
     def setup_codelists(self):
@@ -26,7 +24,7 @@ class GroupFlatIATIData():
         region_req = requests.get(REGIONS_CODELIST_URL)
         sector_req = requests.get(SECTORS_CODELIST_URL)
         sector_groups_req = requests.get(SECTOR_GROUPS_URL)
-        self.sector_groups = dict(map(lambda code: (code['group_code'], code['group_name']), sector_groups_req.json()))
+        self.sector_groups = dict(map(lambda code: (code['code'], code['name']), sector_groups_req.json()['data']))
 
         self.country_names = dict(map(lambda country: (country['code'], country['name']), country_req.json()["data"]))
         self.region_names = dict(map(lambda region: (region['code'], region['name']), region_req.json()["data"]))
