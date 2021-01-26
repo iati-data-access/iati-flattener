@@ -16,17 +16,14 @@ from iatiflattener.budget import FlatIATIBudget
 
 CSV_HEADER_DTYPES = dict(map(lambda csv_header: (csv_header[1], _DTYPES[csv_header[0]]), enumerate(CSV_HEADERS)))
 
-MORPH_IO_API_KEY = os.environ['MORPH_IO_API_KEY']
-EXCHANGE_RATES_URL = "https://morph.io/markbrough/exchangerates-scraper/data.csv?key={}&query=select+%2A+from+%22rates%22".format(
-            MORPH_IO_API_KEY)
+EXCHANGE_RATES_URL = "https://codeforiati.org/exchangerates-scraper/consolidated.csv"
 EXCLUDED_PUBLISHERS=["aiddata"]
 REGIONS_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Region.json"
 COUNTRIES_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Country.json"
 SECTORS_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Sector.json"
 M49_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/RegionM49.json"
-SECTOR_GROUPS_URL = "https://morph.io/codeforIATI/dac-sector-groups/data.json?key={}&query=select+%2A+from+%22swdata%22".format(
-            MORPH_IO_API_KEY)
-PUBLISHER_NAMES_URL = "https://github.com/devinit/D-Portal/blob/master/dstore/json/publishers.json?raw=true"
+SECTOR_GROUPS_URL = "https://codelists.codeforiati.org/api/json/en/SectorGroup.json"
+PUBLISHER_NAMES_URL = "https://codelists.codeforiati.org/api/json/en/ReportingOrganisation.json"
 IATI_DUMP_DIR = os.path.join("__iatikitcache__", "registry")
 
 
@@ -55,10 +52,10 @@ class FlattenIATIData():
         self.countries = list(map(lambda country: country['code'], country_req.json()["data"]))
         self.regions = list(map(lambda region: region['code'], region_req.json()["data"]))
         self.countries += self.regions
-        self.category_group = dict(map(lambda code: (code['category_code'], code['group_code']), sector_groups_req.json()))
+        self.category_group = dict(map(lambda code: (code['Codeforiati:category-code'], code['Code']), sector_groups_req.json()))
 
         publishers_req = requests.get(PUBLISHER_NAMES_URL)
-        self.organisations = dict(map(lambda org: (org['publisher_iati_id'], org['title']), publishers_req.json().values()))
+        self.organisations = dict(map(lambda org: (org['Code'], org['Name']), publishers_req.json().values()))
 
         self.exchange_rates = get_exchange_rates(refresh_rates)
 
