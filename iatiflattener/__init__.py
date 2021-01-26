@@ -55,7 +55,7 @@ class FlattenIATIData():
         self.category_group = dict(map(lambda code: (code['codeforiati:category-code'], code['code']), sector_groups_req.json()['data']))
 
         publishers_req = requests.get(PUBLISHER_NAMES_URL)
-        self.organisations = dict(map(lambda org: (org['Code'], org['Name']), publishers_req.json().values()))
+        self.organisations = dict(map(lambda org: (org['code'], org['name']), publishers_req.json().values()))
 
         self.exchange_rates = get_exchange_rates(refresh_rates)
 
