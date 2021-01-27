@@ -52,7 +52,7 @@ class FlattenIATIData():
         self.countries = list(map(lambda country: country['code'], country_req.json()["data"]))
         self.regions = list(map(lambda region: region['code'], region_req.json()["data"]))
         self.countries += self.regions
-        self.category_group = dict(map(lambda code: (code['codeforiati:category-code'], code['code']), sector_groups_req.json()['data']))
+        self.category_group = dict(map(lambda code: (code['codeforiati:category-code'], code['codeforiati:group-code']), sector_groups_req.json()['data']))
 
         publishers_req = requests.get(PUBLISHER_NAMES_URL)
         self.organisations = dict(map(lambda org: (org['code'], org['name']), publishers_req.json()['data']))

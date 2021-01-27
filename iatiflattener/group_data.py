@@ -24,7 +24,7 @@ class GroupFlatIATIData():
         region_req = requests.get(REGIONS_CODELIST_URL)
         sector_req = requests.get(SECTORS_CODELIST_URL)
         sector_groups_req = requests.get(SECTOR_GROUPS_URL)
-        self.sector_groups = dict(map(lambda code: (code['code'], code['name']), sector_groups_req.json()['data']))
+        self.sector_groups = dict(map(lambda code: (code['codeforiati:group-code'], code['codeforiati:group-name']), sector_groups_req.json()['data']))
 
         self.country_names = dict(map(lambda country: (country['code'], country['name']), country_req.json()["data"]))
         self.region_names = dict(map(lambda region: (region['code'], region['name']), region_req.json()["data"]))
