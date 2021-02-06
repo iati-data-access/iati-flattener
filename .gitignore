@@ -1,3 +1,5 @@
+dist
+*.egg-info
 output/xlsx/*.xlsx
 output/csv/*.csv
 pyenv
