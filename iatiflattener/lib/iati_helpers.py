@@ -59,12 +59,12 @@ def get_narrative_text(element):
 def get_org(organisations, activity_data, transaction_or_activity, provider=True):
     def _make_org_output(_text, _ref, _type):
         _display = ""
-        if (_ref is not None) and (_ref != ""):
-            _display += _ref
-        if (_display != "") and (_text is not None):
-            _display += " - "
         if _text is not None:
             _display += _text
+        if (_display != "") and (_ref is not None):
+            _display += " "
+        if (_ref is not None) and (_ref != ""):
+            _display += '[{}]'.format(_ref)
         return {
             'text': get_first((_text, _ref)),
             'ref': get_first((_ref, _text)),
@@ -111,7 +111,7 @@ def get_org(organisations, activity_data, transaction_or_activity, provider=True
             )
             _type = _ro.get('type')
             _ref = _ro.get('ref')
-            _display = "{} - {}".format(_ref, _text)
+            _display = "{} [{}]".format(_text, _ref)
             activity_data['reporting_org'] = {
                 'text': _text,
                 'type': _type,
