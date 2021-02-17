@@ -23,7 +23,7 @@ class ActivityDataSetter():
             )
             _type = _ro.get('type')
             _ref = _ro.get('ref')
-            _display = "{} - {}".format(_ref, _text)
+            _display = "{} [{}]".format(_text, _ref)
             return {
                 'text': _text,
                 'type': _type,
