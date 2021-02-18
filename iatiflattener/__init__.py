@@ -16,7 +16,7 @@ from iatiflattener.budget import FlatIATIBudget
 
 CSV_HEADER_DTYPES = dict(map(lambda csv_header: (csv_header[1], _DTYPES[csv_header[0]]), enumerate(CSV_HEADERS)))
 
-EXCHANGE_RATES_URL = "https://codeforiati.org/exchangerates-scraper/consolidated.csv"
+EXCHANGE_RATES_URL = "https://codeforiati.org/imf-exchangerates/imf_exchangerates.csv"
 EXCLUDED_PUBLISHERS=["aiddata"]
 REGIONS_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Region.json"
 COUNTRIES_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Country.json"
