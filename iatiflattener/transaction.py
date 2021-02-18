@@ -9,7 +9,7 @@ from iatiflattener.lib.variables import CSV_HEADERS
 
 class FlatIATITransaction():
 
-    def transaction_data(self, country, sector, sector_category):
+    def transaction_data(self, country, sector, sector_category, as_dict=False):
 
         ActivityDataSetter(self)
 
@@ -45,7 +45,7 @@ class FlatIATITransaction():
             )
         )
 
-        return ([
+        out = [
             self.iati_identifier,
             self.title,
             self.reporting_org.get('display'),
@@ -70,7 +70,45 @@ class FlatIATITransaction():
             self.covid_19,
             self.fiscal_year,
             self.fiscal_quarter
-        ])
+        ]
+
+        if as_dict==False:
+            return out
+
+        return {
+            'iati_identifier': self.iati_identifier,
+            'title': self.title,
+            'reporting_org': self.reporting_org,
+            'aid_type': self.aid_type.get('code', ''),
+            'finance_type': self.finance_type.get('code', ''),
+            'provider_org': self.provider_org,
+            'receiver_org': self.receiver_org,
+            'transaction_type': self.transaction_type,
+            'value_original': value_original,
+            'currency_original': self.currency_original,
+            'value_usd': value_usd,
+            'value_date': self.value_date.isoformat(),
+            'exchange_rate': self.exchange_rate,
+            'transaction_date': self.transaction_date,
+            'country': country['code'],
+            'multi_country': self.multi_country,
+            'sector_category': sector_category,
+            'sector': sector['code'],
+            'covid_19': self.covid_19,
+            'fiscal_year': self.fiscal_year,
+            'fiscal_quarter': self.fiscal_quarter
+        }
+
+
+    def flatten_transaction(self, as_dict=False):
+        for sector in self.sectors:
+            sector_category = get_sector_category(
+                sector.get('code'),
+                self.flattener.category_group)
+            for country in self.countries:
+                if (country['code'] not in self.flattener.countries):
+                    continue
+                yield self.transaction_data(country, sector, sector_category, as_dict)
 
 
     def output_transaction(self):
@@ -148,7 +186,8 @@ class FlatIATITransaction():
 
         self.multi_country = {True: 1, False: 0}[len(self.countries)>1]
         self.transaction_type = transaction.find('transaction-type').get('code')
-        if self.transaction_type not in ['1', '2', '3', '4']: return
+        if self.limit_transaction_types:
+            if self.transaction_type not in ['1', '2', '3', '4']: return
 
         self.aid_type = transaction.find('aid-type')
         self.finance_type = transaction.find('finance-type')
@@ -171,7 +210,9 @@ class FlatIATITransaction():
         self.value_date = None
         self.output = False
 
-    def __init__(self, flattener, activity, transaction):
+    def __init__(self, flattener, activity, transaction,
+            limit_transaction_types=True):
+        self.limit_transaction_types = limit_transaction_types
         self.flattener = flattener
         self.activity = activity
         self.transaction = transaction
