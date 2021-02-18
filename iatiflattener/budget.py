@@ -14,7 +14,8 @@ from iatiflattener.lib.variables import CSV_HEADERS
 
 class FlatIATIBudget():
 
-    def budget_data(self, country, sector, sector_category, aid_type, finance_type, budget):
+    def budget_data(self, country, sector, sector_category, aid_type,
+            finance_type, budget, as_dict):
         for k, v in budget.items():
             setattr(self, k, v)
 
@@ -51,7 +52,7 @@ class FlatIATIBudget():
             )
         )
 
-        return ([
+        out = [
             self.iati_identifier,
             self.title,
             self.reporting_org.get('display'),
@@ -76,7 +77,50 @@ class FlatIATIBudget():
             0, #self.covid_19, # COVID-19
             self.fiscal_year,
             "Q{}".format(self.fiscal_quarter)
-        ])
+        ]
+
+        if as_dict==False:
+            return out
+
+        return {
+            'iati_identifier': self.iati_identifier,
+            'title': self.title,
+            'reporting_org': self.reporting_org,
+            'aid_type': aid_type.get('code', ''),
+            'finance_type': finance_type.get('code', ''),
+            'provider_org': self.provider_org,
+            'receiver_org': self.receiver_org,
+            'transaction_type': 'budget', # Transaction Type
+            'value_original': value_original,
+            'currency_original': self.currency_original,
+            'value_usd': value_usd,
+            'value_date': self.value_date.isoformat(),
+            'exchange_rate': self.exchange_rate,
+            'transaction_date': "{}-{}-01".format(self.fiscal_year, (self.fiscal_quarter-1)*3), # Transaction Date,
+            'country': country['code'],
+            'multi_country': self.multi_country,
+            'sector_category': sector_category,
+            'sector': sector['code'],
+            'covid_19': 0, #self.covid_19, # COVID-19
+            'fiscal_year': self.fiscal_year,
+            'fiscal_quarter': "Q{}".format(self.fiscal_quarter)
+        }
+
+
+    def flatten_budget(self, as_dict=False):
+        for sector in self.sectors:
+            sector_category = get_sector_category(
+                sector.get('code'),
+                self.flattener.category_group)
+            for country in self.countries:
+                if (country['code'] not in self.flattener.countries):
+                    continue
+                for aid_type in self.aid_type:
+                    for finance_type in self.finance_type:
+                        for budget in self.budgets:
+                            yield self.budget_data(
+                                country, sector, sector_category,
+                                aid_type, finance_type, budget, as_dict)
 
 
     def output_budget(self):
