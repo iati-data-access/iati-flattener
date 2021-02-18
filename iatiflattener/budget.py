@@ -15,7 +15,7 @@ from iatiflattener.lib.variables import CSV_HEADERS
 class FlatIATIBudget():
 
     def budget_data(self, country, sector, sector_category, aid_type,
-            finance_type, budget, as_dict):
+            finance_type, budget, as_dict=False):
         for k, v in budget.items():
             setattr(self, k, v)
 
