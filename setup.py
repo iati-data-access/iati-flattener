@@ -15,7 +15,7 @@ iatikit>=2.3.0
 setup(
     name="iatiflattener",
     packages=find_packages(exclude=['ez_setup', 'examples']),
-    version='0.1.5b3',
+    version='0.1.5b4',
     description="A set of tools to flatten IATI data.",
     author="Mark Brough",
     author_email="mark@brough.io",
