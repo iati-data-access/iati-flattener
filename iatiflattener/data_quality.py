@@ -9,20 +9,34 @@ xlrd.xlsx.ensure_elementtree_imported(False, None)
 xlrd.xlsx.Element_has_iter = True
 
 def report():
-    def write_dataframe_to_excel(headers, values, filename):
+    def write_dataframe_to_excel(_dataframe, filename):
         """
         Function to write a pandas dataframe to Excel.
         This uses pyExcelerate, which is about 2x as fast as the built-in
         pandas library.
         """
+        def fix_h(_h):
+            h = str(_h)
+            if h.startswith("budget"): return "Budget"
+            return h
+
+        def make_header(header):
+            header = list(filter(lambda h: h!='', header))
+            if type(header) in (list, tuple):
+                return " - ".join([fix_h(h) for h in header])
+            return header
+
         wb = Workbook()
-        values.insert(0, headers)
-        ws = wb.new_sheet("Data", data=values)
+        dataframe = _dataframe.reset_index()
+        headers = list(map(lambda header: make_header(header), dataframe.columns.values))
+        data = dataframe.values.tolist()
+        data.insert(0, headers)
+        ws = wb.new_sheet("Data", data=data)
         wb.save(filename)
 
     def one_report(filename, values):
         df = pd.read_excel(os.path.join('output', 'xlsx', filename))
-        if not "Reporting Organisation" in df.columns.values:
+        if not "IATI Identifier" in df.columns.values:
             return values
         this_year = datetime.datetime.now().year
         required_years = list(range(this_year-2, this_year+3))
@@ -60,7 +74,8 @@ def report():
             columns=['Transaction Type',
             'Calendar Year'],
             values='Value (USD)',
-            aggfunc=sum).fillna(0.0).to_dict(orient='index')
+            aggfunc=sum).fillna(0.0)
+        write_dataframe_to_excel(year_summaries, os.path.join('output', 'xlsx', 'summary_year.xlsx'))
         year_summaries = dict(map(lambda org: (org[0][0], {
             'type': org[0][1],
             'data': list(map(lambda year_transaction_type: {
@@ -68,7 +83,7 @@ def report():
                 'year': year_transaction_type[0][1],
                 'value': year_transaction_type[1]
             }, org[1].items()))
-        }), year_summaries.items()))
+        }), year_summaries.to_dict(orient='index').items()))
 
         with open(os.path.join('output', 'xlsx', 'summary_year.json'), 'w') as json_file:
             json.dump({
@@ -82,7 +97,8 @@ def report():
             columns=['Transaction Type',
             'Calendar Year', 'Calendar Quarter'],
             values='Value (USD)',
-            aggfunc=sum).fillna(0.0).to_dict(orient='index')
+            aggfunc=sum).fillna(0.0)
+        write_dataframe_to_excel(quarter_summaries, os.path.join('output', 'xlsx', 'summary_quarter.xlsx'))
         quarter_summaries = dict(map(lambda org: (org[0][0], {
             'type': org[0][1],
             'data': list(map(lambda year_transaction_type: {
@@ -90,7 +106,7 @@ def report():
                 'year': year_transaction_type[0][1],
                 'value': year_transaction_type[1]
             }, org[1].items()))
-        }), quarter_summaries.items()))
+        }), quarter_summaries.to_dict(orient='index').items()))
         with open(os.path.join('output', 'xlsx', 'summary_quarter.json'), 'w') as json_file:
             json.dump({
                 'summary': quarter_summaries
