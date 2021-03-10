@@ -4,11 +4,10 @@ requirements = """
 lxml>=4.6.1
 requests>=2.24.0
 exchangerates>=0.3.4
-pandas==1.1.4
-numpy==1.19.4
-PyExcelerate==0.9.0
-openpyxl==3.0.5
-xlrd==1.2.0
+pandas>=1.1.4
+numpy>=1.19.4
+PyExcelerate>=0.9.0
+openpyxl>=3.0.5
 iatikit>=2.3.0
 """
 
