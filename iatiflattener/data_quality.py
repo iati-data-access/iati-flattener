@@ -3,10 +3,7 @@ import pandas as pd
 import datetime
 import os
 import json
-# https://stackoverflow.com/a/65131301/11841218
-import xlrd
-xlrd.xlsx.ensure_elementtree_imported(False, None)
-xlrd.xlsx.Element_has_iter = True
+import openpyxl
 
 def report():
     def write_dataframe_to_excel(_dataframe, filename):
@@ -35,7 +32,7 @@ def report():
         wb.save(filename)
 
     def one_report(filename, values):
-        df = pd.read_excel(os.path.join('output', 'xlsx', filename))
+        df = pd.read_excel(os.path.join('output', 'xlsx', filename), engine='openpyxl')
         if not "IATI Identifier" in df.columns.values:
             return values
         this_year = datetime.datetime.now().year
