@@ -60,7 +60,7 @@ OUTPUT_HEADERS = [
    'Receiver Organisation',
    'Receiver Organisation Type',
    'Transaction Type',
-   'Recipient Country',
+   'Recipient Country or Region',
    'Multi Country',
    'Sector Category',
    'Sector',
