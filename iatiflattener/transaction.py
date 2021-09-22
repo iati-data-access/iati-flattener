@@ -45,35 +45,33 @@ class FlatIATITransaction():
             )
         )
 
-        out = [
-            self.iati_identifier,
-            self.title,
-            self.reporting_org.get('display'),
-            self.reporting_org.get('type'),
-            self.aid_type.get('code', ''),
-            self.finance_type.get('code', ''),
-            self.provider_org.get('display'),
-            self.provider_org.get('type'),
-            self.receiver_org.get('display'),
-            self.receiver_org.get('type'),
-            self.transaction_type,
-            value_original,
-            self.currency_original,
-            value_usd,
-            self.value_date.isoformat(),
-            self.exchange_rate,
-            self.transaction_date,
-            country['code'],
-            self.multi_country,
-            sector_category,
-            sector['code'],
-            self.covid_19,
-            self.fiscal_year,
-            self.fiscal_quarter
-        ]
-
         if as_dict==False:
-            return out
+            return [
+                self.iati_identifier,
+                self.title,
+                self.reporting_org.get('display'),
+                self.reporting_org.get('type'),
+                self.aid_type.get('code', ''),
+                self.finance_type.get('code', ''),
+                self.provider_org.get('display'),
+                self.provider_org.get('type'),
+                self.receiver_org.get('display'),
+                self.receiver_org.get('type'),
+                self.transaction_type,
+                value_original,
+                self.currency_original,
+                value_usd,
+                self.value_date.isoformat(),
+                self.exchange_rate,
+                self.transaction_date,
+                country['code'],
+                self.multi_country,
+                sector_category,
+                sector['code'],
+                self.covid_19,
+                self.fiscal_year,
+                self.fiscal_quarter
+            ]
 
         return {
             'iati_identifier': self.iati_identifier,
@@ -87,7 +85,7 @@ class FlatIATITransaction():
             'value_original': value_original,
             'currency_original': self.currency_original,
             'value_usd': value_usd,
-            'value_date': self.value_date.isoformat(),
+            'value_date': self.value_date,
             'exchange_rate': self.exchange_rate,
             'transaction_date': self.transaction_date,
             'country': country['code'],
@@ -96,7 +94,8 @@ class FlatIATITransaction():
             'sector': sector['code'],
             'covid_19': self.covid_19,
             'fiscal_year': self.fiscal_year,
-            'fiscal_quarter': self.fiscal_quarter
+            'fiscal_quarter': self.fiscal_quarter,
+            'transaction': self.transaction
         }
 
 
