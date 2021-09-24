@@ -8,14 +8,14 @@ from iatiflattener.lib.iati_helpers import (get_sector_category, clean_sectors,
 from iatiflattener.lib.iati_budget_helpers import get_budgets
 from iatiflattener.lib.iati_transaction_helpers import (get_sectors_from_transactions,
     get_countries_from_transactions, get_aid_type_from_transactions,
-    get_finance_type_from_transactions)
+    get_finance_type_from_transactions, get_flow_type_from_transactions)
 from iatiflattener.lib.variables import CSV_HEADERS
 
 
 class FlatIATIBudget():
 
     def budget_data(self, country, sector, sector_category, aid_type,
-            finance_type, budget, as_dict=False):
+            finance_type, flow_type, budget, as_dict=False):
         for k, v in budget.items():
             setattr(self, k, v)
 
@@ -38,6 +38,8 @@ class FlatIATIBudget():
                 aid_type['percentage']/100
             )*(
                 finance_type['percentage']/100
+            )*(
+                flow_type['percentage']/100
             )
         )
         value_original = (
@@ -49,6 +51,8 @@ class FlatIATIBudget():
                 aid_type['percentage']/100
             )*(
                 finance_type['percentage']/100
+            )*(
+                flow_type['percentage']/100
             )
         )
 
@@ -60,6 +64,7 @@ class FlatIATIBudget():
                 self.reporting_org.get('type'),
                 aid_type.get('code', ''),
                 finance_type.get('code', ''),
+                flow_type.get('code', ''),
                 self.provider_org.get('display'),
                 self.provider_org.get('type'),
                 self.receiver_org.get('display'),
@@ -86,6 +91,7 @@ class FlatIATIBudget():
             'reporting_org': self.reporting_org,
             'aid_type': aid_type.get('code', ''),
             'finance_type': finance_type.get('code', ''),
+            'flow_type': flow_type.get('code'),
             'provider_org': self.provider_org,
             'receiver_org': self.receiver_org,
             'transaction_type': 'budget', # Transaction Type
@@ -115,10 +121,12 @@ class FlatIATIBudget():
                     continue
                 for aid_type in self.aid_type:
                     for finance_type in self.finance_type:
-                        for budget in self.budgets:
-                            yield self.budget_data(
-                                country, sector, sector_category,
-                                aid_type, finance_type, budget, as_dict)
+                        for flow_type in self.flow_type:
+                            for budget in self.budgets:
+                                yield self.budget_data(
+                                    country, sector, sector_category,
+                                    aid_type, finance_type, flow_type,
+                                    budget, as_dict)
 
 
     def output_budget(self):
@@ -142,11 +150,13 @@ class FlatIATIBudget():
                     }
                 for aid_type in self.aid_type:
                     for finance_type in self.finance_type:
-                        for budget in self.budgets:
-                            self.flattener.csv_files[country['code']]['rows'].append(
-                                self.budget_data(
-                                    country, sector, sector_category,
-                                    aid_type, finance_type, budget))
+                        for flow_type in self.flow_type:
+                            for budget in self.budgets:
+                                self.flattener.csv_files[country['code']]['rows'].append(
+                                    self.budget_data(
+                                        country, sector, sector_category,
+                                        aid_type, finance_type, flow_type,
+                                        budget))
 
 
     def process_activity(self):
@@ -217,6 +227,17 @@ class FlatIATIBudget():
         else:
             self.finance_type = [{
                 'code': self.finance_type.get('code', ''),
+                'percentage': 100.0
+            }]
+
+        if self.flow_type == {}:
+            self.flow_type = get_flow_type_from_transactions(
+                activity,
+                self.currency_original,
+                self.flattener.exchange_rates)
+        else:
+            self.flow_type = [{
+                'code': self.flow_type.get('code', ''),
                 'percentage': 100.0
             }]
 
