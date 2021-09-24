@@ -15,11 +15,6 @@ TRANSACTION_TYPES_RULES = {
     "activity": {'provider': 'reporter', 'receiver': '4'}
 }
 
-def get_covid_matches(transaction):
-    transaction_descriptions = ", ".join(transaction.xpath("description/narrative/text()"))
-    if ("COVID-19" in transaction_descriptions) or ("COVID 19" in transaction_descriptions) or ("EP-2020-000012-001" in transaction_descriptions): return True
-    return False
-
 
 def fix_narrative(ref, text):
     return text.strip()
