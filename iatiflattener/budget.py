@@ -52,35 +52,33 @@ class FlatIATIBudget():
             )
         )
 
-        out = [
-            self.iati_identifier,
-            self.title,
-            self.reporting_org.get('display'),
-            self.reporting_org.get('type'),
-            aid_type.get('code', ''),
-            finance_type.get('code', ''),
-            self.provider_org.get('display'),
-            self.provider_org.get('type'),
-            self.receiver_org.get('display'),
-            self.receiver_org.get('type'),
-            'budget', # Transaction Type
-            value_original,
-            self.currency_original,
-            value_usd,
-            self.value_date.isoformat(),
-            self.exchange_rate,
-            "{}-{}-01".format(self.fiscal_year, (self.fiscal_quarter-1)*3), # Transaction Date,
-            country['code'],
-            self.multi_country,
-            sector_category,
-            sector['code'],
-            self.fiscal_year,
-            "Q{}".format(self.fiscal_quarter),
-            "{} Q{}".format(self.fiscal_year, self.fiscal_quarter)
-        ]
-
         if as_dict==False:
-            return out
+            return [
+                self.iati_identifier,
+                self.title,
+                self.reporting_org.get('display'),
+                self.reporting_org.get('type'),
+                aid_type.get('code', ''),
+                finance_type.get('code', ''),
+                self.provider_org.get('display'),
+                self.provider_org.get('type'),
+                self.receiver_org.get('display'),
+                self.receiver_org.get('type'),
+                'budget', # Transaction Type
+                value_original,
+                self.currency_original,
+                value_usd,
+                self.value_date.isoformat(),
+                self.exchange_rate,
+                "{}-{}-01".format(self.fiscal_year, (self.fiscal_quarter-1)*3), # Transaction Date,
+                country['code'],
+                self.multi_country,
+                sector_category,
+                sector['code'],
+                self.fiscal_year,
+                "Q{}".format(self.fiscal_quarter),
+                "{} Q{}".format(self.fiscal_year, self.fiscal_quarter)
+            ]
 
         return {
             'iati_identifier': self.iati_identifier,
