@@ -7,6 +7,7 @@ CSV_HEADERS = [
     'reporting_org_type',
     'aid_type',
     'finance_type',
+    'flow_type',
     'provider_org',
     'provider_org_type',
     'receiver_org',
@@ -21,7 +22,7 @@ CSV_HEADERS = [
     'fiscal_year_quarter']
 
 _DTYPES = [str, str, str, str,
-                 str, str, str, str,
+                 str, str, str, str, str,
                  str, str, str, str,
                  str, np.float64, str, str,
                  str, str,
@@ -35,6 +36,7 @@ GROUP_BY_HEADERS = [
    'reporting_org_type',
    'aid_type',
    'finance_type',
+   'flow_type',
    'provider_org',
    'provider_org_type',
    'receiver_org',
@@ -55,6 +57,7 @@ OUTPUT_HEADERS = [
    'Reporting Organisation Type',
    'Aid Type',
    'Finance Type',
+   'Flow Type',
    'Provider Organisation',
    'Provider Organisation Type',
    'Receiver Organisation',
