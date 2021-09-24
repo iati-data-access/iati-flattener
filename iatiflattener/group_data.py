@@ -35,6 +35,7 @@ class GroupFlatIATIData():
             'reporting_org_type': 'OrganisationType',
             'aid_type': 'AidType',
             'finance_type': 'FinanceType',
+            'flow_type': 'FlowType',
             'transaction_type': 'TransactionType',
             'sector_code': 'Sector',
             'provider_org_type': 'OrganisationType',
