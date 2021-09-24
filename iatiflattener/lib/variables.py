@@ -1,5 +1,7 @@
 import numpy as np
 
+DPORTAL_URL = "https://d-portal.org/q.html?aid={}"
+
 CSV_HEADERS = [
     'iati_identifier',
     'title',
@@ -19,7 +21,7 @@ CSV_HEADERS = [
     'country_code', 'multi_country',
     'sector_category', 'sector_code',
     'fiscal_year', 'fiscal_quarter',
-    'fiscal_year_quarter']
+    'fiscal_year_quarter', 'url']
 
 _DTYPES = [str, str, str, str,
                  str, str, str, str, str,
@@ -27,7 +29,7 @@ _DTYPES = [str, str, str, str,
                  str, np.float64, str, str,
                  str, str,
                  np.int32, str, str,
-                 np.int32, str, str]
+                 np.int32, str, str, str]
 
 GROUP_BY_HEADERS = [
    'iati_identifier',
@@ -48,7 +50,8 @@ GROUP_BY_HEADERS = [
    'sector_code',
    'fiscal_year',
    'fiscal_quarter',
-   'fiscal_year_quarter']
+   'fiscal_year_quarter',
+   'url']
 
 OUTPUT_HEADERS = [
    'IATI Identifier',
@@ -70,4 +73,5 @@ OUTPUT_HEADERS = [
    'Calendar Year',
    'Calendar Quarter',
    'Calendar Year and Quarter',
+   'URL',
    'Value (USD)']

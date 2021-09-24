@@ -5,7 +5,7 @@ import os
 from iatiflattener.activity import ActivityDataSetter
 from iatiflattener.lib.utils import get_date, get_fy_fq
 from iatiflattener.lib.iati_helpers import get_sector_category, clean_countries, clean_sectors, get_org
-from iatiflattener.lib.variables import CSV_HEADERS
+from iatiflattener.lib.variables import CSV_HEADERS, DPORTAL_URL
 
 class FlatIATITransaction():
 
@@ -71,7 +71,8 @@ class FlatIATITransaction():
                 sector['code'],
                 self.fiscal_year,
                 self.fiscal_quarter,
-                "{} {}".format(self.fiscal_year, self.fiscal_quarter)
+                "{} {}".format(self.fiscal_year, self.fiscal_quarter),
+                DPORTAL_URL.format(self.iati_identifier)
             ]
 
         return {
@@ -97,7 +98,8 @@ class FlatIATITransaction():
             'fiscal_year': self.fiscal_year,
             'fiscal_quarter': self.fiscal_quarter,
             'fiscal_year_quarter': "{} {}".format(self.fiscal_year, self.fiscal_quarter),
-            'transaction': self.transaction
+            'transaction': self.transaction,
+            'url': DPORTAL_URL.format(self.iati_identifier)
         }
 
 

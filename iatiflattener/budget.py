@@ -9,7 +9,7 @@ from iatiflattener.lib.iati_budget_helpers import get_budgets
 from iatiflattener.lib.iati_transaction_helpers import (get_sectors_from_transactions,
     get_countries_from_transactions, get_aid_type_from_transactions,
     get_finance_type_from_transactions, get_flow_type_from_transactions)
-from iatiflattener.lib.variables import CSV_HEADERS
+from iatiflattener.lib.variables import CSV_HEADERS, DPORTAL_URL
 
 
 class FlatIATIBudget():
@@ -82,7 +82,8 @@ class FlatIATIBudget():
                 sector['code'],
                 self.fiscal_year,
                 "Q{}".format(self.fiscal_quarter),
-                "{} Q{}".format(self.fiscal_year, self.fiscal_quarter)
+                "{} Q{}".format(self.fiscal_year, self.fiscal_quarter),
+                DPORTAL_URL.format(self.iati_identifier)
             ]
 
         return {
@@ -107,7 +108,8 @@ class FlatIATIBudget():
             'sector': sector['code'],
             'fiscal_year': self.fiscal_year,
             'fiscal_quarter': "Q{}".format(self.fiscal_quarter),
-            'fiscal_year_quarter': "{} Q{}".format(self.fiscal_year, self.fiscal_quarter)
+            'fiscal_year_quarter': "{} Q{}".format(self.fiscal_year, self.fiscal_quarter),
+            'url': DPORTAL_URL.format(self.iati_identifier)
         }
 
 

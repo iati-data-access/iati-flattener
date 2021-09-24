@@ -65,9 +65,6 @@ class FlattenIATIData():
             with open('output/csv/{}.csv'.format(country), 'w') as csvfile:
                 csvwriter = csv.writer(csvfile)
                 csvwriter.writerow(CSV_HEADERS)
-            with open('output/csv/budget-{}.csv'.format(country), 'w') as csvfile:
-                csvwriter = csv.writer(csvfile)
-                csvwriter.writerow(CSV_HEADERS)
 
 
     def process_transaction(self, activity, transaction):
