@@ -118,18 +118,18 @@ class FlatIATITransaction():
             for country in self.countries:
                 if (country['code'] not in self.flattener.countries):
                     continue
-                if country['code'] not in self.flattener.csv_files_transactions:
+                if country['code'] not in self.flattener.csv_files:
                     _file = open(
                         os.path.join(self.flattener.output_dir,
                             'csv',
                             '{}.csv'.format(country['code'])),
                         'a')
-                    self.flattener.csv_files_transactions[country['code']] = {
+                    self.flattener.csv_files[country['code']] = {
                         'file': _file,
                         'csv': csv.writer(_file),
                         'rows': []
                     }
-                self.flattener.csv_files_transactions[country['code']]['rows'].append(
+                self.flattener.csv_files[country['code']]['rows'].append(
                     self.transaction_data(country, sector, sector_category)
                 )
 

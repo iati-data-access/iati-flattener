@@ -83,17 +83,13 @@ class FlattenIATIData():
 
 
     def write_csv_files(self):
-        for _file in self.csv_files_transactions.values():
-            _file['csv'].writerows(_file['rows'])
-            _file['file'].close()
-        for _file in self.csv_files_budgets.values():
+        for _file in self.csv_files.values():
             _file['csv'].writerows(_file['rows'])
             _file['file'].close()
 
 
     def process_package(self, publisher, package):
-        self.csv_files_transactions = {}
-        self.csv_files_budgets = {}
+        self.csv_files = {}
         doc = etree.parse(os.path.join(IATI_DUMP_DIR, "data", "{}".format(publisher), "{}".format(package)))
         if doc.getroot().get("version") not in ['2.01', '2.02', '2.03']: return
         self.activity_data = {}

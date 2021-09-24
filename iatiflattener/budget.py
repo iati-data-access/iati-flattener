@@ -129,13 +129,13 @@ class FlatIATIBudget():
             for country in self.countries:
                 if (country['code'] not in self.flattener.countries):
                     continue
-                if country['code'] not in self.flattener.csv_files_budgets:
+                if country['code'] not in self.flattener.csv_files:
                     _file = open(
                         os.path.join(self.flattener.output_dir,
                             'csv',
                             'budget-{}.csv'.format(country['code'])),
                         'a')
-                    self.flattener.csv_files_budgets[country['code']] = {
+                    self.flattener.csv_files[country['code']] = {
                         'file': _file,
                         'csv': csv.writer(_file),
                         'rows': []
@@ -143,7 +143,7 @@ class FlatIATIBudget():
                 for aid_type in self.aid_type:
                     for finance_type in self.finance_type:
                         for budget in self.budgets:
-                            self.flattener.csv_files_budgets[country['code']]['rows'].append(
+                            self.flattener.csv_files[country['code']]['rows'].append(
                                 self.budget_data(
                                     country, sector, sector_category,
                                     aid_type, finance_type, budget))
