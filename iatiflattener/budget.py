@@ -74,7 +74,6 @@ class FlatIATIBudget():
             self.multi_country,
             sector_category,
             sector['code'],
-            0, #self.covid_19, # COVID-19
             self.fiscal_year,
             "Q{}".format(self.fiscal_quarter)
         ]
@@ -101,7 +100,6 @@ class FlatIATIBudget():
             'multi_country': self.multi_country,
             'sector_category': sector_category,
             'sector': sector['code'],
-            'covid_19': 0, #self.covid_19, # COVID-19
             'fiscal_year': self.fiscal_year,
             'fiscal_quarter': "Q{}".format(self.fiscal_quarter)
         }

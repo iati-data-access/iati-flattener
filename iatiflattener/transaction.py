@@ -4,7 +4,7 @@ import os
 
 from iatiflattener.activity import ActivityDataSetter
 from iatiflattener.lib.utils import get_date, get_fy_fq
-from iatiflattener.lib.iati_helpers import get_sector_category, clean_countries, clean_sectors, get_org, get_covid_matches
+from iatiflattener.lib.iati_helpers import get_sector_category, clean_countries, clean_sectors, get_org
 from iatiflattener.lib.variables import CSV_HEADERS
 
 class FlatIATITransaction():
@@ -68,7 +68,6 @@ class FlatIATITransaction():
                 self.multi_country,
                 sector_category,
                 sector['code'],
-                self.covid_19,
                 self.fiscal_year,
                 self.fiscal_quarter
             ]
@@ -92,7 +91,6 @@ class FlatIATITransaction():
             'multi_country': self.multi_country,
             'sector_category': sector_category,
             'sector': sector['code'],
-            'covid_19': self.covid_19,
             'fiscal_year': self.fiscal_year,
             'fiscal_quarter': self.fiscal_quarter,
             'transaction': self.transaction
@@ -200,7 +198,6 @@ class FlatIATITransaction():
         self.value_date = get_date(transaction.find('value').get('value-date'))
         self.transaction_date = transaction.find('transaction-date').get('iso-date')
         self.fiscal_year, self.fiscal_quarter = get_fy_fq(self.transaction_date)
-        self.covid_19 = int(get_covid_matches(transaction))
         self.output = True
 
     def set_headers(self):

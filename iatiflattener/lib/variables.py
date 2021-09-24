@@ -17,7 +17,6 @@ CSV_HEADERS = [
     'exchange_rate', 'transaction_date',
     'country_code', 'multi_country',
     'sector_category', 'sector_code',
-    'covid_19',
     'fiscal_year', 'fiscal_quarter']
 
 _DTYPES = [str, str, str, str,
@@ -25,7 +24,7 @@ _DTYPES = [str, str, str, str,
                  str, str, str, str,
                  str, np.float64, str, str,
                  str, str,
-                 np.int32, str, str, np.int32,
+                 np.int32, str, str,
                  np.int32, str]
 
 GROUP_BY_HEADERS = [
@@ -44,7 +43,6 @@ GROUP_BY_HEADERS = [
    'multi_country',
    'sector_category',
    'sector_code',
-   'covid_19',
    'fiscal_year',
    'fiscal_quarter']
 
@@ -64,7 +62,6 @@ OUTPUT_HEADERS = [
    'Multi Country',
    'Sector Category',
    'Sector',
-   'COVID 19',
    'Calendar Year',
    'Calendar Quarter',
    'Value (USD)']
