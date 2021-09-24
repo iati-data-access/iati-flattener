@@ -62,9 +62,9 @@ class FlatIATIBudget():
                 self.title,
                 self.reporting_org.get('display'),
                 self.reporting_org.get('type'),
-                aid_type.get('code', ''),
-                finance_type.get('code', ''),
-                flow_type.get('code', ''),
+                aid_type.get('code'),
+                finance_type.get('code'),
+                flow_type.get('code'),
                 self.provider_org.get('display'),
                 self.provider_org.get('type'),
                 self.receiver_org.get('display'),
@@ -89,8 +89,8 @@ class FlatIATIBudget():
             'iati_identifier': self.iati_identifier,
             'title': self.title,
             'reporting_org': self.reporting_org,
-            'aid_type': aid_type.get('code', ''),
-            'finance_type': finance_type.get('code', ''),
+            'aid_type': aid_type.get('code'),
+            'finance_type': finance_type.get('code'),
             'flow_type': flow_type.get('code'),
             'provider_org': self.provider_org,
             'receiver_org': self.receiver_org,
@@ -215,7 +215,7 @@ class FlatIATIBudget():
                 self.flattener.exchange_rates)
         else:
             self.aid_type = [{
-                'code': self.aid_type.get('code', ''),
+                'code': self.aid_type.get('code'),
                 'percentage': 100.0
             }]
 
@@ -226,7 +226,7 @@ class FlatIATIBudget():
                 self.flattener.exchange_rates)
         else:
             self.finance_type = [{
-                'code': self.finance_type.get('code', ''),
+                'code': self.finance_type.get('code'),
                 'percentage': 100.0
             }]
 
@@ -237,7 +237,7 @@ class FlatIATIBudget():
                 self.flattener.exchange_rates)
         else:
             self.flow_type = [{
-                'code': self.flow_type.get('code', ''),
+                'code': self.flow_type.get('code'),
                 'percentage': 100.0
             }]
 

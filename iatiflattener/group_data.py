@@ -67,7 +67,7 @@ class GroupFlatIATIData():
             cl_key = codelist[0]
             cl_items = codelist[1]
             conditions, outputs = self.make_conditions_outputs(codelist, dataframe)
-            res = np.select(conditions, outputs, '')
+            res = np.select(conditions, outputs, 'No data')
             dataframe[cl_key] = pd.Series(res)
         return dataframe
 
@@ -90,8 +90,8 @@ class GroupFlatIATIData():
         df = pd.read_csv("output/csv/{}.csv".format(country_code), dtype=CSV_HEADER_DTYPES)
         if (not "reporting_org" in df.columns.values) or (len(df)==0):
             return
-        out = df.fillna("").groupby(GROUP_BY_HEADERS)
-        out = out["value_usd"].agg("sum").reset_index().fillna("")
+        out = df.fillna("No data").groupby(GROUP_BY_HEADERS)
+        out = out["value_usd"].agg("sum").reset_index().fillna("No data")
         out = self.relabel_dataframe(out)
         self.write_dataframe_to_excel(out, "output/xlsx/{}.xlsx".format(country_code))
 

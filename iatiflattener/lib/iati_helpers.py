@@ -51,6 +51,10 @@ def get_narrative_text(element):
     return None
 
 
+def filter_none(item):
+    return item is not None
+
+
 def get_org(organisations, activity_data, transaction_or_activity, provider=True):
     def _make_org_output(_text, _ref, _type):
         _display = ""
@@ -137,14 +141,14 @@ def get_org(organisations, activity_data, transaction_or_activity, provider=True
                         ref=_org.get("ref"),
                         text=get_narrative(_org)
                 ),
-                _ref=_org.get('ref', ''),
-                _type=_org.get('type', '')), activity_participating)
+                _ref=_org.get('ref'),
+                _type=_org.get('type')), activity_participating)
                 )
 
-            _text = "; ".join([org.get('text', '') for org in _orgs])
-            _ref = "; ".join([org.get('ref') for org in _orgs])
-            _type = "; ".join([org.get('type') for org in _orgs])
-            _display = "; ".join([org.get('display') for org in _orgs])
+            _text = "; ".join(filter(filter_none, [org.get('text') for org in _orgs]))
+            _ref = "; ".join(filter(filter_none, [org.get('ref') for org in _orgs]))
+            _type = "; ".join(filter(filter_none, [org.get('type') for org in _orgs]))
+            _display = "; ".join(filter(filter_none, [org.get('display') for org in _orgs]))
 
             activity_data["participating_org_{}".format(role)] = {
                 'text': _text,
@@ -156,10 +160,10 @@ def get_org(organisations, activity_data, transaction_or_activity, provider=True
     if activity_data.get('participating_org_{}'.format(role)) is not None:
         return activity_data.get('participating_org_{}'.format(role))
     return {
-        'text': "",
-        'ref': "",
-        'type': "",
-        'display': ""
+        'text': None,
+        'ref': None,
+        'type': None,
+        'display': None
     }
 
 
