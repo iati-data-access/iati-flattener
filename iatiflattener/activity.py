@@ -9,6 +9,7 @@ class ActivityDataSetter():
             if attr == 'reporting_org': return get_reporting_org()
             if attr == 'aid_type': return get_aid_type()
             if attr == 'finance_type': return get_finance_type()
+            if attr == 'flow_type': return get_flow_type()
             if attr == 'currency_original': return get_currency()
 
         def get_activity_title():
@@ -44,11 +45,16 @@ class ActivityDataSetter():
             if el is not None: return el
             else: return {}
 
+        def get_flow_type():
+            el = self.activity.find('default-flow-type')
+            if el is not None: return el
+            else: return {}
+
         def get_currency():
             return self.activity.get('default-currency')
 
         activity_functions = ['title', 'reporting_org', 'reporting_org_type',
-            'aid_type', 'finance_type', 'currency_original']
+            'aid_type', 'finance_type', 'flow_type', 'currency_original']
 
         # Read data from activity in order to avoid having to get this for
         # each transaction
