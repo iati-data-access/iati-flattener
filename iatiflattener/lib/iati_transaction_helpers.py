@@ -103,6 +103,26 @@ def get_aid_type_from_transactions(activity,
     return get_codes_from_transactions(transactions, exchange_rates)
 
 
+def get_flow_type_from_transactions(activity,
+    default_currency, exchange_rates):
+    transactions_with_flow_types = activity.xpath(
+        "transaction[flow-type][transaction-type/@code='2']"
+    )
+    if len(transactions_with_flow_types) == 0:
+        transactions_with_flow_types = activity.xpath(
+            "transaction[flow-type][transaction-type/@code='2']"
+        )
+    if len(transactions_with_flow_types) == 0: return [{'code': '', 'percentage': 100.0}]
+    transactions = list(map(lambda transaction: (
+        transaction.find("flow-type").get('code'),
+        transaction.find("value").get('currency', default_currency),
+        float(transaction.find("value").text),
+        transaction.find("value").get('value-date'),
+    ), transactions_with_flow_types))
+
+    return get_codes_from_transactions(transactions, exchange_rates)
+
+
 def get_finance_type_from_transactions(activity,
     default_currency, exchange_rates):
     transactions_with_finance_types = activity.xpath(
