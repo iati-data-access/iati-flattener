@@ -17,7 +17,8 @@ CSV_HEADERS = [
     'exchange_rate', 'transaction_date',
     'country_code', 'multi_country',
     'sector_category', 'sector_code',
-    'fiscal_year', 'fiscal_quarter']
+    'fiscal_year', 'fiscal_quarter',
+    'fiscal_year_quarter']
 
 _DTYPES = [str, str, str, str,
                  str, str, str, str,
@@ -25,7 +26,7 @@ _DTYPES = [str, str, str, str,
                  str, np.float64, str, str,
                  str, str,
                  np.int32, str, str,
-                 np.int32, str]
+                 np.int32, str, str]
 
 GROUP_BY_HEADERS = [
    'iati_identifier',
@@ -44,7 +45,8 @@ GROUP_BY_HEADERS = [
    'sector_category',
    'sector_code',
    'fiscal_year',
-   'fiscal_quarter']
+   'fiscal_quarter',
+   'fiscal_year_quarter']
 
 OUTPUT_HEADERS = [
    'IATI Identifier',
@@ -64,4 +66,5 @@ OUTPUT_HEADERS = [
    'Sector',
    'Calendar Year',
    'Calendar Quarter',
+   'Calendar Year and Quarter',
    'Value (USD)']

@@ -69,7 +69,8 @@ class FlatIATITransaction():
                 sector_category,
                 sector['code'],
                 self.fiscal_year,
-                self.fiscal_quarter
+                self.fiscal_quarter,
+                "{} {}".format(self.fiscal_year, self.fiscal_quarter)
             ]
 
         return {
@@ -93,6 +94,7 @@ class FlatIATITransaction():
             'sector': sector['code'],
             'fiscal_year': self.fiscal_year,
             'fiscal_quarter': self.fiscal_quarter,
+            'fiscal_year_quarter': "{} {}".format(self.fiscal_year, self.fiscal_quarter),
             'transaction': self.transaction
         }
 

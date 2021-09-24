@@ -75,7 +75,8 @@ class FlatIATIBudget():
             sector_category,
             sector['code'],
             self.fiscal_year,
-            "Q{}".format(self.fiscal_quarter)
+            "Q{}".format(self.fiscal_quarter),
+            "{} Q{}".format(self.fiscal_year, self.fiscal_quarter)
         ]
 
         if as_dict==False:
@@ -101,7 +102,8 @@ class FlatIATIBudget():
             'sector_category': sector_category,
             'sector': sector['code'],
             'fiscal_year': self.fiscal_year,
-            'fiscal_quarter': "Q{}".format(self.fiscal_quarter)
+            'fiscal_quarter': "Q{}".format(self.fiscal_quarter),
+            'fiscal_year_quarter': "{} Q{}".format(self.fiscal_year, self.fiscal_quarter)
         }
 
 
