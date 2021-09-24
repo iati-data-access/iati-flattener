@@ -53,6 +53,7 @@ class FlatIATITransaction():
                 self.reporting_org.get('type'),
                 self.aid_type.get('code', ''),
                 self.finance_type.get('code', ''),
+                self.flow_type.get('code'),
                 self.provider_org.get('display'),
                 self.provider_org.get('type'),
                 self.receiver_org.get('display'),
@@ -79,6 +80,7 @@ class FlatIATITransaction():
             'reporting_org': self.reporting_org,
             'aid_type': self.aid_type.get('code', ''),
             'finance_type': self.finance_type.get('code', ''),
+            'flow_type': self.flow_type.get('code'),
             'provider_org': self.provider_org,
             'receiver_org': self.receiver_org,
             'transaction_type': self.transaction_type,
@@ -190,6 +192,7 @@ class FlatIATITransaction():
 
         self.aid_type = transaction.find('aid-type')
         self.finance_type = transaction.find('finance-type')
+        self.flow_type = transaction.find('flow-type')
 
         self.provider_org = get_org(self.flattener.organisations, activity_data, transaction)
         self.receiver_org = get_org(self.flattener.organisations, activity_data, transaction, False)
