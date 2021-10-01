@@ -8,22 +8,22 @@ import time
 import datetime
 import os
 
-from iatiflattener.lib.variables import CSV_HEADERS, GROUP_BY_HEADERS, OUTPUT_HEADERS, _DTYPES
+from iatiflattener.lib.variables import OUTPUT_HEADERS, headers_with_langs, dtypes_with_langs, group_by_headers_with_lang
 
-CSV_HEADER_DTYPES = dict(map(lambda csv_header: (csv_header[1], _DTYPES[csv_header[0]]), enumerate(CSV_HEADERS)))
-
-REGIONS_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Region.json"
-COUNTRIES_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Country.json"
-SECTORS_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/Sector.json"
-M49_CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/RegionM49.json"
-SECTOR_GROUPS_URL = "https://codelists.codeforiati.org/api/json/en/SectorGroup.json"
+CODELISTS_URL = "https://codelists.codeforiati.org/api/json/{}/{}.json"
 
 class GroupFlatIATIData():
+    def get_codelist_with_fallback(self, lang, codelist_name):
+        req = requests.get(CODELISTS_URL.format(lang, codelist_name))
+        if req.status_code == 404:
+            req = requests.get(CODELISTS_URL.format('en', codelist_name))
+        return req
+
     def setup_codelists(self):
-        country_req = requests.get(COUNTRIES_CODELIST_URL)
-        region_req = requests.get(REGIONS_CODELIST_URL)
-        sector_req = requests.get(SECTORS_CODELIST_URL)
-        sector_groups_req = requests.get(SECTOR_GROUPS_URL)
+        country_req = self.get_codelist_with_fallback(self.lang, "Country")
+        region_req = self.get_codelist_with_fallback(self.lang, "Region")
+        sector_req = self.get_codelist_with_fallback(self.lang, "Sector")
+        sector_groups_req = self.get_codelist_with_fallback(self.lang, "SectorGroup")
         self.sector_groups = dict(map(lambda code: (code['codeforiati:group-code'], code['codeforiati:group-name']), sector_groups_req.json()['data']))
 
         self.country_names = dict(map(lambda country: (country['code'], country['name']), country_req.json()["data"]))
@@ -42,9 +42,9 @@ class GroupFlatIATIData():
             'receiver_org_type': 'OrganisationType'
         }
         self.column_codelist = {}
-        generic_codelists_url = "https://codelists.codeforiati.org/api/json/en/{}.json"
+        generic_codelists_url = "https://codelists.codeforiati.org/api/json/{}/{}.json"
         for _cl in required_codelists.items():
-            req = requests.get(generic_codelists_url.format(_cl[1]))
+            req = self.get_codelist_with_fallback(self.lang, _cl[1])
             self.column_codelist[_cl[0]] = dict(map(lambda item: (item['code'], item['name']), req.json()["data"]))
         self.column_codelist['transaction_type']['budget'] = 'Budget'
         self.column_codelist['sector_category'] = self.sector_groups
@@ -79,7 +79,7 @@ class GroupFlatIATIData():
         pandas library.
         """
         wb = Workbook()
-        headers = OUTPUT_HEADERS
+        headers = OUTPUT_HEADERS.get(self.lang)
         data = dataframe.values.tolist()
         data.insert(0, headers)
         ws = wb.new_sheet("Data", data=data)
@@ -87,16 +87,20 @@ class GroupFlatIATIData():
 
 
     def group_results(self, country_code):
-        df = pd.read_csv("output/csv/{}.csv".format(country_code), dtype=CSV_HEADER_DTYPES)
-        if (not "reporting_org" in df.columns.values) or (len(df)==0):
+        df = pd.read_csv("output/csv/{}.csv".format(country_code), dtype=self.CSV_HEADER_DTYPES)
+        if (not "reporting_org#{}".format(self.lang) in df.columns.values) or (len(df)==0):
             return
-        out = df.fillna("No data").groupby(GROUP_BY_HEADERS)
-        out = out["value_usd"].agg("sum").reset_index().fillna("No data")
+        out = df.fillna("No data").groupby(self.GROUP_BY_HEADERS)
+        out = out.agg({'value_usd':'sum','value_eur':'sum','value_local':'sum'})
+        out = out.reset_index().fillna("No data")
         out = self.relabel_dataframe(out)
-        self.write_dataframe_to_excel(out, "output/xlsx/{}.xlsx".format(country_code))
+        self.write_dataframe_to_excel(
+            dataframe = out,
+            filename = "output/xlsx/{}/{}.xlsx".format(self.lang, country_code))
 
 
     def group_data(self):
+        os.makedirs('output/xlsx/{}/'.format(self.lang), exist_ok=True)
         csv_files = os.listdir("output/csv/")
         csv_files.sort()
         print("BEGINNING PROCESS AT {}".format(datetime.datetime.utcnow()))
@@ -108,22 +112,28 @@ class GroupFlatIATIData():
                 country_name = self.country_names.get(country_code)
                 country_or_region = {True: 'region', False: 'country'}[re.match('^\d*$', country_code) is not None]
                 self.group_results(country_code)
-                if not country.startswith("budget-"):
-                    list_of_files.append({
-                        'country_code': country_code,
-                        'country_name': country_name,
-                        'country_or_region': country_or_region,
-                        'filename': "{}.xlsx".format(country_code)
-                    })
+                list_of_files.append({
+                    'country_code': country_code,
+                    'country_name': country_name,
+                    'country_or_region': country_or_region,
+                    'filename': "{}.xlsx".format(country_code)
+                })
             end = time.time()
             print("Processing {} took {}s".format(country, end-start))
         with open('output/xlsx/index.json', 'w') as json_file:
             json.dump({
                 'lastUpdated': datetime.datetime.utcnow().date().isoformat(),
-                'countries': list_of_files
+                'countries': list_of_files,
+                'langs': self.langs
             }, json_file)
         print("FINISHED PROCESS AT {}".format(datetime.datetime.utcnow()))
 
-    def __init__(self):
+    def __init__(self, lang='en', langs=['en']):
+        self.lang = lang
+        self.langs = langs
+        self.CSV_HEADERS = headers_with_langs([lang])
+        self._DTYPES = dtypes_with_langs([lang])
+        self.GROUP_BY_HEADERS = group_by_headers_with_lang(lang)
+        self.CSV_HEADER_DTYPES = dict(map(lambda csv_header: (csv_header[1], self._DTYPES[csv_header[0]]), enumerate(self.CSV_HEADERS)))
         self.setup_codelists()
         self.group_data()
