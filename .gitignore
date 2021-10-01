@@ -6,4 +6,5 @@ pyenv
 *.pyc
 .DS_Store
 rates.csv
+!iatiflattener/tests/fixtures/rates.csv
 
