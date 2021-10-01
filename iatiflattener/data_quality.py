@@ -32,7 +32,7 @@ def report():
         wb.save(filename)
 
     def one_report(filename, values):
-        df = pd.read_excel(os.path.join('output', 'xlsx', filename), engine='openpyxl')
+        df = pd.read_excel(os.path.join('output', 'xlsx', 'en', filename), engine='openpyxl')
         if not "IATI Identifier" in df.columns.values:
             return values
         this_year = datetime.datetime.now().year
@@ -49,7 +49,7 @@ def report():
         return values
 
     def all_reports():
-        xlsx_files = os.listdir(os.path.join('output', 'xlsx'))
+        xlsx_files = os.listdir(os.path.join('output', 'xlsx', 'en'))
         xlsx_files.sort()
         headers = ['Reporting Organisation',
                    'Reporting Organisation Type',
