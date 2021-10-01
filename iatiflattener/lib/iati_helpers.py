@@ -20,18 +20,30 @@ def fix_narrative(ref, text):
     return text.strip()
 
 
-def get_narrative(container):
+def get_narrative(container, lang='en'):
     narratives = container.xpath("narrative")
     if len(narratives) == 0: return ""
     if len(narratives) == 1:
         if narratives[0].text:
             return fix_narrative(container.get('ref'), narratives[0].text.strip())
         else: return ""
+
+    def filter_lang_non_en(element):
+        el_lang = element.get("{http://www.w3.org/XML/1998/namespace}lang")
+        if lang != 'en':
+            return el_lang in (lang, lang.upper())
+        else:
+            return el_lang in (None, 'en', 'EN')
+
     def filter_lang(element):
-        lang = element.get("{http://www.w3.org/XML/1998/namespace}lang")
-        return lang in (None, 'en')
-    filtered = list(filter(filter_lang, narratives))
-    if len(filtered) == 0: return fix_narrative(container.get('ref'), narratives[0].text.strip())
+        el_lang = element.get("{http://www.w3.org/XML/1998/namespace}lang")
+        return el_lang in (None, 'en', 'EN')
+
+    filtered = list(filter(filter_lang_non_en, narratives))
+    if len(filtered) == 0:
+        filtered = list(filter(filter_lang, narratives))
+        if len(filtered)==0:
+            return fix_narrative(container.get('ref'), narratives[0].text.strip())
     return fix_narrative(container.get('ref'), filtered[0].text.strip())
 
 
@@ -55,7 +67,7 @@ def filter_none(item):
     return item is not None
 
 
-def get_org(organisations, activity_data, transaction_or_activity, provider=True):
+def get_org(organisations, activity_data, transaction_or_activity, provider=True, lang='en'):
     def _make_org_output(_text, _ref, _type):
         _display = ""
         if _text is not None:
@@ -81,7 +93,7 @@ def get_org(organisations, activity_data, transaction_or_activity, provider=True
             _text = get_org_name(
                 organisations=organisations,
                 ref=_el.get("ref"),
-                text=get_narrative(_el)
+                text=get_narrative(_el, lang)
             )
             _ref = _el.get("ref")
             _type = _el.get("type")
@@ -106,7 +118,7 @@ def get_org(organisations, activity_data, transaction_or_activity, provider=True
             _text = get_org_name(
                 organisations=organisations,
                 ref=_ro.get("ref"),
-                text=get_narrative(_ro)
+                text=get_narrative(_ro, lang)
             )
             _type = _ro.get('type')
             _ref = _ro.get('ref')
@@ -117,7 +129,7 @@ def get_org(organisations, activity_data, transaction_or_activity, provider=True
                 'ref': _ref,
                 'display': _display
             }
-        return activity_data.get('reporting_org')
+        return activity_data.get('reporting_org').get(lang)
 
     if activity_data.get("participating_org_{}".format(role)) is None:
         if transaction_or_activity == 'transaction':
@@ -139,7 +151,7 @@ def get_org(organisations, activity_data, transaction_or_activity, provider=True
                 _text=get_org_name(
                         organisations=organisations,
                         ref=_org.get("ref"),
-                        text=get_narrative(_org)
+                        text=get_narrative(_org, lang)
                 ),
                 _ref=_org.get('ref'),
                 _type=_org.get('type')), activity_participating)
