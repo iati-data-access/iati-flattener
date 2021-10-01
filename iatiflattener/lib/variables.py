@@ -45,7 +45,7 @@ MULTILANG_HEADERS = [
 ]
 
 
-def headers_with_langs(langs):
+def headers(langs):
    out = []
    for header in HEADERS.keys():
       if header in MULTILANG_HEADERS:
@@ -55,13 +55,60 @@ def headers_with_langs(langs):
    return out
 
 
-def dtypes_with_langs(langs):
+def dtypes(langs):
    out = []
-   for dtype in HEADERS.values():
-      if dtype in MULTILANG_HEADERS:
+   for header, dtype in HEADERS.items():
+      if header in MULTILANG_HEADERS:
          out += [dtype for lang in langs]
       else:
          out += [dtype]
+   return out
+
+
+def headers_dtypes(langs):
+   out = []
+   for header, dtype in HEADERS.items():
+      if dtype in MULTILANG_HEADERS:
+         out += [{header: dtype} for lang in langs]
+      else:
+         out += [{header: dtype}]
+   return out
+
+def headers_with_langs(langs):
+   return ['iati_identifier'] + ['{}#{}'.format(header, lang) for lang in langs for header in MULTILANG_HEADERS]
+
+
+GROUP_BY_HEADERS = [
+   'iati_identifier',
+   'title',
+   'reporting_org',
+   'reporting_org_type',
+   'aid_type',
+   'finance_type',
+   'flow_type',
+   'provider_org',
+   'provider_org_type',
+   'receiver_org',
+   'receiver_org_type',
+   'transaction_type',
+   'country_code',
+   'multi_country',
+   'sector_category',
+   'sector_code',
+   'humanitarian',
+   'fiscal_year',
+   'fiscal_quarter',
+   'fiscal_year_quarter',
+   'url']
+
+
+def group_by_headers_with_langs(langs):
+   out = []
+   for header in GROUP_BY_HEADERS:
+      if header in MULTILANG_HEADERS:
+         out += ['{}#{}'.format(header, lang) for lang in langs]
+      else:
+         out += [header]
    return out
 
 
