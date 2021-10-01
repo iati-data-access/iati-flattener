@@ -8,7 +8,7 @@ import datetime
 import exchangerates
 import iatikit
 
-from iatiflattener.lib.variables import OUTPUT_HEADERS, headers_with_langs
+from iatiflattener.lib import variables
 from iatiflattener import model
 from iatiflattener.data_quality import report as data_quality_report
 
@@ -142,7 +142,7 @@ class FlattenIATIData():
             langs=['en', 'fr']):
         self.iatikitcache_dir = iatikitcache_dir
         self.langs = langs
-        self.csv_headers = headers_with_langs(langs)
+        self.csv_headers = variables.headers(langs)
         self.output_dir = output
         os.makedirs(self.output_dir, exist_ok=True)
         if publishers is None:
