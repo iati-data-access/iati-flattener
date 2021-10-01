@@ -1,9 +1,8 @@
 import json, datetime, csv, os
 
-from iatiflattener.lib.utils import get_date, get_fy_fq, get_fy_fq_numeric
-from iatiflattener.lib.iati_helpers import clean_countries, clean_sectors, get_narrative, get_org_name, get_org, get_sector_category
+from iatiflattener.lib.utils import get_date, get_fy_fq, get_fy_fq_numeric, get_first
+from iatiflattener.lib.iati_helpers import clean_countries, clean_sectors, get_narrative, get_org_name, get_org, get_sector_category, TRANSACTION_TYPES_RULES, get_narrative_text, filter_none
 from iatiflattener.lib.iati_transaction_helpers import get_classification_from_transactions, get_sectors_from_transactions, get_countries_from_transactions
-from iatiflattener.lib.variables import headers_with_langs
 from exchangerates import UnknownCurrencyException
 
 DPORTAL_URL = "https://d-portal.org/q.html?aid={}"
@@ -258,8 +257,10 @@ class Common(FinancialValues):
         fy, fq = get_fy_fq(self.transaction_date.value)
         return SimpleField(fy), SimpleField(fq)
 
-    def _fiscal_year_fiscal_quarter(self):
-        return SimpleField("{} {}".format(self.fiscal_year.value, self.fiscal_quarter.value))
+    def _fiscal_year_fiscal_quarter(self, budget=False):
+        if budget is False:
+            return SimpleField("{} {}".format(self.fiscal_year.value, self.fiscal_quarter.value))
+        return SimpleField("{} Q{}".format(self.fiscal_year.value, self.fiscal_quarter.value))
 
     def _countries(self, budget=False):
         if budget is False:
@@ -390,8 +391,8 @@ class ActivityBudget(Common):
                     value_local = dict([(country, (value_local/len(quarter_range)/len(year_range))) for country, value_local in budget.value_local.value.items()])
                     out.append({
                         'fiscal_year': year,
-                        'fiscal_quarter': quarter,
-                        'fiscal_year_quarter': "{} {}".format(year, quarter),
+                        'fiscal_quarter': "Q{}".format(quarter),
+                        'fiscal_year_quarter': "{} Q{}".format(year, quarter),
                         'value_usd': budget.value_usd.value/len(quarter_range)/len(year_range),
                         'value_eur': budget.value_eur.value/len(quarter_range)/len(year_range),
                         'value_local': value_local,
@@ -445,9 +446,9 @@ class ActivityBudget(Common):
         self.finance_types = self.update_cache(self._default_field('finance-type', budget=True))
         self.flow_types = self.update_cache(self._default_field('flow-type', budget=True))
 
-        self.provider_org = self._organisation_field('provider')
+        self.provider_org = self.update_cache(self._organisation_field('provider'))
         self.provider_org_type = self._provider_org_type()
-        self.receiver_org = self._organisation_field('receiver')
+        self.receiver_org = self.update_cache(self._organisation_field('receiver'))
         self.receiver_org_type = self._receiver_org_type()
         self.transaction_type = SimpleField('budget')
         self.url = self._dportal_url()
@@ -521,9 +522,9 @@ class Transaction(Common):
         self.finance_type = self.update_cache(self._default_field('finance-type'))
         self.flow_type = self.update_cache(self._default_field('flow-type'))
         self.humanitarian = self._humanitarian()
-        self.provider_org = self._organisation_field('provider')
+        self.provider_org = self.update_cache(self._organisation_field('provider'))
         self.provider_org_type = self._provider_org_type()
-        self.receiver_org = self._organisation_field('receiver')
+        self.receiver_org = self.update_cache(self._organisation_field('receiver'))
         self.receiver_org_type = self._receiver_org_type()
         self.value_original = self._value_original()
         self.currency_original = self.update_cache(self._currency_original())
@@ -655,11 +656,122 @@ class ReportingOrg(Field):
 
 
 class Organisation(Field):
+    def get_org(self, lang='en'):
+        def _make_org_output(_text, _ref, _type):
+            _display = ""
+            if _text is not None:
+                _display += _text
+            if (_display != "") and (_ref is not None):
+                _display += " "
+            if (_ref is not None) and (_ref != ""):
+                _display += '[{}]'.format(_ref)
+            return {
+                'text': get_first((_text, _ref)),
+                'ref': get_first((_ref, _text)),
+                'type': _type,
+                'display': _display
+            }
+
+        provider_receiver = {True: 'provider', False: 'receiver'}[self.provider_receiver]
+        if (self.transaction.tag == 'transaction'):
+            transaction = self.transaction
+            activity = transaction.getparent()
+            transaction_type = transaction.find("transaction-type").get("code")
+            if transaction.find('{}-org'.format(provider_receiver)) is not None:
+                _el = transaction.find('{}-org'.format(provider_receiver))
+                _text = get_org_name(
+                    organisations=self.organisations,
+                    ref=_el.get("ref"),
+                    text=get_narrative(_el, lang)
+                )
+                _ref = _el.get("ref")
+                _type = _el.get("type")
+                if (_ref is not None) or (_text is not None):
+                    return _make_org_output(_text, _ref, _type)
+        else:
+            activity = self.transaction
+            transaction_type = 'activity'
+
+        role = {
+            True: TRANSACTION_TYPES_RULES[transaction_type]['provider'],
+            False: TRANSACTION_TYPES_RULES[transaction_type]['receiver']}[self.provider_receiver]
+        if ((role == "reporter")
+            or (self.provider_receiver==True and transaction_type in ['3', '4'])
+            or (self.provider_receiver==False and transaction_type in ['1', '11', '13'])):
+
+            if self.activity_cache.get('reporting_org') is None:
+                if self.transaction == 'transaction':
+                    _ro = transaction.getparent().find("reporting-org")
+                else:
+                    _ro = activity.find("reporting-org")
+                _text = get_org_name(
+                    organisations=self.organisations,
+                    ref=_ro.get("ref"),
+                    text=get_narrative(_ro, lang)
+                )
+                _type = _ro.get('type')
+                _ref = _ro.get('ref')
+                _display = "{} [{}]".format(_text, _ref)
+                self.activity_cache['reporting_org'] = {
+                    'text': _text,
+                    'type': _type,
+                    'ref': _ref,
+                    'display': _display
+                }
+            return self.activity_cache.get('reporting_org').get(lang)
+
+        if self.activity_cache.get("participating_org_{}".format(role)) is None:
+            if self.transaction == 'transaction':
+                activity_participating = transaction.getparent().findall("participating-org[@role='{}']".format(role))
+            else:
+                activity_participating = activity.findall("participating-org[@role='{}']".format(role))
+            if len(activity_participating) == 1:
+                _text = get_org_name(
+                        organisations=self.organisations,
+                        ref=activity_participating[0].get('ref'),
+                        text=get_narrative_text(activity_participating[0])
+                    )
+                _ref = activity_participating[0].get("ref")
+                _type = activity_participating[0].get("type")
+
+                self.activity_cache["participating_org_{}".format(role)] = _make_org_output(_text, _ref, _type)
+            elif len(activity_participating) > 1:
+                _orgs = list(map(lambda _org: _make_org_output(
+                    _text=get_org_name(
+                            organisations=self.organisations,
+                            ref=_org.get("ref"),
+                            text=get_narrative(_org, lang)
+                    ),
+                    _ref=_org.get('ref'),
+                    _type=_org.get('type')), activity_participating)
+                    )
+
+                _text = "; ".join(filter(filter_none, [org.get('text') for org in _orgs]))
+                _ref = "; ".join(filter(filter_none, [org.get('ref') for org in _orgs]))
+                _type = "; ".join(filter(filter_none, [org.get('type') for org in _orgs]))
+                _display = "; ".join(filter(filter_none, [org.get('display') for org in _orgs]))
+
+                self.activity_cache["participating_org_{}".format(role)] = {
+                    'text': _text,
+                    'ref': _ref,
+                    'type': _type,
+                    'display': _display
+                }
+
+        if self.activity_cache.get('participating_org_{}'.format(role)) is not None:
+            return self.activity_cache.get('participating_org_{}'.format(role))
+        return {
+            'text': None,
+            'ref': None,
+            'type': None,
+            'display': None
+        }
+
     def csv_value(self, lang):
         return self.value.get(lang).get('display')
 
     def get_organisation(self, lang):
-        return get_org(self.organisations, self.activity_cache, self.transaction, self.provider_receiver, lang)
+        return self.get_org(lang)
 
     def generate(self):
         return dict([(lang, self.get_organisation(lang)) for lang in self.langs])
