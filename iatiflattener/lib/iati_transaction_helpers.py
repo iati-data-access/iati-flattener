@@ -81,63 +81,28 @@ def get_countries_from_transactions(activity,
     return get_codes_from_transactions(transactions, exchange_rates)
 
 
-def get_aid_type_from_transactions(activity,
-    default_currency, exchange_rates):
-    transactions_with_aid_types = activity.xpath(
-        "transaction[aid-type[not(@vocabulary) or @vocabulary='1']][transaction-type/@code='2']"
+def get_classification_from_transactions(activity, default_currency, exchange_rates, field_name):
+    fields_xpath = {
+        'aid-type': "aid-type[not(@vocabulary) or @vocabulary='1']",
+        'flow-type': 'flow-type',
+        'finance-type': 'finance-type'
+    }
+    classification_xpath = fields_xpath.get(field_name)
+    transactions_with_classifications = activity.xpath(
+        "transaction[{}][transaction-type/@code='2']".format(classification_xpath)
     )
 
-    if len(transactions_with_aid_types) == 0:
-        transactions_with_aid_types = activity.xpath(
-            "transaction[aid-type[not(@vocabulary) or @vocabulary='1']][transaction-type/@code='11']"
+    if len(transactions_with_classifications) == 0:
+        transactions_with_classifications = activity.xpath(
+            "transaction[{}][transaction-type/@code='11']".format(classification_xpath)
         )
 
-    if len(transactions_with_aid_types) == 0: return [{'code': '', 'percentage': 100.0}]
+    if len(transactions_with_classifications) == 0: return [{'code': '', 'percentage': 100.0}]
     transactions = list(map(lambda transaction: (
-        transaction.xpath("aid-type[not(@vocabulary) or @vocabulary='1']")[0].get('code'),
+        transaction.xpath(classification_xpath)[0].get('code'),
         transaction.find("value").get('currency', default_currency),
         float(transaction.find("value").text),
         transaction.find("value").get('value-date'),
-    ), transactions_with_aid_types))
-
-    return get_codes_from_transactions(transactions, exchange_rates)
-
-
-def get_flow_type_from_transactions(activity,
-    default_currency, exchange_rates):
-    transactions_with_flow_types = activity.xpath(
-        "transaction[flow-type][transaction-type/@code='2']"
-    )
-    if len(transactions_with_flow_types) == 0:
-        transactions_with_flow_types = activity.xpath(
-            "transaction[flow-type][transaction-type/@code='2']"
-        )
-    if len(transactions_with_flow_types) == 0: return [{'code': '', 'percentage': 100.0}]
-    transactions = list(map(lambda transaction: (
-        transaction.find("flow-type").get('code'),
-        transaction.find("value").get('currency', default_currency),
-        float(transaction.find("value").text),
-        transaction.find("value").get('value-date'),
-    ), transactions_with_flow_types))
-
-    return get_codes_from_transactions(transactions, exchange_rates)
-
-
-def get_finance_type_from_transactions(activity,
-    default_currency, exchange_rates):
-    transactions_with_finance_types = activity.xpath(
-        "transaction[finance-type][transaction-type/@code='2']"
-    )
-    if len(transactions_with_finance_types) == 0:
-        transactions_with_finance_types = activity.xpath(
-            "transaction[finance-type][transaction-type/@code='2']"
-        )
-    if len(transactions_with_finance_types) == 0: return [{'code': '', 'percentage': 100.0}]
-    transactions = list(map(lambda transaction: (
-        transaction.find("finance-type").get('code'),
-        transaction.find("value").get('currency', default_currency),
-        float(transaction.find("value").text),
-        transaction.find("value").get('value-date'),
-    ), transactions_with_finance_types))
+    ), transactions_with_classifications))
 
     return get_codes_from_transactions(transactions, exchange_rates)
