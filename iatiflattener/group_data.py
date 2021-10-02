@@ -93,15 +93,14 @@ class GroupFlatIATIData():
         if (not "iati_identifier" in df.columns.values) or (len(df)==0):
             return
         df = df.fillna("No data")
-        headers_with_langs = variables.group_by_headers_with_langs(self.langs)
-        all_relevant_headers = headers_with_langs + ['value_usd', 'value_eur', 'value_local']
-        df_all_langs = df[all_relevant_headers]
-        df_all_langs = df_all_langs.groupby(headers_with_langs)
-        df_all_langs = df_all_langs.agg({'value_usd':'sum','value_eur':'sum','value_local':'sum'})
-        df_all_langs = df_all_langs.reset_index().fillna("No data")
+
         for lang in self.langs:
-            output_headers = variables.group_by_headers_with_lang(lang) + ['value_usd', 'value_eur', 'value_local']
-            df_lang = df_all_langs[output_headers]
+            headers_with_langs = variables.group_by_headers_with_langs([lang])
+            all_relevant_headers = headers_with_langs + ['value_usd', 'value_eur', 'value_local']
+            df_lang = df[all_relevant_headers]
+            df_lang = df_lang.groupby(headers_with_langs)
+            df_lang = df_lang.agg({'value_usd':'sum','value_eur':'sum','value_local':'sum'})
+            df_lang = df_lang.reset_index().fillna("No data")
             df_lang = self.relabel_dataframe(df_lang, lang)
             self.write_dataframe_to_excel(
                 dataframe = df_lang,
