@@ -1,7 +1,7 @@
 import json, datetime, csv, os
 
 from iatiflattener.lib.utils import get_date, get_fy_fq, get_fy_fq_numeric, get_first
-from iatiflattener.lib.iati_helpers import clean_countries, clean_sectors, get_narrative, get_org_name, get_org, get_sector_category, TRANSACTION_TYPES_RULES, get_narrative_text, filter_none
+from iatiflattener.lib.iati_helpers import clean_countries, clean_sectors, get_narrative, get_org_name, get_sector_category, TRANSACTION_TYPES_RULES, get_narrative_text, filter_none
 from iatiflattener.lib.iati_transaction_helpers import get_classification_from_transactions, get_sectors_from_transactions, get_countries_from_transactions
 from exchangerates import UnknownCurrencyException
 
