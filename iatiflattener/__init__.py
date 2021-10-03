@@ -57,7 +57,10 @@ class FlattenIATIData():
 
     def setup_countries(self):
         for country in self.countries:
-            with open('output/csv/{}.csv'.format(country), 'w') as csvfile:
+            with open('output/csv/transaction-{}.csv'.format(country), 'w') as csvfile:
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.csv_headers)
+            with open('output/csv/budget-{}.csv'.format(country), 'w') as csvfile:
                 csvwriter = csv.writer(csvfile)
                 csvwriter.writerow(self.csv_headers)
 
@@ -89,17 +92,20 @@ class FlattenIATIData():
 
 
     def process_package(self, publisher, package):
-        csvwriter = model.CSVFilesWriter(headers=self.csv_headers)
 
         doc = etree.parse(os.path.join(self.iatikitcache_dir, "data", "{}".format(publisher), "{}".format(package)))
         if doc.getroot().get("version") not in ['2.01', '2.02', '2.03']: return
         self.activity_cache = model.ActivityCache()
+
+        csvwriter = model.CSVFilesWriter(budget_transaction='transaction',
+            headers=self.csv_headers)
         transactions = doc.xpath("//transaction")
         for transaction in transactions:
             self.process_transaction(csvwriter, transaction.getparent(), transaction)
 
-        self.csv_files = csvwriter.csv_files
-
+        csvwriter.write()
+        csvwriter = model.CSVFilesWriter(budget_transaction='budget',
+            headers=self.csv_headers)
         activities = doc.xpath("//iati-activity[budget]")
         for activity in activities:
             self.process_activity_for_budgets(csvwriter, activity)

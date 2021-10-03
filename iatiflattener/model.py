@@ -62,7 +62,7 @@ class CSVFilesWriter():
             _file = open(
                 os.path.join(self.output_dir,
                     'csv',
-                    '{}.csv'.format(country)),
+                    '{}-{}.csv'.format(self.budget_transaction, country)),
                 'a')
             self.csv_files[country] = {
                 'file': _file,
@@ -79,8 +79,9 @@ class CSVFilesWriter():
             _file['csv'].writerows(_file['rows'])
             _file['file'].close()
 
-    def __init__(self, output_dir='output', headers=[]):
+    def __init__(self, budget_transaction='transaction', output_dir='output', headers=[]):
         self.csv_files = {}
+        self.budget_transaction = budget_transaction
         self.csv_headers = headers
         self.output_dir = output_dir
 
