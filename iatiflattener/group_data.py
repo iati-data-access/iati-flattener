@@ -93,7 +93,7 @@ class GroupFlatIATIData():
         print("Read CSV {}-{}.csv".format(transaction_budget, country_code))
         for df in pd.read_csv("output/csv/{}-{}.csv".format(transaction_budget, country_code),
             dtype=self.CSV_HEADER_DTYPES,
-            chunksize=500000):
+            chunksize=100000):
             print("Reading chunk...")
             if (not "iati_identifier" in df.columns.values) or (len(df)==0):
                 print("df length is 0")
