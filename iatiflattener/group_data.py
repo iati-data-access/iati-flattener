@@ -117,10 +117,12 @@ class GroupFlatIATIData():
             df_budget = self.get_dataframe(country_code, 'budget', lang)
             if (df_transaction is None) and (df_budget is None):
                 continue
-            elif (df_transaction is None) or (df_budget is None):
-                df = df_transaction or df_budget
-            else:
+            elif (df_transaction is not None) and (df_budget is not None):
                 df = pd.concat([df_transaction, df_budget], ignore_index=True)
+            else:
+                if df_transaction is not None:
+                    df = df_transaction
+                df = df_budget
 
             self.write_dataframe_to_excel(
                 dataframe = df,
