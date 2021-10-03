@@ -88,19 +88,34 @@ class GroupFlatIATIData():
         wb.save(filename)
 
 
+    def get_dataframe(self, country_code, transaction_budget, lang):
+        df = pd.read_csv("output/csv/{}-{}.csv".format(transaction_budget, country_code), dtype=self.CSV_HEADER_DTYPES)
+        print("Read CSV {}-{}.csv".format(transaction_budget, country_code))
+        if (not "iati_identifier" in df.columns.values) or (len(df)==0):
+            print("df length is 0")
+            return
+        headers_with_langs = variables.group_by_headers_with_langs([lang])
+        all_relevant_headers = headers_with_langs + ['value_usd', 'value_eur', 'value_local']
+        df = df[all_relevant_headers]
+        df = df.fillna("No data")
+        df = df.groupby(headers_with_langs)
+        df = df.agg({'value_usd':'sum','value_eur':'sum','value_local':'sum'})
+        df = df.reset_index().fillna("No data")
+        df = self.relabel_dataframe(df, lang)
+        return df
+
+
     def group_results(self, country_code):
         for lang in self.langs:
-            df = pd.read_csv("output/csv/{}.csv".format(country_code), dtype=self.CSV_HEADER_DTYPES)
-            if (not "iati_identifier" in df.columns.values) or (len(df)==0):
-                return
-            headers_with_langs = variables.group_by_headers_with_langs([lang])
-            all_relevant_headers = headers_with_langs + ['value_usd', 'value_eur', 'value_local']
-            df = df[all_relevant_headers]
-            df = df.fillna("No data")
-            df = df.groupby(headers_with_langs)
-            df = df.agg({'value_usd':'sum','value_eur':'sum','value_local':'sum'})
-            df = df.reset_index().fillna("No data")
-            df = self.relabel_dataframe(df, lang)
+            df_transaction = self.get_dataframe(country_code, 'transaction', lang)
+            df_budget = self.get_dataframe(country_code, 'budget', lang)
+            if (df_transaction is None) and (df_budget is None):
+                continue
+            elif (df_transaction is None) or (df_budget is None):
+                df = df_transaction or df_budget
+            else:
+                df = pd.concat([df_transaction, df_budget], ignore_index=True)
+
             self.write_dataframe_to_excel(
                 dataframe = df,
                 filename = "output/xlsx/{}/{}.xlsx".format(lang, country_code),
@@ -114,21 +129,18 @@ class GroupFlatIATIData():
         csv_files.sort()
         print("BEGINNING PROCESS AT {}".format(datetime.datetime.utcnow()))
         list_of_files = []
-        for country in csv_files:
+        for country_code, country_name in sorted(self.country_names[lang].items()):
             start = time.time()
-            if country.endswith(".csv"):
-                country_code, _ = country.split(".")
-                country_name = self.country_names['en'].get(country_code)
-                country_or_region = {True: 'region', False: 'country'}[re.match('^\d*$', country_code) is not None]
-                self.group_results(country_code)
-                list_of_files.append({
-                    'country_code': country_code,
-                    'country_name': country_name,
-                    'country_or_region': country_or_region,
-                    'filename': "{}.xlsx".format(country_code)
-                })
+            country_or_region = {True: 'region', False: 'country'}[re.match('^\d*$', country_code) is not None]
+            self.group_results(country_code)
+            list_of_files.append({
+                'country_code': country_code,
+                'country_name': country_name,
+                'country_or_region': country_or_region,
+                'filename': "{}.xlsx".format(country_code)
+            })
             end = time.time()
-            print("Processing {} took {}s".format(country, end-start))
+            print("Processing {} took {}s".format(country_code, end-start))
         with open('output/xlsx/index.json', 'w') as json_file:
             json.dump({
                 'lastUpdated': datetime.datetime.utcnow().date().isoformat(),
