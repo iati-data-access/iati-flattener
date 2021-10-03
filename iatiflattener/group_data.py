@@ -89,20 +89,26 @@ class GroupFlatIATIData():
 
 
     def get_dataframe(self, country_code, transaction_budget, lang):
-        df = pd.read_csv("output/csv/{}-{}.csv".format(transaction_budget, country_code), dtype=self.CSV_HEADER_DTYPES)
+        full_df = pd.DataFrame()
         print("Read CSV {}-{}.csv".format(transaction_budget, country_code))
-        if (not "iati_identifier" in df.columns.values) or (len(df)==0):
-            print("df length is 0")
-            return
-        headers_with_langs = variables.group_by_headers_with_langs([lang])
-        all_relevant_headers = headers_with_langs + ['value_usd', 'value_eur', 'value_local']
-        df = df[all_relevant_headers]
-        df = df.fillna("No data")
-        df = df.groupby(headers_with_langs)
-        df = df.agg({'value_usd':'sum','value_eur':'sum','value_local':'sum'})
-        df = df.reset_index().fillna("No data")
-        df = self.relabel_dataframe(df, lang)
-        return df
+        for df in pd.read_csv("output/csv/{}-{}.csv".format(transaction_budget, country_code),
+            dtype=self.CSV_HEADER_DTYPES,
+            chunksize=500000):
+            print("Reading chunk...")
+            if (not "iati_identifier" in df.columns.values) or (len(df)==0):
+                print("df length is 0")
+                return
+            headers_with_langs = variables.group_by_headers_with_langs([lang])
+            all_relevant_headers = headers_with_langs + ['value_usd', 'value_eur', 'value_local']
+            df = df[all_relevant_headers]
+            df = df.fillna("No data")
+            df = df.groupby(headers_with_langs)
+            df = df.agg({'value_usd':'sum','value_eur':'sum','value_local':'sum'})
+            df = df.reset_index().fillna("No data")
+            df = self.relabel_dataframe(df, lang)
+            full_df = pd.concat([full_df, df])
+
+        return full_df
 
 
     def group_results(self, country_code):
