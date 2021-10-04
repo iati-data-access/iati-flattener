@@ -128,7 +128,7 @@ class GroupFlatIATIData():
 
             if df is not None:
                 num_rows = len(df)
-                output_rows = 1000000
+                output_rows = 500000
                 if num_rows > output_rows:
                     for start in range(0, num_rows, output_rows):
                         df_part = df.iloc[start:start+output_rows, :]
