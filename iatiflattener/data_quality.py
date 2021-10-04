@@ -32,20 +32,26 @@ def report():
         wb.save(filename)
 
     def one_report(filename, values):
+        print("Beginning {} AT {}".format(filename, datetime.datetime.utcnow()))
         df = pd.read_excel(os.path.join('output', 'xlsx', 'en', filename), engine='openpyxl')
         if not "IATI Identifier" in df.columns.values:
             return values
         this_year = datetime.datetime.now().year
         required_years = list(range(this_year-2, this_year+3))
         df = df[df["Calendar Year"].isin(required_years)]
+
+        print("Group by {} AT {}".format(filename, datetime.datetime.utcnow()))
         out = df.fillna("").groupby([
                    'Reporting Organisation',
                    'Reporting Organisation Type',
                    'Transaction Type',
                    'Calendar Year',
                    'Calendar Quarter'])
+
+        print("Aggregate {} AT {}".format(filename, datetime.datetime.utcnow()))
         out = out["Value (USD)"].agg("sum").reset_index()
         values += out.values.tolist()
+        print("Finished {} AT {}".format(filename, datetime.datetime.utcnow()))
         return values
 
     def all_reports():
