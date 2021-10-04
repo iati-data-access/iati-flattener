@@ -124,10 +124,11 @@ class GroupFlatIATIData():
                     df = df_transaction
                 df = df_budget
 
-            self.write_dataframe_to_excel(
-                dataframe = df,
-                filename = "output/xlsx/{}/{}.xlsx".format(lang, country_code),
-                lang = lang)
+            if df is not None:
+                self.write_dataframe_to_excel(
+                    dataframe = df,
+                    filename = "output/xlsx/{}/{}.xlsx".format(lang, country_code),
+                    lang = lang)
 
 
     def group_data(self):
