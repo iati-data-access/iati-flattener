@@ -7,6 +7,7 @@ import re
 import time
 import datetime
 import os
+import math
 
 from iatiflattener.lib import variables
 
@@ -122,13 +123,25 @@ class GroupFlatIATIData():
             else:
                 if df_transaction is not None:
                     df = df_transaction
-                df = df_budget
+                else:
+                    df = df_budget
 
             if df is not None:
-                self.write_dataframe_to_excel(
-                    dataframe = df,
-                    filename = "output/xlsx/{}/{}.xlsx".format(lang, country_code),
-                    lang = lang)
+                num_rows = len(df)
+                output_rows = 1000000
+                if num_rows > output_rows:
+                    for start in range(0, num_rows, output_rows):
+                        df_part = df.iloc[start:start+output_rows, :]
+                        page = (start/output_rows)+1
+                        self.write_dataframe_to_excel(
+                            dataframe = df_part,
+                            filename = "output/xlsx/{}/{}-{}.xlsx".format(lang, country_code, page),
+                            lang = lang)
+                else:
+                    self.write_dataframe_to_excel(
+                        dataframe = df,
+                        filename = "output/xlsx/{}/{}.xlsx".format(lang, country_code),
+                        lang = lang)
 
 
     def group_data(self):
