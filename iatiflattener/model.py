@@ -627,7 +627,7 @@ class ReportingOrg(Field):
     def get_reporting_org(self, lang):
         _ro = self.activity.find("reporting-org")
         _text = get_org_name(
-            organisations=self.organisations,
+            organisations=self.organisations.get(lang, {}),
             ref=_ro.get("ref"),
             text=get_narrative(_ro, lang)
         )
@@ -681,7 +681,7 @@ class Organisation(Field):
             if transaction.find('{}-org'.format(provider_receiver)) is not None:
                 _el = transaction.find('{}-org'.format(provider_receiver))
                 _text = get_org_name(
-                    organisations=self.organisations,
+                    organisations=self.organisations.get(lang, {}),
                     ref=_el.get("ref"),
                     text=get_narrative(_el, lang)
                 )
@@ -706,7 +706,7 @@ class Organisation(Field):
                 else:
                     _ro = activity.find("reporting-org")
                 _text = get_org_name(
-                    organisations=self.organisations,
+                    organisations=self.organisations.get(lang, {}),
                     ref=_ro.get("ref"),
                     text=get_narrative(_ro, lang)
                 )
@@ -728,7 +728,7 @@ class Organisation(Field):
                 activity_participating = activity.findall("participating-org[@role='{}']".format(role))
             if len(activity_participating) == 1:
                 _text = get_org_name(
-                        organisations=self.organisations,
+                        organisations=self.organisations.get(lang, {}),
                         ref=activity_participating[0].get('ref'),
                         text=get_narrative_text(activity_participating[0])
                     )
@@ -739,7 +739,7 @@ class Organisation(Field):
             elif len(activity_participating) > 1:
                 _orgs = list(map(lambda _org: _make_org_output(
                     _text=get_org_name(
-                            organisations=self.organisations,
+                            organisations=self.organisations.get(lang, {}),
                             ref=_org.get("ref"),
                             text=get_narrative(_org, lang)
                     ),
