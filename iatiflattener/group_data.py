@@ -70,7 +70,8 @@ class GroupFlatIATIData():
             cl_key = codelist[0]
             cl_items = codelist[1]
             conditions, outputs = self.make_conditions_outputs(codelist, dataframe)
-            res = np.select(conditions, outputs, 'No data')
+            no_data = variables.TRANSLATIONS.get(lang).get('no-data')
+            res = np.select(conditions, outputs, no_data)
             dataframe[cl_key] = pd.Series(res)
         return dataframe
 
@@ -102,10 +103,11 @@ class GroupFlatIATIData():
             headers_with_langs = variables.group_by_headers_with_langs([lang])
             all_relevant_headers = headers_with_langs + ['value_usd', 'value_eur', 'value_local']
             df = df[all_relevant_headers]
-            df = df.fillna("No data")
+            no_data = variables.TRANSLATIONS.get(lang).get('no-data')
+            df = df.fillna(no_data)
             df = df.groupby(headers_with_langs)
             df = df.agg({'value_usd':'sum','value_eur':'sum','value_local':'sum'})
-            df = df.reset_index().fillna("No data")
+            df = df.reset_index().fillna(no_data)
             df = self.relabel_dataframe(df, lang)
             full_df = pd.concat([full_df, df])
 
@@ -163,12 +165,19 @@ class GroupFlatIATIData():
             })
             end = time.time()
             print("Processing {} took {}s".format(country_code, end-start))
-        with open('output/xlsx/index.json', 'w') as json_file:
-            json.dump({
-                'lastUpdated': datetime.datetime.utcnow().date().isoformat(),
-                'countries': list_of_files,
-                'langs': self.langs
-            }, json_file)
+        for lang in self.langs:
+            with open('output/xlsx/{}/index.json'.format(lang), 'w') as json_file:
+                countries = [{
+                    'country_code': country_code,
+                    'country_name': country_name,
+                    'country_or_region': country_or_region,
+                    'filename': "{}.xlsx".format(country_code)
+                } for country_code, country_name in self.country_names[lang].items()]
+                json.dump({
+                    'lastUpdated': datetime.datetime.utcnow().date().isoformat(),
+                    'countries': countries,
+                    'langs': self.langs
+                }, json_file)
         print("FINISHED PROCESS AT {}".format(datetime.datetime.utcnow()))
 
     def __init__(self, langs=['en']):
@@ -176,6 +185,6 @@ class GroupFlatIATIData():
         self.CSV_HEADERS = variables.headers(langs)
         self._DTYPES = variables.dtypes(langs)
         self.CSV_HEADER_DTYPES = dict(map(lambda csv_header: (csv_header[1], self._DTYPES[csv_header[0]]), enumerate(self.CSV_HEADERS)))
-        self.HEADERS_WITH_LANGS = variables.headers_with_langs(['en', 'fr'])
+        self.HEADERS_WITH_LANGS = variables.headers_with_langs(langs)
         self.setup_codelists()
         self.group_data()
