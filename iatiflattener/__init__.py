@@ -1,10 +1,12 @@
-from lxml import etree
 import os
 import shutil
-import requests
 import csv
 import time
 import datetime
+import collections
+
+from lxml import etree
+import requests
 import exchangerates
 import iatikit
 
