@@ -171,7 +171,7 @@ OUTPUT_HEADERS = {
       'Type d’organisme déclarant',
       'Type d’aide',
       'Type de financement',
-      'Type d’apport',
+      'Type de flux',
       'Organisme prestataire',
       'Type d’organisme prestataire',
       'Organisme bénéficiaire',
@@ -181,10 +181,10 @@ OUTPUT_HEADERS = {
       'Multipays',
       'Catégorie de secteur',
       'Secteur',
-      'Humanitarian',
+      'Humanitaire',
       'Année civile',
       'Trimestre civil',
-      'Année et Trimestre civile',
+      'Année et trimestre civils',
       'URL',
       'Valeur (USD)',
       'Valeur (EUR)',
@@ -216,4 +216,13 @@ OUTPUT_HEADERS = {
       'Valor (EUR)',
       'Valor (Local currrency)'
    ],
+}
+
+TRANSLATIONS = {
+   'en': {
+      'no-data': 'No data'
+   },
+   'fr': {
+      'no-data': 'Aucune donnée'
+   }
 }
