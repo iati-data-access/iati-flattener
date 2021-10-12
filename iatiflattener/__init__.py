@@ -15,8 +15,9 @@ from iatiflattener import model
 from iatiflattener.data_quality import report as data_quality_report
 
 EXCHANGE_RATES_URL = "https://codeforiati.org/imf-exchangerates/imf_exchangerates.csv"
-COUNTRIES_CURRENCIES_URL = "https://gist.githubusercontent.com/markbrough/8ab81da725b35bbb115566f4e7ce9d22/raw/1f1e02c74e3fdf153ff63082c94e4ae8548fff9d/countries_currencies.json"
+COUNTRIES_CURRENCIES_URL = "https://codeforiati.org/imf-exchangerates/currencies.json"
 EXCLUDED_PUBLISHERS=["aiddata"]
+CODELIST_URL_LANG = "https://codelists.codeforiati.org/api/json/{}/{}.json"
 CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/{}.json"
 
 
@@ -47,11 +48,12 @@ class FlattenIATIData():
         self.countries += self.regions
         self.category_group = dict(map(lambda code: (code['codeforiati:category-code'], code['codeforiati:group-code']), sector_groups_req.json()['data']))
 
-        publishers_req = requests.get(CODELIST_URL.format("ReportingOrganisation"))
-        self.organisations = dict(map(lambda org: (org['code'], org['name']), publishers_req.json()['data']))
+        self.organisations = collections.defaultdict()
+        for lang in self.langs:
+            publishers_req = requests.get(CODELIST_URL_LANG.format(lang, "ReportingOrganisation"))
+            self.organisations[lang] = dict(map(lambda org: (org['code'], org['name']), publishers_req.json()['data']))
 
         self.exchange_rates = get_exchange_rates(refresh_rates)
-        publishers_req = requests.get(CODELIST_URL.format("ReportingOrganisation"))
 
         countries_currencies_req = requests.get(COUNTRIES_CURRENCIES_URL)
         self.countries_currencies = countries_currencies_req.json()
