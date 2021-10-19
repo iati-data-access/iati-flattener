@@ -51,7 +51,7 @@ class GroupFlatIATIData():
             self.column_codelist[lang]['transaction_type']['budget'] = 'Budget'
             sector_sector_categories = dict(map(lambda code: (code['codeforiati:group-code'], code['codeforiati:group-name']), sector_groups_req.json()['data']))
             self.column_codelist[lang]['sector_category'] = sector_sector_categories
-            self.column_codelist[lang]['country_code'] = self.country_names
+            self.column_codelist[lang]['country_code'] = self.country_names[lang]
 
     def make_conditions_outputs(self, codelist, dataframe):
         cl_key = codelist[0]
