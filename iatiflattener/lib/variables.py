@@ -224,5 +224,8 @@ TRANSLATIONS = {
    },
    'fr': {
       'no-data': 'Aucune donnée'
+   },
+   'es': {
+      'no-data': 'Ningún dato'
    }
 }
