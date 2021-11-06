@@ -197,7 +197,7 @@ OUTPUT_HEADERS = {
       'Tipo de organización informante',
       'Tipo de ayuda',
       'Tipo de financiación',
-      'Flow Type',
+      'Tipo de flujo',
       'Organización proveedora',
       'Tipo de organización proveedora',
       'Organización beneficiaria',
@@ -205,16 +205,16 @@ OUTPUT_HEADERS = {
       'Tipo de transacción',
       'País o región beneficiario',
       'Multinacional',
-      'Categoría de sector',
+      'Categoría del sector',
       'Sector',
-      'Humanitarian',
+      'Humanitario',
       'Año natural',
       'Trimestre natural',
-      'Año y trimestre natural',
+      'Año y trimestre naturales',
       'URL',
       'Valor (USD)',
       'Valor (EUR)',
-      'Valor (Local currrency)'
+      'Valor (Divisa local)'
    ],
 }
 
