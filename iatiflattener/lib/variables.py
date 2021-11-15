@@ -216,6 +216,32 @@ OUTPUT_HEADERS = {
       'Valor (EUR)',
       'Valor (Divisa local)'
    ],
+   'pt': [
+      'Identificador da IATI',
+      'Título',
+      'Organização relatora',
+      'Tipo de organização relatora',
+      'Tipo de ajuda',
+      'Tipo de financiamento',
+      'Tipo de fluxo',
+      'Organização provedora',
+      'Tipo de organização provedora',
+      'Organização destinatária',
+      'Tipo de organização destinatária',
+      'Tipo de transação',
+      'País/região destinatário',
+      'Plurinacional',
+      'Categoria de sector',
+      'Sector',
+      'Humanitária',
+      'Ano',
+      'Trimestre',
+      'Ano y trimestre',
+      'URL',
+      'Valor (USD)',
+      'Valor (EUR)',
+      'Valor (Moeda local)'
+   ],
 }
 
 TRANSLATIONS = {
@@ -227,5 +253,8 @@ TRANSLATIONS = {
    },
    'es': {
       'no-data': 'Ningún dato'
+   },
+   'pt': {
+      'no-data': 'Sem dados'
    }
 }
