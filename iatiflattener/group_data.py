@@ -166,13 +166,15 @@ class GroupFlatIATIData():
             end = time.time()
             print("Processing {} took {}s".format(country_code, end-start))
         for lang in self.langs:
+            filenames = os.listdir('output/xlsx/{}'.format(lang))
+            country_files = [os.path.splitext(filename)[0] for filename in filenames if filename.endswith(".xlsx")]
             with open('output/xlsx/{}/index.json'.format(lang), 'w') as json_file:
                 countries = [{
                     'country_code': country_code,
                     'country_name': country_name,
                     'country_or_region': country_or_region,
                     'filename': "{}.xlsx".format(country_code)
-                } for country_code, country_name in self.country_names[lang].items()]
+                } for country_code, country_name in self.country_names[lang].items() if country_code in country_files]
                 json.dump({
                     'lastUpdated': datetime.datetime.utcnow().date().isoformat(),
                     'countries': countries,
