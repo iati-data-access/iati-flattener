@@ -133,7 +133,7 @@ class FlattenIATIData():
                             self.process_package(publisher, package)
                     except Exception as e:
                         print("Exception with package {}".format(package))
-                        print("Exception was {}".format(e))
+                        print("Exception was {}".format(repr(e)))
                         continue
             except NotADirectoryError:
                 continue
