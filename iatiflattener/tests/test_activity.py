@@ -62,7 +62,7 @@ class TestModel():
         if publisher == 'worldbank':
             assert flat_activity['GLIDE'] == 'EP-2020-000012-001'
 
-    def test_write_outputs(self, publisher, activity, flat_activity):
+    def _test_write_outputs(self, publisher, activity, flat_activity):
         """
         Remove the underscore to enable writing, if you update any of the outputs.
         """
