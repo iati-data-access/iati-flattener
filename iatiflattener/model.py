@@ -456,7 +456,7 @@ class ActivityBudget(Common):
         return True
 
     def __init__(self, activity, activity_cache, exchange_rates, currencies,
-            organisations_cache=[], langs=['en']):
+            organisations_cache={}, langs=['en']):
         self.activity = activity
         self.activity_cache = activity_cache.get(
             self._iati_identifier().value
@@ -540,7 +540,7 @@ class Transaction(Common):
         return True
 
     def __init__(self, activity, transaction, activity_cache, exchange_rates,
-            currencies, limit_transaction_types=True, organisations_cache=[],
+            currencies, limit_transaction_types=True, organisations_cache={},
             langs=['en']):
         self.transaction = transaction
         self.activity = activity
