@@ -595,7 +595,6 @@ class Activity(Common):
             'reporting_org']
 
 
-
 class Transaction(Common):
     def _organisation_field(self, provider_receiver):
         return Organisation(self.activity_cache, self.organisations_cache, self.transaction, provider_receiver=='provider', self.langs)
