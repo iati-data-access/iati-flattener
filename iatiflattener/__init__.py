@@ -118,6 +118,15 @@ class FlattenIATIData():
         if doc.getroot().get("version") not in ['2.01', '2.02', '2.03']: return
         self.activity_cache = model.ActivityCache()
 
+        activity_csvwriter = model.ActivityCSVFilesWriter(
+            self.output_dir,
+            headers=self.activity_csv_headers)
+        activities = doc.xpath("//iati-activity")
+        for activity in activities:
+            self.process_activity(activity_csvwriter, activity)
+
+        activity_csvwriter.write()
+
         csvwriter = model.CSVFilesWriter(budget_transaction='transaction',
             headers=self.csv_headers)
         transactions = doc.xpath("//transaction")
@@ -133,15 +142,6 @@ class FlattenIATIData():
             self.process_activity_for_budgets(csvwriter, activity)
 
         csvwriter.write()
-
-        activity_csvwriter = model.ActivityCSVFilesWriter(
-            self.output_dir,
-            headers=self.activity_csv_headers)
-        activities = doc.xpath("//iati-activity")
-        for activity in activities:
-            self.process_activity(activity_csvwriter, activity)
-
-        activity_csvwriter.write()
 
 
     def run_for_publishers(self):
@@ -189,7 +189,11 @@ class FlattenIATIData():
         else:
             self.publishers = publishers
         self.publishers.sort()
+        print("Setting up codelists...")
         self.setup_codelists(refresh_rates=refresh_rates)
+        print("Setting up countries...")
         self.setup_countries()
+        print("Setting up organisations...")
         self.setup_organisations()
+        print("Processing publishers...")
         self.run_for_publishers()
