@@ -629,7 +629,7 @@ class Transaction(Common):
         self.aid_type = self.update_cache(self._default_field('aid-type'))
         self.finance_type = self.update_cache(self._default_field('finance-type'))
         self.flow_type = self.update_cache(self._default_field('flow-type'))
-        self.humanitarian = self._humanitarian()
+        self.humanitarian = self._humanitarian(budget=False)
         self.provider_org = self.update_cache(self._organisation_field('provider'))
         self.provider_org_type = self._provider_org_type()
         self.receiver_org = self.update_cache(self._organisation_field('receiver'))
