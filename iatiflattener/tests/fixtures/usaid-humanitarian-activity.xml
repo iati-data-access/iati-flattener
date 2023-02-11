@@ -1,0 +1,241 @@
+<iati-activities xmlns:iati-extra="https://datastore.codeforiati.org/ns" generated-datetime="2023-02-11T13:48:44.925668"><iati-activity iati-extra:version="2.03" xmlns:usg="https://explorer.usaid.gov" default-currency="USD" hierarchy="1" last-updated-datetime="2023-01-23T21:57:41.962Z" xml:lang="en">
+    <iati-identifier>US-GOV-1-72DFFP19IO00066</iati-identifier>
+    <reporting-org ref="US-GOV-1" type="10">
+      <narrative>U.S. Agency for International Development</narrative>
+    </reporting-org>
+    <title>
+      <narrative xml:lang="en">Food Assistance Activity</narrative>
+    </title>
+    <description>
+      <narrative xml:lang="en">Food Assistance Activity</narrative>
+    </description>
+    <participating-org ref="US-GOV-1" role="1" type="10">
+      <narrative>U.S. Agency for International Development</narrative>
+    </participating-org>
+    <participating-org ref="US-GOV-1" role="2" type="10">
+      <narrative>U.S. Agency for International Development</narrative>
+    </participating-org>
+    <participating-org ref="US-GOV-1" role="3" type="10">
+      <narrative>U.S. Agency for International Development</narrative>
+    </participating-org>
+    <participating-org ref="XM-DAC-41140" role="4" type="40">
+      <narrative>World Food Program</narrative>
+    </participating-org>
+    <activity-status code="3"/>
+    <activity-date iso-date="2019-06-21" type="1"/>
+    <activity-date iso-date="2019-06-21" type="2"/>
+    <activity-date iso-date="2021-03-31" type="3"/>
+    <activity-date iso-date="2021-03-31" type="4"/>
+    <contact-info type="1">
+      <organisation>
+        <narrative>U.S. Agency for International Development</narrative>
+      </organisation>
+      <person-name>
+        <narrative/>
+      </person-name>
+      <telephone>+1 (202) 712 4810</telephone>
+      <email>aidtransparency@usaid.gov</email>
+      <website/>
+      <mailing-address>
+        <narrative>1300 Pennsylvania Ave NW, Washington DC 20004</narrative>
+      </mailing-address>
+    </contact-info>
+    <activity-scope code="4"/>
+    <collaboration-type code="1"/>
+    <default-flow-type code="10"/>
+    <default-finance-type code="110"/>
+    <default-aid-type code="C01"/>
+    <default-tied-status code="5"/>
+    <transaction ref="34524EEDDA49" humanitarian="1">
+      <transaction-type code="2"/>
+      <transaction-date iso-date="2019-06-30"/>
+      <value value-date="2019-06-30">2000000.00</value>
+      <disbursement-channel code="2"/>
+      <sector code="72040" vocabulary="1">
+        <narrative>Emergency food assistance</narrative>
+      </sector>
+      <sector code="7001" vocabulary="99">
+        <narrative>Protection, Assistance and Solutions</narrative>
+      </sector>
+      <sector code="6" vocabulary="10"/>
+      <recipient-country code="DZ"/>
+      <usg:treasury-account>
+        <usg:regular-account code="72"/>
+        <usg:main-account code="1035">International Disaster and Famine Assistance</usg:main-account>
+        <usg:fiscal-funding-year begin="2019" end="2023"/>
+      </usg:treasury-account>
+      <usg:humanitarian-scope type="1" vocabulary="99"/>
+    </transaction>
+    <transaction ref="6C3A9A93A8C5" humanitarian="1">
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2019-08-31"/>
+      <value value-date="2019-08-31">122065.00</value>
+      <disbursement-channel code="2"/>
+      <sector code="72040" vocabulary="1">
+        <narrative>Emergency food assistance</narrative>
+      </sector>
+      <sector code="7001" vocabulary="99">
+        <narrative>Protection, Assistance and Solutions</narrative>
+      </sector>
+      <sector code="6" vocabulary="10"/>
+      <recipient-country code="DZ"/>
+      <usg:treasury-account>
+        <usg:regular-account code="72"/>
+        <usg:main-account code="1035">International Disaster and Famine Assistance</usg:main-account>
+        <usg:fiscal-funding-year begin="2019" end="2023"/>
+      </usg:treasury-account>
+      <usg:humanitarian-scope type="1" vocabulary="99"/>
+    </transaction>
+    <transaction ref="6F04AB3CB999" humanitarian="1">
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2019-10-31"/>
+      <value value-date="2019-10-31">28740.00</value>
+      <disbursement-channel code="2"/>
+      <sector code="72040" vocabulary="1">
+        <narrative>Emergency food assistance</narrative>
+      </sector>
+      <sector code="7001" vocabulary="99">
+        <narrative>Protection, Assistance and Solutions</narrative>
+      </sector>
+      <sector code="6" vocabulary="10"/>
+      <recipient-country code="DZ"/>
+      <usg:treasury-account>
+        <usg:regular-account code="72"/>
+        <usg:main-account code="1035">International Disaster and Famine Assistance</usg:main-account>
+        <usg:fiscal-funding-year begin="2019" end="2023"/>
+      </usg:treasury-account>
+      <usg:humanitarian-scope type="1" vocabulary="99"/>
+    </transaction>
+    <transaction ref="67C6C9693741" humanitarian="1">
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-01-31"/>
+      <value value-date="2020-01-31">287041.00</value>
+      <disbursement-channel code="2"/>
+      <sector code="72040" vocabulary="1">
+        <narrative>Emergency food assistance</narrative>
+      </sector>
+      <sector code="7001" vocabulary="99">
+        <narrative>Protection, Assistance and Solutions</narrative>
+      </sector>
+      <sector code="6" vocabulary="10"/>
+      <recipient-country code="DZ"/>
+      <usg:treasury-account>
+        <usg:regular-account code="72"/>
+        <usg:main-account code="1035">International Disaster and Famine Assistance</usg:main-account>
+        <usg:fiscal-funding-year begin="2019" end="2023"/>
+      </usg:treasury-account>
+      <usg:humanitarian-scope type="1" vocabulary="99"/>
+    </transaction>
+    <transaction ref="2164E4E03B2B" humanitarian="1">
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-05-31"/>
+      <value value-date="2020-05-31">61009.00</value>
+      <disbursement-channel code="2"/>
+      <sector code="72040" vocabulary="1">
+        <narrative>Emergency food assistance</narrative>
+      </sector>
+      <sector code="7001" vocabulary="99">
+        <narrative>Protection, Assistance and Solutions</narrative>
+      </sector>
+      <sector code="6" vocabulary="10"/>
+      <recipient-country code="DZ"/>
+      <usg:treasury-account>
+        <usg:regular-account code="72"/>
+        <usg:main-account code="1035">International Disaster and Famine Assistance</usg:main-account>
+        <usg:fiscal-funding-year begin="2019" end="2023"/>
+      </usg:treasury-account>
+      <usg:humanitarian-scope type="1" vocabulary="99"/>
+    </transaction>
+    <transaction ref="09CB1AA13CAE" humanitarian="1">
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-08-31"/>
+      <value value-date="2020-08-31">266943.00</value>
+      <disbursement-channel code="2"/>
+      <sector code="72040" vocabulary="1">
+        <narrative>Emergency food assistance</narrative>
+      </sector>
+      <sector code="7001" vocabulary="99">
+        <narrative>Protection, Assistance and Solutions</narrative>
+      </sector>
+      <sector code="6" vocabulary="10"/>
+      <recipient-country code="DZ"/>
+      <usg:treasury-account>
+        <usg:regular-account code="72"/>
+        <usg:main-account code="1035">International Disaster and Famine Assistance</usg:main-account>
+        <usg:fiscal-funding-year begin="2019" end="2023"/>
+      </usg:treasury-account>
+      <usg:humanitarian-scope type="1" vocabulary="99"/>
+    </transaction>
+    <transaction ref="E74614A13A7B" humanitarian="1">
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-11-30"/>
+      <value value-date="2020-11-30">415864.00</value>
+      <disbursement-channel code="2"/>
+      <sector code="72040" vocabulary="1">
+        <narrative>Emergency food assistance</narrative>
+      </sector>
+      <sector code="7001" vocabulary="99">
+        <narrative>Protection, Assistance and Solutions</narrative>
+      </sector>
+      <sector code="6" vocabulary="10"/>
+      <recipient-country code="DZ"/>
+      <usg:treasury-account>
+        <usg:regular-account code="72"/>
+        <usg:main-account code="1035">International Disaster and Famine Assistance</usg:main-account>
+        <usg:fiscal-funding-year begin="2019" end="2023"/>
+      </usg:treasury-account>
+      <usg:humanitarian-scope type="1" vocabulary="99"/>
+    </transaction>
+    <transaction ref="AECCDE91314E" humanitarian="1">
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-02-28"/>
+      <value value-date="2021-02-28">698495.00</value>
+      <disbursement-channel code="2"/>
+      <sector code="72040" vocabulary="1">
+        <narrative>Emergency food assistance</narrative>
+      </sector>
+      <sector code="7001" vocabulary="99">
+        <narrative>Protection, Assistance and Solutions</narrative>
+      </sector>
+      <sector code="6" vocabulary="10"/>
+      <recipient-country code="DZ"/>
+      <usg:treasury-account>
+        <usg:regular-account code="72"/>
+        <usg:main-account code="1035">International Disaster and Famine Assistance</usg:main-account>
+        <usg:fiscal-funding-year begin="2019" end="2023"/>
+      </usg:treasury-account>
+      <usg:humanitarian-scope type="1" vocabulary="99"/>
+    </transaction>
+    <transaction ref="7CD9FBFC14DE" humanitarian="1">
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-05-31"/>
+      <value value-date="2021-05-31">119841.00</value>
+      <disbursement-channel code="2"/>
+      <sector code="72040" vocabulary="1">
+        <narrative>Emergency food assistance</narrative>
+      </sector>
+      <sector code="7001" vocabulary="99">
+        <narrative>Protection, Assistance and Solutions</narrative>
+      </sector>
+      <sector code="6" vocabulary="10"/>
+      <recipient-country code="DZ"/>
+      <usg:treasury-account>
+        <usg:regular-account code="72"/>
+        <usg:main-account code="1035">International Disaster and Famine Assistance</usg:main-account>
+        <usg:fiscal-funding-year begin="2019" end="2023"/>
+      </usg:treasury-account>
+      <usg:humanitarian-scope type="1" vocabulary="99"/>
+    </transaction>
+    <conditions attached="0"/>
+    <usg:mechanism-signing-date iso-date="2019-06-21"/>
+    <usg:duns-number>
+      <narrative>71550813</narrative>
+    </usg:duns-number>
+    <usg:tec1>
+      <narrative>2000000.00</narrative>
+    </usg:tec1>
+    <usg:state-location>
+      <narrative>Algeria</narrative>
+    </usg:state-location>
+  </iati-activity>
+  </iati-activities>
