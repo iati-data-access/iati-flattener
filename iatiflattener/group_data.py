@@ -103,6 +103,8 @@ class GroupFlatIATIData():
             headers_with_langs = variables.group_by_headers_with_langs([lang])
             all_relevant_headers = headers_with_langs + ['value_usd', 'value_eur', 'value_local']
             df = df[all_relevant_headers]
+            if country_code == 'NA':
+                df.country_code = df.country_code.fillna('NA')
             no_data = variables.TRANSLATIONS.get(lang).get('no-data')
             df = df.fillna(no_data)
             df = df.groupby(headers_with_langs)

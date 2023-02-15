@@ -45,10 +45,40 @@ MULTILANG_HEADERS = [
 ]
 
 
+ACTIVITY_HEADERS = OrderedDict({
+   'iati_identifier': str,
+   'title': str,
+   'description': str,
+   'reporting_org': str,
+   'reporting_org_ref': str,
+   'location': str,
+   'start_date': str,
+   'end_date': str,
+   'GLIDE': str,
+   'HRP': str
+})
+
+
+ACTIVITY_MULTILANG_HEADERS = [
+   'title',
+   'description',
+   'reporting_org'
+]
+
+
 def headers(langs):
    out = []
    for header in HEADERS.keys():
       if header in MULTILANG_HEADERS:
+         out += ['{}#{}'.format(header, lang) for lang in langs]
+      else:
+         out += [header]
+   return out
+
+def activity_headers(langs):
+   out = []
+   for header in ACTIVITY_HEADERS.keys():
+      if header in ACTIVITY_MULTILANG_HEADERS:
          out += ['{}#{}'.format(header, lang) for lang in langs]
       else:
          out += [header]

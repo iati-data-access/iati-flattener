@@ -20,7 +20,7 @@ def write_outputs(publisher, transaction, flat_transaction_json):
         json_file.write(flat_transaction_json)
 
 
-@pytest.mark.parametrize("publisher", ["fcdo", "canada", "usaid"])
+@pytest.mark.parametrize("publisher", ["fcdo", "canada", "usaid", "usaid-humanitarian"])
 class TestModel():
 
     @pytest.fixture()
@@ -67,6 +67,15 @@ class TestModel():
         sector = flat_transaction['sector_code']
         sector_pct = list(filter(lambda _sector: _sector['code'] == sector, transaction_dict['sectors']))[0]['percentage']
         assert flat_transaction['value_usd'] == transaction_dict['value_usd'] * (country_pct/100) * (sector_pct/100)
+
+    def test_humanitarian(self, publisher, transaction, flat_transaction):
+        """Checks to see if humanitarian transactions are set correctly"""
+        if publisher == 'usaid-humanitarian':
+            assert transaction.humanitarian.transaction.get('humanitarian', False) in ('1', True)
+            assert flat_transaction['humanitarian'] == 1
+        else:
+            assert transaction.humanitarian.transaction.get('humanitarian', False) in ('0', False)
+            assert flat_transaction['humanitarian'] == 0
 
     def _test_write_outputs(self, publisher, transaction, flat_transaction_json):
         """

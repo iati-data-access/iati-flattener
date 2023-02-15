@@ -35,7 +35,9 @@ class ActivityCacheActivity():
 
     def __init__(self, iati_identifier):
         self.iati_identifier = iati_identifier
-        fields = ['title', 'currency', 'sectors',
+        fields = ['title', 'description',
+        'currency', 'sectors',
+        'GLIDE', 'HRP',
         'countries', 'regions', 'aid_type',
         'finance_type', 'flow_type', 'title',
         'reporting_org', 'participating_org_1',
@@ -84,6 +86,36 @@ class CSVFilesWriter():
         self.budget_transaction = budget_transaction
         self.csv_headers = headers
         self.output_dir = output_dir
+
+
+class ActivityCSVFilesWriter():
+    def append(self, reporting_org, activity):
+        if reporting_org not in self.csv_files:
+            _file = open(
+                os.path.join(self.output_dir,
+                    'csv',
+                    'activities',
+                    '{}.csv'.format(reporting_org.replace("/", "_"))),
+                'a')
+            self.csv_files[reporting_org] = {
+                'file': _file,
+                'csv': csv.writer(_file),
+                'rows': []
+            }
+        if self.csv_headers:
+            self.csv_files[reporting_org]['rows'].append([activity[header] for header in self.csv_headers])
+        else:
+            self.csv_files[reporting_org]['rows'].append(activity.values())
+
+    def write(self):
+        for _filename, _file in self.csv_files.items():
+            _file['csv'].writerows(_file['rows'])
+            _file['file'].close()
+
+    def __init__(self, output_dir='output', headers=[]):
+        self.csv_files = {}
+        self.output_dir = output_dir
+        self.csv_headers = headers
 
 
 class FlatBudget():
@@ -162,6 +194,19 @@ class FlatTransactionBudgetCSV():
         self.countries = countries
         self.csv_writer = csv_writer
         self.flat_transaction_budget = flat_transaction_budget
+
+
+class ActivityCSV():
+    def output(self):
+        reporting_org = self.activity_data['reporting_org_ref']
+        if reporting_org in self.organisations:
+            self.csv_writer.append(reporting_org=reporting_org,
+                activity=self.activity_data)
+
+    def __init__(self, organisations, csv_writer, activity_data):
+        self.organisations = organisations
+        self.csv_writer = csv_writer
+        self.activity_data = activity_data
 
 
 class FlatTransaction():
@@ -248,8 +293,23 @@ class Common(FinancialValues):
     def _title(self):
         return Title(self.activity, self.activity_cache, self.langs)
 
+    def _description(self):
+        return Description(self.activity, self.activity_cache, self.langs)
+
+    def _locations(self):
+        return Location(self.activity, self.langs)
+
+    def _GLIDE(self):
+        return GLIDE(self.activity, self.langs)
+
+    def _HRP(self):
+        return HRP(self.activity, self.langs)
+
     def _reporting_org(self):
         return ReportingOrg(self.activity, self.activity_cache, self.organisations_cache, self.langs)
+
+    def _reporting_org_ref(self):
+        return SimpleField(self._get_first_attrib(self.reporting_org.value, 'ref'))
 
     def _reporting_org_type(self):
         return SimpleField(list(self.reporting_org.value.values())[0].get('type'))
@@ -285,6 +345,12 @@ class Common(FinancialValues):
 
     def _dportal_url(self):
         return SimpleField(DPORTAL_URL.format(self.iati_identifier))
+
+    def _start_date(self):
+        return ActivityDate(self.activity, ['2', '1'])
+
+    def _end_date(self):
+        return ActivityDate(self.activity, ['4', '3'])
 
     def update_cache(self, field):
         self.activity_cache = field.activity_cache
@@ -456,7 +522,7 @@ class ActivityBudget(Common):
         return True
 
     def __init__(self, activity, activity_cache, exchange_rates, currencies,
-            organisations_cache=[], langs=['en']):
+            organisations_cache={}, langs=['en']):
         self.activity = activity
         self.activity_cache = activity_cache.get(
             self._iati_identifier().value
@@ -486,6 +552,47 @@ class ActivityBudget(Common):
         }
         self.multilingual_fields = ['title', 'reporting_org',
         'provider_org', 'receiver_org']
+
+
+class Activity(Common):
+    def generate(self):
+        self.iati_identifier = self._iati_identifier()
+        self.title = self.update_cache(self._title())
+        self.description = self._description()
+        self.reporting_org = self.update_cache(self._reporting_org())
+        self.reporting_org_ref = self._reporting_org_ref()
+        self.location = self._locations()
+        self.start_date = self._start_date()
+        self.end_date = self._end_date()
+        self.GLIDE = self._GLIDE()
+        self.HRP = self._HRP()
+
+    def __init__(self, activity, activity_cache,
+            organisations_cache={}, langs=['en']):
+        self.activity = activity
+        self.activity_cache = activity_cache.get(
+            self._iati_identifier().value
+        )
+        self.organisations_cache = organisations_cache
+        self.langs = langs
+        self.csv_fields = ['iati_identifier', 'title', 'description',
+            'reporting_org',
+            'reporting_org_ref',
+            'location', 'GLIDE', 'HRP',
+            'start_date', 'end_date']
+        self.fields = ['iati_identifier', 'title', 'description',
+            'reporting_org',
+            'reporting_org_ref',
+            'location', 'GLIDE', 'HRP',
+            'start_date', 'end_date']
+        self.fields_with_attributes = {
+            'reporting_org': {
+                '': 'display',
+                '_type': 'type'
+            }
+        }
+        self.multilingual_fields = ['title', 'description',
+            'reporting_org']
 
 
 class Transaction(Common):
@@ -522,7 +629,7 @@ class Transaction(Common):
         self.aid_type = self.update_cache(self._default_field('aid-type'))
         self.finance_type = self.update_cache(self._default_field('finance-type'))
         self.flow_type = self.update_cache(self._default_field('flow-type'))
-        self.humanitarian = self._humanitarian()
+        self.humanitarian = self._humanitarian(budget=False)
         self.provider_org = self.update_cache(self._organisation_field('provider'))
         self.provider_org_type = self._provider_org_type()
         self.receiver_org = self.update_cache(self._organisation_field('receiver'))
@@ -540,7 +647,7 @@ class Transaction(Common):
         return True
 
     def __init__(self, activity, transaction, activity_cache, exchange_rates,
-            currencies, limit_transaction_types=True, organisations_cache=[],
+            currencies, limit_transaction_types=True, organisations_cache={},
             langs=['en']):
         self.transaction = transaction
         self.activity = activity
@@ -609,7 +716,7 @@ class Title(Field):
     def generate(self):
         if self.activity_cache.title is not None:
             return self.activity_cache.title
-        title = dict([(lang, get_narrative(self.activity.find("title"), lang)) for lang in self.langs])
+        title = dict([(lang, get_narrative(self.activity.find('title'), lang)) for lang in self.langs])
         self.activity_cache.title = title
         return title
 
@@ -617,6 +724,86 @@ class Title(Field):
         self.activity = activity
         self.activity_cache = activity_cache
         self.langs = langs
+        self.value = self.generate()
+
+
+class Description(Field):
+    def csv_value(self, lang):
+        return self.value.get(lang)
+
+    def generate(self):
+        if self.activity_cache.description is not None:
+            return self.activity_cache.description
+        if self.activity.find('description[@type="{}"]'.format(self.description_type)) is not None:
+            description = dict([(lang, get_narrative(self.activity.find('description[@type="{}"]'.format(self.description_type)), lang)) for lang in self.langs])
+        else:
+            description = dict([(lang, get_narrative(self.activity.find('description'), lang)) for lang in self.langs])
+        self.activity_cache.description = description
+        return description
+
+    def __init__(self, activity, activity_cache, langs, description_type='1'):
+        self.activity = activity
+        self.activity_cache = activity_cache
+        self.langs = langs
+        self.description_type = description_type
+        self.value = self.generate()
+
+
+class ActivityDate(Field):
+    def generate(self):
+        pref_attr = None
+        for preference in self.preferences:
+            pref_el = self.activity.find(f'activity-date[@type="{preference}"]')
+            if pref_el is not None:
+                pref_attr = pref_el.get('iso-date')
+                if pref_attr is not None: break
+        return pref_attr
+
+    def __init__(self, activity, preferences):
+        self.activity = activity
+        self.preferences = preferences
+        self.value = self.generate()
+
+
+class Location(Field):
+    """
+    Finds all locations for an activity. NB this only returns
+    location IDs where a publisher has used geonames IDs.
+    Later, this can be extended to reconcile coordinates against
+    shapefiles, but this will be a more intensive process.
+    """
+    def generate(self):
+        locations = self.activity.xpath('location[location-id/@vocabulary="G1"]')
+        return "; ".join([location.find('location-id').get('code') for location in locations])
+
+    def __init__(self, activity, lang):
+        self.activity = activity
+        self.value = self.generate()
+
+
+class GLIDE(Field):
+    """
+    Finds all GLIDE codes for an activity.
+    """
+    def generate(self):
+        glides = self.activity.xpath('humanitarian-scope[@type="1"][@vocabulary="1-2"]')
+        return "; ".join([glide.get('code') for glide in glides])
+
+    def __init__(self, activity, lang):
+        self.activity = activity
+        self.value = self.generate()
+
+
+class HRP(Field):
+    """
+    Finds all HRP codes for an activity.
+    """
+    def generate(self):
+        hrps = self.activity.xpath('humanitarian-scope[@type="2"][@vocabulary="2-1"]')
+        return "; ".join([hrp.get('code') for hrp in hrps])
+
+    def __init__(self, activity, lang):
+        self.activity = activity
         self.value = self.generate()
 
 

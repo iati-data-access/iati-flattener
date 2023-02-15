@@ -69,6 +69,13 @@ class FlattenIATIData():
                 csvwriter.writerow(self.csv_headers)
 
 
+    def setup_organisations(self):
+        for organisation in self.organisations['en'].keys():
+            with open('output/csv/activities/{}.csv'.format(organisation.replace("/", "_")), 'w') as csvfile:
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.activity_csv_headers)
+
+
     def process_transaction(self, csvwriter, activity, transaction):
         _transaction = model.Transaction(activity, transaction, self.activity_cache,
             self.exchange_rates, self.countries_currencies, True, self.organisations, self.langs)
@@ -95,11 +102,30 @@ class FlattenIATIData():
             flat_transaction_budget=_part_flat_budget).output()
 
 
+    def process_activity(self, csvwriter, activity):
+        _activity = model.Activity(activity, self.activity_cache,
+            self.organisations, self.langs)
+        generated = _activity.generate()
+        model.ActivityCSV(
+            organisations = self.organisations['en'].keys(),
+            csv_writer=csvwriter,
+            activity_data=_activity.as_csv_dict()).output()
+
+
     def process_package(self, publisher, package):
 
         doc = etree.parse(os.path.join(self.iatikitcache_dir, "data", "{}".format(publisher), "{}".format(package)))
         if doc.getroot().get("version") not in ['2.01', '2.02', '2.03']: return
         self.activity_cache = model.ActivityCache()
+
+        activity_csvwriter = model.ActivityCSVFilesWriter(
+            self.output_dir,
+            headers=self.activity_csv_headers)
+        activities = doc.xpath("//iati-activity")
+        for activity in activities:
+            self.process_activity(activity_csvwriter, activity)
+
+        activity_csvwriter.write()
 
         csvwriter = model.CSVFilesWriter(budget_transaction='transaction',
             headers=self.csv_headers)
@@ -108,6 +134,7 @@ class FlattenIATIData():
             self.process_transaction(csvwriter, transaction.getparent(), transaction)
 
         csvwriter.write()
+
         csvwriter = model.CSVFilesWriter(budget_transaction='budget',
             headers=self.csv_headers)
         activities = doc.xpath("//iati-activity[budget]")
@@ -153,13 +180,20 @@ class FlattenIATIData():
         self.iatikitcache_dir = iatikitcache_dir
         self.langs = langs
         self.csv_headers = variables.headers(langs)
+        self.activity_csv_headers = variables.activity_headers(langs)
         self.output_dir = output
         os.makedirs(self.output_dir, exist_ok=True)
+        os.makedirs(os.path.join(self.output_dir, 'csv', 'activities'), exist_ok=True)
         if publishers is None:
             self.publishers = os.listdir(os.path.join(self.iatikitcache_dir, "data"))
         else:
             self.publishers = publishers
         self.publishers.sort()
+        print("Setting up codelists...")
         self.setup_codelists(refresh_rates=refresh_rates)
+        print("Setting up countries...")
         self.setup_countries()
+        print("Setting up organisations...")
+        self.setup_organisations()
+        print("Processing publishers...")
         self.run_for_publishers()

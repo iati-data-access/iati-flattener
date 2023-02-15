@@ -17,7 +17,14 @@ TRANSACTION_TYPES_RULES = {
 
 
 def fix_narrative(ref, text):
-    return text.strip()
+    # We currently don't try to do anything clever with
+    # narratives, though we could eventually look up
+    # e.g. organisation names.
+    # Narratives should always have a text, but sometimes
+    # they are declared and are empty :/
+    if text is not None:
+        return text.strip()
+    return ""
 
 
 def get_narrative(container, lang='en'):
@@ -25,7 +32,7 @@ def get_narrative(container, lang='en'):
     if len(narratives) == 0: return ""
     if len(narratives) == 1:
         if narratives[0].text:
-            return fix_narrative(container.get('ref'), narratives[0].text.strip())
+            return fix_narrative(container.get('ref'), narratives[0].text)
         else: return ""
 
     def filter_lang_non_en(element):
@@ -43,8 +50,8 @@ def get_narrative(container, lang='en'):
     if len(filtered) == 0:
         filtered = list(filter(filter_lang, narratives))
         if len(filtered)==0:
-            return fix_narrative(container.get('ref'), narratives[0].text.strip())
-    return fix_narrative(container.get('ref'), filtered[0].text.strip())
+            return fix_narrative(container.get('ref'), narratives[0].text)
+    return fix_narrative(container.get('ref'), filtered[0].text)
 
 
 def get_org_name(organisations, ref, text=None):
