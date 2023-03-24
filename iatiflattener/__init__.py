@@ -4,6 +4,7 @@ import csv
 import time
 import datetime
 import collections
+from bdb import BdbQuit
 
 from lxml import etree
 import requests
@@ -158,9 +159,11 @@ class FlattenIATIData():
                     try:
                         if package.endswith(".xml"):
                             self.process_package(publisher, package)
+                    except BdbQuit:
+                        raise
                     except Exception as e:
                         print("Exception with package {}".format(package))
-                        print("Exception was {}".format(e))
+                        print("Exception was {}".format(repr(e)))
                         continue
             except NotADirectoryError:
                 continue
