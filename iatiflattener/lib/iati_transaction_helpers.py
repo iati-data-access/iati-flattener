@@ -1,5 +1,5 @@
 from .iati_helpers import value_in_usd
-from .utils import get_first
+from .utils import get_first, get_date
 from collections import defaultdict
 
 def get_codes_from_transactions(transactions, exchange_rates):
@@ -15,8 +15,8 @@ def get_codes_from_transactions(transactions, exchange_rates):
             'USD',
             value_in_usd(
                 value=transaction[2],
-                currency=t[1],
-                value_date=get_date(value_date=t[3]),
+                currency=transaction[1],
+                value_date=get_date(transaction[3]),
                 exchange_rates=exchange_rates
             ),
             transaction[3]

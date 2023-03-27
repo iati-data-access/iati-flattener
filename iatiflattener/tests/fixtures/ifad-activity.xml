@@ -1,0 +1,1046 @@
+<iati-activities xmlns:iati-extra="https://datastore.codeforiati.org/ns" generated-datetime="2023-03-27T17:07:02.358185"><iati-activity iati-extra:version="2.03" xml:lang="en" default-currency="USD">
+    <iati-identifier>XM-DAC-41108-1100001761</iati-identifier>
+    <reporting-org ref="XM-DAC-41108" type="40">
+      <narrative>International Fund for Agricultural Development</narrative>
+    </reporting-org>
+    <title>
+      <narrative>Rural Development: Tree Crops Extension Project</narrative>
+    </title>
+    <description>
+      <narrative>The proposed project will make a special effort to directly support the Government's strategy to promote economic revitalization through export-oriented economic growth with the deeper engagement of the private sector</narrative>
+    </description>
+    <participating-org ref="XM-DAC-41108" role="1" type="40" activity-id="XM-DAC-41108-1100001761">
+      <narrative>International Fund for Agricultural Development</narrative>
+    </participating-org>
+    <other-identifier ref="1100001761" type="A1"/>
+    <activity-status code="2"/>
+    <activity-date type="2" iso-date="2015-12-30"/>
+    <activity-date type="3" iso-date="2025-12-31"/>
+    <contact-info type="1">
+      <organisation>
+        <narrative>International Fund for Agricultural Development</narrative>
+      </organisation>
+      <person-name>
+        <narrative>Pathe Sene, Amath</narrative>
+      </person-name>
+      <telephone>+390654591</telephone>
+      <website>http://www.ifad.org</website>
+    </contact-info>
+    <recipient-country code="LR"/>
+    <location>
+      <location-reach code="1"/>
+      <name>
+        <narrative>Rural Development: Tree Crops Extension Project</narrative>
+      </name>
+      <description>
+        <narrative>This point represents the centroid of the project area. For more detailed geographic information, please refer to the project page on the IFAD website.</narrative>
+      </description>
+      <point srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+        <pos>6.800868936266495 -8.779286634257593</pos>
+      </point>
+      <exactness code="1"/>
+    </location>
+    <sector vocabulary="2" code="430"/>
+    <collaboration-type code="2"/>
+    <default-aid-type code="C01"/>
+    <default-tied-status code="5"/>
+    <transaction>
+      <transaction-type code="2"/>
+      <transaction-date iso-date="2015-12-10"/>
+      <value currency="XDR" value-date="2015-12-10">9480000.00</value>
+      <description>
+        <narrative>2000000632 LOANS</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2019-09-17"/>
+      <value currency="XDR" value-date="2019-09-17">187027.46</value>
+      <description>
+        <narrative>2000000632 001RFDB192560034 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-08-04"/>
+      <value currency="XDR" value-date="2021-08-04">305270.65</value>
+      <description>
+        <narrative>2000000632 001RFDB212140008 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-03-30"/>
+      <value currency="XDR" value-date="2020-03-30">447585.25</value>
+      <description>
+        <narrative>2000000632 001RFDB200860007 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-09-22"/>
+      <value currency="XDR" value-date="2020-09-22">82144.09</value>
+      <description>
+        <narrative>2000000632 001RFDB202620009 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-05-16"/>
+      <value currency="XDR" value-date="2022-05-16">278343.63</value>
+      <description>
+        <narrative>2000000632 001RFDB221320003 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2019-05-16"/>
+      <value currency="XDR" value-date="2019-05-16">1063349.33</value>
+      <description>
+        <narrative>2000000632 001RFDB191340026 Designated Special</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2019-11-27"/>
+      <value currency="XDR" value-date="2019-11-27">152269.30</value>
+      <description>
+        <narrative>2000000632 001RFDB193290013 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-12-23"/>
+      <value currency="XDR" value-date="2020-12-23">281206.66</value>
+      <description>
+        <narrative>2000000632 001RFDB203560017 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-02-04"/>
+      <value currency="XDR" value-date="2022-02-04">358161.88</value>
+      <description>
+        <narrative>2000000632 001RFDB220330008 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-08-12"/>
+      <value currency="XDR" value-date="2022-08-12">211604.52</value>
+      <description>
+        <narrative>2000000632 001RFDB222220002 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-10-06"/>
+      <value currency="XDR" value-date="2022-10-06">298260.32</value>
+      <description>
+        <narrative>2000000632 001RFDB222790002 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-02-10"/>
+      <value currency="XDR" value-date="2020-02-10">245207.10</value>
+      <description>
+        <narrative>2000000632 001RFDB200370005 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-12-30"/>
+      <value currency="XDR" value-date="2020-12-30">233232.84</value>
+      <description>
+        <narrative>2000000632 001RFDB203630011 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-12-13"/>
+      <value currency="XDR" value-date="2021-12-13">228557.59</value>
+      <description>
+        <narrative>2000000632 001RFDB213430012 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2017-11-17"/>
+      <value currency="XDR" value-date="2017-11-17">121599.78</value>
+      <description>
+        <narrative>2000000632 001RFDB173190004 Designated Special</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2023-03-15"/>
+      <value currency="XDR" value-date="2023-03-15">1000887.06</value>
+      <description>
+        <narrative>2000000632 001RFDB230720002 Designated Special</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-07-06"/>
+      <value currency="XDR" value-date="2020-07-06">214954.24</value>
+      <description>
+        <narrative>2000000632 001RFDB201840008 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000000632" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="2"/>
+      <transaction-date iso-date="2014-12-25"/>
+      <value currency="XDR" value-date="2014-12-25">3280000.00</value>
+      <description>
+        <narrative>2000001473 GRANTS</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-12-31"/>
+      <value currency="XDR" value-date="2020-12-31">202802.91</value>
+      <description>
+        <narrative>2000001473 001RFDB203640003 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-11-16"/>
+      <value currency="XDR" value-date="2021-11-16">190491.77</value>
+      <description>
+        <narrative>2000001473 001RFDB213150014 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2019-09-17"/>
+      <value currency="XDR" value-date="2019-09-17">19270.45</value>
+      <description>
+        <narrative>2000001473 001RFDB192560031 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-08-12"/>
+      <value currency="XDR" value-date="2022-08-12">129910.11</value>
+      <description>
+        <narrative>2000001473 001RFDB222220003 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-05-31"/>
+      <value currency="XDR" value-date="2022-05-31">123258.74</value>
+      <description>
+        <narrative>2000001473 001RFDB221470017 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2019-05-16"/>
+      <value currency="XDR" value-date="2019-05-16">485824.66</value>
+      <description>
+        <narrative>2000001473 001RFDB191340028 Designated Special</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-01-14"/>
+      <value currency="XDR" value-date="2022-01-14">300083.24</value>
+      <description>
+        <narrative>2000001473 001RFDB220130014 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-04-13"/>
+      <value currency="XDR" value-date="2021-04-13">335580.17</value>
+      <description>
+        <narrative>2000001473 001RFDB210990006 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-09-22"/>
+      <value currency="XDR" value-date="2020-09-22">272619.29</value>
+      <description>
+        <narrative>2000001473 001RFDB202620008 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-12-12"/>
+      <value currency="XDR" value-date="2022-12-12">190825.82</value>
+      <description>
+        <narrative>2000001473 001RFDB223420023 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2017-11-17"/>
+      <value currency="XDR" value-date="2017-11-17">20149.69</value>
+      <description>
+        <narrative>2000001473 001RFDB173190005 Designated Special</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-02-14"/>
+      <value currency="XDR" value-date="2020-02-14">60081.86</value>
+      <description>
+        <narrative>2000001473 001RFDB200430014 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-03-27"/>
+      <value currency="XDR" value-date="2020-03-27">262340.92</value>
+      <description>
+        <narrative>2000001473 001RFDB200850004 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-08-04"/>
+      <value currency="XDR" value-date="2021-08-04">192055.98</value>
+      <description>
+        <narrative>2000001473 001RFDB212140007 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000001473" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="2"/>
+      <transaction-date iso-date="2019-09-09"/>
+      <value currency="USD" value-date="2019-09-09">2400000.00</value>
+      <description>
+        <narrative>2000003090 DSF</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003090" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-07-12"/>
+      <value currency="USD" value-date="2021-07-12">197769.63</value>
+      <description>
+        <narrative>2000003090 001RFDB211890010 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003090" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-03-16"/>
+      <value currency="USD" value-date="2021-03-16">190553.15</value>
+      <description>
+        <narrative>2000003090 001RFDB210710002 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003090" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-01-14"/>
+      <value currency="USD" value-date="2022-01-14">296102.13</value>
+      <description>
+        <narrative>2000003090 001RFDB220130016 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003090" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2023-03-15"/>
+      <value currency="USD" value-date="2023-03-15">179932.95</value>
+      <description>
+        <narrative>2000003090 001RFDB230720003 Designated Special</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003090" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-06-09"/>
+      <value currency="USD" value-date="2022-06-09">295436.77</value>
+      <description>
+        <narrative>2000003090 001RFDB221580007 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003090" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-12-30"/>
+      <value currency="USD" value-date="2020-12-30">140000.00</value>
+      <description>
+        <narrative>2000003090 001RFDB203630006 Designated Special</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003090" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-12-12"/>
+      <value currency="USD" value-date="2022-12-12">245000.00</value>
+      <description>
+        <narrative>2000003090 001RFDB223420006 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003090" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-12-22"/>
+      <value currency="USD" value-date="2020-12-22">160000.00</value>
+      <description>
+        <narrative>2000003090 001RFDB203530009 Designated Special</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003090" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-08-04"/>
+      <value currency="USD" value-date="2021-08-04">189611.23</value>
+      <description>
+        <narrative>2000003090 001RFDB212140009 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003090" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="2"/>
+      <transaction-date iso-date="2019-09-09"/>
+      <value currency="USD" value-date="2019-09-09">6600000.00</value>
+      <description>
+        <narrative>2000003091 LOANS</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-08-10"/>
+      <value currency="USD" value-date="2022-08-10">690319.80</value>
+      <description>
+        <narrative>2000003091 001RFDB222200001 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-04-22"/>
+      <value currency="USD" value-date="2022-04-22">369642.43</value>
+      <description>
+        <narrative>2000003091 001RFDB221100007 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-12-12"/>
+      <value currency="USD" value-date="2022-12-12">527244.70</value>
+      <description>
+        <narrative>2000003091 001RFDB223420005 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-07-12"/>
+      <value currency="USD" value-date="2021-07-12">195022.08</value>
+      <description>
+        <narrative>2000003091 001RFDB211890009 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-12-30"/>
+      <value currency="USD" value-date="2020-12-30">260000.00</value>
+      <description>
+        <narrative>2000003091 001RFDB203630005 Designated Special</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-03-22"/>
+      <value currency="USD" value-date="2022-03-22">390116.61</value>
+      <description>
+        <narrative>2000003091 001RFDB220770002 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2023-03-15"/>
+      <value currency="USD" value-date="2023-03-15">388361.55</value>
+      <description>
+        <narrative>2000003091 001RFDB230720004 Designated Special</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2020-12-22"/>
+      <value currency="USD" value-date="2020-12-22">440000.00</value>
+      <description>
+        <narrative>2000003091 001RFDB203530010 Designated Special</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-08-13"/>
+      <value currency="USD" value-date="2021-08-13">213720.91</value>
+      <description>
+        <narrative>2000003091 001RFDB212230009 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-01-14"/>
+      <value currency="USD" value-date="2022-01-14">580276.55</value>
+      <description>
+        <narrative>2000003091 001RFDB220130017 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-02-19"/>
+      <value currency="USD" value-date="2021-02-19">463573.05</value>
+      <description>
+        <narrative>2000003091 001RFDB210480004 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-05-31"/>
+      <value currency="USD" value-date="2022-05-31">318764.23</value>
+      <description>
+        <narrative>2000003091 001RFDB221470013 Replenishment</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003091" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="421"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="2"/>
+      <transaction-date iso-date="2020-09-17"/>
+      <value currency="USD" value-date="2020-09-17">488983.00</value>
+      <description>
+        <narrative>2000003561 GRANTS</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003561" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-10-05"/>
+      <value currency="USD" value-date="2022-10-05">-2347.41</value>
+      <description>
+        <narrative>2000003561 001RFDB220330006 Designated Advance</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003561" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-02-04"/>
+      <value currency="USD" value-date="2022-02-04">88983.00</value>
+      <description>
+        <narrative>2000003561 001RFDB220330006 Designated Advance</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003561" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-05-18"/>
+      <value currency="USD" value-date="2021-05-18">400000.00</value>
+      <description>
+        <narrative>2000003561 001RFDB211340005 Designated Advance</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003561" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="2"/>
+      <transaction-date iso-date="2021-06-16"/>
+      <value currency="USD" value-date="2021-06-16">597280.00</value>
+      <description>
+        <narrative>2000003859 GRANTS</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003859" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-02-09"/>
+      <value currency="USD" value-date="2022-02-09">59728.00</value>
+      <description>
+        <narrative>2000003859 001RFDB220380003 Designated Advance</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003859" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2022-10-01"/>
+      <value currency="USD" value-date="2022-10-01">-243.60</value>
+      <description>
+        <narrative>2000003859 001RFDB220380003 Designated Advance</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003859" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="3"/>
+      <transaction-date iso-date="2021-12-03"/>
+      <value currency="USD" value-date="2021-12-03">537552.00</value>
+      <description>
+        <narrative>2000003859 001RFDB213350007 Designated Advance</narrative>
+      </description>
+      <provider-org provider-activity-id="XM-DAC-41108-2000003859" ref="XM-DAC-41108" type="40">
+        <narrative>International Fund for Agricultural Development</narrative>
+      </provider-org>
+      <disbursement-channel code="1"/>
+      <flow-type code="20"/>
+      <finance-type code="110"/>
+      <aid-type code="C01"/>
+    </transaction>
+    <document-link format="application/pdf" url="https://operations.ifad.org/documents/654016/b1c73513-0070-424b-b5fd-8e38849ea221">
+      <title>
+        <narrative>Liberia 1100001761: TCEP Supervision Report December 2022</narrative>
+      </title>
+      <category code="A02"/>
+      <category code="A07"/>
+      <category code="A08"/>
+      <language code="en"/>
+    </document-link>
+    <document-link format="application/pdf" url="https://operations.ifad.org/documents/654016/d8ebd0f3-625c-4143-921b-398f5741e2a9">
+      <title>
+        <narrative>Liberia 1100001761: TCEP Interim (Mid-term) Review Report January 2022</narrative>
+      </title>
+      <category code="A01"/>
+      <category code="A07"/>
+      <category code="A08"/>
+      <language code="en"/>
+    </document-link>
+    <document-link format="text/html" url="https://www.ifad.org/en/web/operations/-/project/1100001761">
+      <title>
+        <narrative>Project page on IFAD corporate website</narrative>
+      </title>
+      <description>
+        <narrative>The IFAD website includes a specific page for this project.  More information can be found here.</narrative>
+      </description>
+      <category code="A12"/>
+      <language code="en"/>
+    </document-link>
+    <document-link format="text/html" url="https://www.ifad.org/en/iati">
+      <title>
+        <narrative>IATI documentation on IFAD corporate website</narrative>
+      </title>
+      <description>
+        <narrative>More information on how IFAD publish IATI data to ensure the effectiveness of development.</narrative>
+      </description>
+      <category code="A12"/>
+      <language code="en"/>
+    </document-link>
+  </iati-activity>
+  </iati-activities>
