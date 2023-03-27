@@ -80,7 +80,7 @@ class FlattenIATIData():
         _transaction = model.Transaction(activity, transaction, self.activity_cache,
             self.exchange_rates, self.countries_currencies, True, self.organisations, self.langs)
         generated = _transaction.generate()
-        if generated:
+        if generated is not False:
             _flat_transaction = model.FlatTransaction(_transaction, self.category_group).flatten()
             for _part_flat_transaction in _flat_transaction:
                 transaction_csv = model.FlatTransactionBudgetCSV(
@@ -93,7 +93,7 @@ class FlattenIATIData():
         _budget = model.ActivityBudget(activity, self.activity_cache,
             self.exchange_rates, self.countries_currencies, self.organisations, self.langs)
         generated = _budget.generate()
-        if generated:
+        if generated is not False:
             _flat_budget = model.FlatBudget(_budget, self.category_group).flatten()
         for _part_flat_budget in _flat_budget:
             transaction_csv = model.FlatTransactionBudgetCSV(
