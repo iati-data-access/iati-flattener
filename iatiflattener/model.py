@@ -519,7 +519,7 @@ class ActivityBudget(Common):
         self.receiver_org_type = self._receiver_org_type()
         self.transaction_type = SimpleField('budget')
         self.url = self._dportal_url()
-        return True
+        return self
 
     def __init__(self, activity, activity_cache, exchange_rates, currencies,
             organisations_cache={}, langs=['en']):
@@ -644,7 +644,7 @@ class Transaction(Common):
         self.value_eur = self._exchange_rate_eur()
         self.value_local = self._values_local()
         self.url = self._dportal_url()
-        return True
+        return self
 
     def __init__(self, activity, transaction, activity_cache, exchange_rates,
             currencies, limit_transaction_types=True, organisations_cache={},
