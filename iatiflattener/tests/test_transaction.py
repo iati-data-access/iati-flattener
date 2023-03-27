@@ -20,7 +20,7 @@ def write_outputs(publisher, transaction, flat_transaction_json):
         json_file.write(flat_transaction_json)
 
 
-@pytest.mark.parametrize("publisher", ["fcdo", "canada", "usaid", "usaid-humanitarian"])
+@pytest.mark.parametrize("publisher", ["fcdo", "canada", "usaid", "usaid-humanitarian", "ifad"])
 class TestModel():
 
     @pytest.fixture()
