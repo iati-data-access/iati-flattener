@@ -32,7 +32,8 @@ class TestModel():
             output='output_test',
             publishers=None,
             langs=['en', 'fr'],
-            run_publishers=False
+            run_publishers=False,
+            exchange_rates_filename="iatiflattener/tests/fixtures/rates.csv"
         )
 
 
@@ -81,9 +82,9 @@ class TestModel():
             'provider_org_type': '', 'receiver_org#en': 'Adam Smith International [GB-COH-2732176]',
             'receiver_org#fr': 'Adam Smith International [GB-COH-2732176]', 'receiver_org_type': '70',
             'transaction_type': '3', 'value_original': '1232.0', 'currency_original': 'GBP',
-            'value_usd': '1796.2559999999992', 'exchange_rate_date': '2010-05-31',
-            'exchange_rate': '0.685871056241427', 'value_eur': '1459.5400991305746',
-            'value_local': '128432.30399999995',
+            'value_usd': '1696.3408008150918', 'exchange_rate_date': '2021-08-31',
+            'exchange_rate': '0.726269155', 'value_eur': '1433.446680400464',
+            'value_local': '0.0',
             'transaction_date': '2010-05-27', 'country_code': 'LR', 'multi_country': '0',
             'sector_category': '150', 'sector_code': '15110', 'humanitarian': '0', 'fiscal_year': '2010',
             'fiscal_quarter': 'Q2',
@@ -97,7 +98,7 @@ class TestModel():
 
     def test_first_row_en(self, flattener, package, groupedfile_en):
         first_row = [cell.value for cell in next(groupedfile_en.worksheets[0].iter_rows(min_row=2, max_row=2))]
-        assert first_row ==  ['GB-1-103662-101', 'PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia', 'UK - Foreign, Commonwealth and Development Office [GB-GOV-1]', '10 - Government', 'C01 - Project-type interventions', '110 - Standard grant', '10 - ODA', 'UK - Foreign, Commonwealth and Development Office [GB-GOV-1]', 'No data', 'Adam Smith International [GB-COH-2732176]', '70 - Private Sector', '3 - Disbursement', 'LR - Liberia', 0, '150 - Government & Civil Society', '15110 - Public sector policy and administrative management', 0, 2010, 'Q2', '2010 Q2', 'https://d-portal.org/q.html?aid=GB-1-103662-101', 1796.256, 1459.54009913057, 128432.304]
+        assert first_row == ['GB-1-103662-101', 'PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia', 'UK - Foreign, Commonwealth and Development Office [GB-GOV-1]', '10 - Government', 'C01 - Project-type interventions', '110 - Standard grant', '10 - ODA', 'UK - Foreign, Commonwealth and Development Office [GB-GOV-1]', 'No data', 'Adam Smith International [GB-COH-2732176]', '70 - Private Sector', '3 - Disbursement', 'LR - Liberia', 0, '150 - Government & Civil Society', '15110 - Public sector policy and administrative management', 0, 2010, 'Q2', '2010 Q2', 'https://d-portal.org/q.html?aid=GB-1-103662-101', 1696.34080081509, 1433.44668040046, 0]
 
     def test_group_headers_fr(self, flattener, package, groupedfile_fr):
         headers_row = [cell.value for cell in next(groupedfile_fr.worksheets[0].iter_rows(min_row=1, max_row=1))]
@@ -105,4 +106,4 @@ class TestModel():
 
     def test_first_row_fr(self, flattener, package, groupedfile_fr):
         first_row = [cell.value for cell in next(groupedfile_fr.worksheets[0].iter_rows(min_row=2, max_row=2))]
-        assert first_row == ['GB-1-103662-101', 'PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia', 'Royaume-Uni – Ministère des Affaires étrangères, du Commonwealth et du ' 'Développement [GB-GOV-1]', '10 - Gouvernement', 'C01 - Interventions de type projet', '110 - Dons ordinaires', '10 - APD', 'Royaume-Uni – Ministère des Affaires étrangères, du Commonwealth et du ' 'Développement [GB-GOV-1]', 'Aucune donnée', 'Adam Smith International [GB-COH-2732176]', '70 - Secteur privé', '3 - Décaissement', 'LR - Libéria (le)', 0, '150 - Gouvernement & Société Civile', '15110 - Politiques publiques et gestion administrative', 0, 2010, 'Q2', '2010 Q2', 'https://d-portal.org/q.html?aid=GB-1-103662-101', 1796.256, 1459.54009913057, 128432.304]
+        assert first_row == ['GB-1-103662-101', 'PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia', 'Royaume-Uni – Ministère des Affaires étrangères, du Commonwealth et du ' 'Développement [GB-GOV-1]', '10 - Gouvernement', 'C01 - Interventions de type projet', '110 - Dons ordinaires', '10 - APD', 'Royaume-Uni – Ministère des Affaires étrangères, du Commonwealth et du ' 'Développement [GB-GOV-1]', 'Aucune donnée', 'Adam Smith International [GB-COH-2732176]', '70 - Secteur privé', '3 - Décaissement', 'LR - Libéria (le)', 0, '150 - Gouvernement & Société Civile', '15110 - Politiques publiques et gestion administrative', 0, 2010, 'Q2', '2010 Q2', 'https://d-portal.org/q.html?aid=GB-1-103662-101', 1696.34080081509, 1433.44668040046, 0]
