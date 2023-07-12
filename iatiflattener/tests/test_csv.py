@@ -22,7 +22,10 @@ class TestModel():
 
     @pytest.fixture(scope='class')
     def flattener(self):
-        shutil.rmtree('output_test/')
+        try:
+            shutil.rmtree('output_test/')
+        except FileNotFoundError:
+            pass
         yield iatiflattener.FlattenIATIData(
             refresh_rates=False,
             iatikitcache_dir='',
