@@ -7,6 +7,7 @@ DPORTAL_URL = "https://d-portal.org/q.html?aid={}"
 HEADERS = OrderedDict({
    'iati_identifier': str,
    'title': str,
+   'reporting_org_group': str,
    'reporting_org': str,
    'reporting_org_type': str,
    'aid_type': str,
@@ -49,6 +50,7 @@ ACTIVITY_HEADERS = OrderedDict({
    'iati_identifier': str,
    'title': str,
    'description': str,
+   'reporting_org_group': str,
    'reporting_org': str,
    'reporting_org_ref': str,
    'location': str,
@@ -112,6 +114,7 @@ def headers_with_langs(langs):
 GROUP_BY_HEADERS = [
    'iati_identifier',
    'title',
+   'reporting_org_group',
    'reporting_org',
    'reporting_org_type',
    'aid_type',
@@ -147,6 +150,7 @@ def group_by_headers_with_lang(lang):
    return [
    'iati_identifier',
    'title#{}'.format(lang),
+   'reporting_org_group',
    'reporting_org#{}'.format(lang),
    'reporting_org_type',
    'aid_type',
@@ -172,6 +176,7 @@ OUTPUT_HEADERS = {
    'en': [
       'IATI Identifier',
       'Title',
+      'Reporting Organisation Group',
       'Reporting Organisation',
       'Reporting Organisation Type',
       'Aid Type',
@@ -198,6 +203,7 @@ OUTPUT_HEADERS = {
    'fr': [
       'Identifiant de l’IITA',
       'Titre',
+      'Groupe d’organisme déclarant',
       'Organisme déclarant',
       'Type d’organisme déclarant',
       'Type d’aide',
@@ -224,6 +230,7 @@ OUTPUT_HEADERS = {
    'es': [
       'Identificador de la IATI',
       'Título',
+      'Groupo de organización informante',
       'Organización informante',
       'Tipo de organización informante',
       'Tipo de ayuda',
@@ -250,6 +257,7 @@ OUTPUT_HEADERS = {
    'pt': [
       'Identificador da IATI',
       'Título',
+      'Grupo da organização relatora',
       'Organização relatora',
       'Tipo de organização relatora',
       'Tipo de ajuda',

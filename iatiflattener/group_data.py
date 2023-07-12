@@ -27,6 +27,7 @@ class GroupFlatIATIData():
             region_req = self.get_codelist_with_fallback(lang, "Region")
             sector_req = self.get_codelist_with_fallback(lang, "Sector")
             sector_groups_req = self.get_codelist_with_fallback(lang, "SectorGroup")
+            reporting_org_groups_req = self.get_codelist_with_fallback(lang, "ReportingOrganisationGroup")
 
             country_names = dict(map(lambda country: (country['code'], country['name']), country_req.json()["data"]))
             region_names = dict(map(lambda region: (region['code'], region['name']), region_req.json()["data"]))
@@ -52,6 +53,7 @@ class GroupFlatIATIData():
             sector_sector_categories = dict(map(lambda code: (code['codeforiati:group-code'], code['codeforiati:group-name']), sector_groups_req.json()['data']))
             self.column_codelist[lang]['sector_category'] = sector_sector_categories
             self.column_codelist[lang]['country_code'] = self.country_names[lang]
+            self.column_codelist[lang]['reporting_org_group'] = dict([(org['codeforiati:group-code'], org['codeforiati:group-name']) for org in reporting_org_groups_req.json()['data']])
 
     def make_conditions_outputs(self, codelist, dataframe):
         cl_key = codelist[0]

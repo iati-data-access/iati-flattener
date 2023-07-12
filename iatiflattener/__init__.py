@@ -58,6 +58,9 @@ class FlattenIATIData():
         countries_currencies_req = requests.get(COUNTRIES_CURRENCIES_URL)
         self.countries_currencies = countries_currencies_req.json()
 
+        reporting_org_groups_req = requests.get(CODELIST_URL.format("ReportingOrganisationGroup"))
+        self.reporting_organisation_groups = dict([(org.get('code'), org.get('codeforiati:group-code')) for org in reporting_org_groups_req.json()['data']])
+
 
     def setup_countries(self):
         for country in self.countries:
@@ -78,7 +81,8 @@ class FlattenIATIData():
 
     def process_transaction(self, csvwriter, activity, transaction):
         _transaction = model.Transaction(activity, transaction, self.activity_cache,
-            self.exchange_rates, self.countries_currencies, True, self.organisations, self.langs)
+            self.exchange_rates, self.countries_currencies, True, self.organisations, self.langs,
+            self.reporting_organisation_groups)
         generated = _transaction.generate()
         if generated is not False:
             _flat_transaction = model.FlatTransaction(_transaction, self.category_group).flatten()
@@ -91,7 +95,8 @@ class FlattenIATIData():
 
     def process_activity_for_budgets(self, csvwriter, activity):
         _budget = model.ActivityBudget(activity, self.activity_cache,
-            self.exchange_rates, self.countries_currencies, self.organisations, self.langs)
+            self.exchange_rates, self.countries_currencies, self.organisations, self.langs,
+            self.reporting_organisation_groups)
         generated = _budget.generate()
         if generated is not False:
             _flat_budget = model.FlatBudget(_budget, self.category_group).flatten()
@@ -104,7 +109,8 @@ class FlattenIATIData():
 
     def process_activity(self, csvwriter, activity):
         _activity = model.Activity(activity, self.activity_cache,
-            self.organisations, self.langs)
+            self.organisations, self.langs,
+            self.reporting_organisation_groups)
         generated = _activity.generate()
         model.ActivityCSV(
             organisations = self.organisations['en'].keys(),
