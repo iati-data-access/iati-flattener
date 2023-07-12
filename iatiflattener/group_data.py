@@ -93,7 +93,7 @@ class GroupFlatIATIData():
     def get_dataframe(self, country_code, transaction_budget, lang):
         full_df = pd.DataFrame()
         print("Read CSV {}-{}.csv".format(transaction_budget, country_code))
-        for df in pd.read_csv("output/csv/{}-{}.csv".format(transaction_budget, country_code),
+        for df in pd.read_csv(f"{self.output_folder}/csv/{transaction_budget}-{country_code}.csv",
             dtype=self.CSV_HEADER_DTYPES,
             chunksize=100000):
             print("Reading chunk...")
@@ -139,19 +139,19 @@ class GroupFlatIATIData():
                         page = (start/output_rows)+1
                         self.write_dataframe_to_excel(
                             dataframe = df_part,
-                            filename = "output/xlsx/{}/{}-{}.xlsx".format(lang, country_code, page),
+                            filename = f"{self.output_folder}/xlsx/{lang}/{country_code}-{page}.xlsx",
                             lang = lang)
                 else:
                     self.write_dataframe_to_excel(
                         dataframe = df,
-                        filename = "output/xlsx/{}/{}.xlsx".format(lang, country_code),
+                        filename = f"{self.output_folder}/xlsx/{lang}/{country_code}.xlsx",
                         lang = lang)
 
 
     def group_data(self):
         for lang in self.langs:
-            os.makedirs('output/xlsx/{}/'.format(lang), exist_ok=True)
-        csv_files = os.listdir("output/csv/")
+            os.makedirs(f'{self.output_folder}/xlsx/{lang}/', exist_ok=True)
+        csv_files = os.listdir(f"{self.output_folder}/csv/")
         csv_files.sort()
         print("BEGINNING PROCESS AT {}".format(datetime.datetime.utcnow()))
         list_of_files = []
@@ -168,9 +168,9 @@ class GroupFlatIATIData():
             end = time.time()
             print("Processing {} took {}s".format(country_code, end-start))
         for lang in self.langs:
-            filenames = os.listdir('output/xlsx/{}'.format(lang))
+            filenames = os.listdir(f'{self.output_folder}/xlsx/{lang}')
             country_files = [os.path.splitext(filename)[0] for filename in filenames if filename.endswith(".xlsx")]
-            with open('output/xlsx/{}/index.json'.format(lang), 'w') as json_file:
+            with open(f'{self.output_folder}/xlsx/{lang}/index.json', 'w') as json_file:
                 countries = [{
                     'country_code': country_code,
                     'country_name': country_name,
@@ -184,7 +184,8 @@ class GroupFlatIATIData():
                 }, json_file)
         print("FINISHED PROCESS AT {}".format(datetime.datetime.utcnow()))
 
-    def __init__(self, langs=['en']):
+    def __init__(self, langs=['en'], output_folder='output'):
+        self.output_folder = output_folder
         self.langs = langs
         self.CSV_HEADERS = variables.headers(langs)
         self._DTYPES = variables.dtypes(langs)
