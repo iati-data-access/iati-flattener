@@ -1,21 +1,11 @@
 import os
-import datetime
 import pytest
-import exchangerates
 import iatiflattener
 from iatiflattener import model
 from iatiflattener import group_data
-from lxml import etree
 import csv
 import shutil
 import openpyxl
-
-exchange_rates = exchangerates.CurrencyConverter(
-    update=False, source="iatiflattener/tests/fixtures/rates.csv")
-
-assert "GBP" in exchange_rates.known_currencies()
-
-countries_currencies = {'BD': 'BDT'}
 
 
 class TestModel():
@@ -75,7 +65,22 @@ class TestModel():
 
     def test_activity_row(self, flattener, package, activity_csvfile):
         first_row = next(activity_csvfile)
-        assert first_row == {'iati_identifier': 'GB-1-103662-101', 'title#en': 'PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia', 'title#fr': 'PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia', 'description#en': "This activity (PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia) is a component of Civil Ser. Cap. Bldng. Liberia reported by FCDO, with a funding type of 'Procurement of Services' and a budget of £2,721,510. This component benefits Liberia, and works in the following sector(s): Public sector policy and administrative management. , with the following implementing partners: Adam Smith International. The start date is 01-12-2006 and the end date is 31-03-2010.", 'description#fr': "This activity (PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia) is a component of Civil Ser. Cap. Bldng. Liberia reported by FCDO, with a funding type of 'Procurement of Services' and a budget of £2,721,510. This component benefits Liberia, and works in the following sector(s): Public sector policy and administrative management. , with the following implementing partners: Adam Smith International. The start date is 01-12-2006 and the end date is 31-03-2010.", 'reporting_org#en': 'UK - Foreign, Commonwealth and Development Office [GB-GOV-1]', 'reporting_org#fr': 'Royaume-Uni – Ministère des Affaires étrangères, du Commonwealth et du Développement [GB-GOV-1]', 'reporting_org_ref': 'GB-GOV-1', 'location': '', 'start_date': '2006-12-01', 'end_date': '2010-03-31', 'GLIDE': '', 'HRP': ''}
+        assert first_row == {
+            'iati_identifier': 'GB-1-103662-101',
+            'title#en': 'PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia',
+            'title#fr': 'PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia',
+            'description#en': "This activity (PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia) is a component of Civil Ser. Cap. Bldng. Liberia reported by FCDO, with a funding type of 'Procurement of Services' and a budget of £2,721,510. This component benefits Liberia, and works in the following sector(s): Public sector policy and administrative management. , with the following implementing partners: Adam Smith International. The start date is 01-12-2006 and the end date is 31-03-2010.",
+            'description#fr': "This activity (PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia) is a component of Civil Ser. Cap. Bldng. Liberia reported by FCDO, with a funding type of 'Procurement of Services' and a budget of £2,721,510. This component benefits Liberia, and works in the following sector(s): Public sector policy and administrative management. , with the following implementing partners: Adam Smith International. The start date is 01-12-2006 and the end date is 31-03-2010.",
+            'reporting_org#en': 'UK - Foreign, Commonwealth and Development Office [GB-GOV-1]',
+            'reporting_org#fr': 'Royaume-Uni – Ministère des Affaires étrangères, du Commonwealth et du Développement [GB-GOV-1]',
+            'reporting_org_ref': 'GB-GOV-1',
+            'location': '',
+            'start_date': '2006-12-01',
+            'end_date': '2010-03-31',
+            'GLIDE': '',
+            'HRP': '',
+            'hash': '71c4ddbc047173a4a9a1c10635cc03d9'
+        }
 
 
     def test_row(self, flattener, package, csvfile):

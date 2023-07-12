@@ -1,4 +1,6 @@
 import json, datetime, csv, os
+import hashlib
+from lxml import etree
 
 from iatiflattener.lib.utils import get_date, get_fy_fq, get_fy_fq_numeric, get_first
 from iatiflattener.lib.iati_helpers import clean_countries, clean_sectors, get_narrative, get_org_name, get_sector_category, TRANSACTION_TYPES_RULES, get_narrative_text, filter_none
@@ -352,6 +354,9 @@ class Common(FinancialValues):
     def _end_date(self):
         return ActivityDate(self.activity, ['4', '3'])
 
+    def _hash(self):
+        return ActivityHash(self.activity)
+
     def update_cache(self, field):
         self.activity_cache = field.activity_cache
         return field
@@ -566,6 +571,7 @@ class Activity(Common):
         self.end_date = self._end_date()
         self.GLIDE = self._GLIDE()
         self.HRP = self._HRP()
+        self.hash = self._hash()
 
     def __init__(self, activity, activity_cache,
             organisations_cache={}, langs=['en']):
@@ -579,12 +585,12 @@ class Activity(Common):
             'reporting_org',
             'reporting_org_ref',
             'location', 'GLIDE', 'HRP',
-            'start_date', 'end_date']
+            'start_date', 'end_date', 'hash']
         self.fields = ['iati_identifier', 'title', 'description',
             'reporting_org',
             'reporting_org_ref',
             'location', 'GLIDE', 'HRP',
-            'start_date', 'end_date']
+            'start_date', 'end_date', 'hash']
         self.fields_with_attributes = {
             'reporting_org': {
                 '': 'display',
@@ -707,6 +713,18 @@ class IATIIdentifier(Field):
     def __init__(self, activity):
         self.activity = activity
         self.value = activity.find('iati-identifier').text
+
+
+class ActivityHash(Field):
+    def generate(self):
+        string = etree.tostring(self.activity)
+        m = hashlib.md5()
+        m.update(string)
+        return m.hexdigest()
+
+    def __init__(self, activity):
+        self.activity = activity
+        self.value = self.generate()
 
 
 class Title(Field):

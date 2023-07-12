@@ -55,7 +55,8 @@ ACTIVITY_HEADERS = OrderedDict({
    'start_date': str,
    'end_date': str,
    'GLIDE': str,
-   'HRP': str
+   'HRP': str,
+   'hash': str
 })
 
 
