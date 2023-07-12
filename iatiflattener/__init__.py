@@ -61,17 +61,17 @@ class FlattenIATIData():
 
     def setup_countries(self):
         for country in self.countries:
-            with open('output/csv/transaction-{}.csv'.format(country), 'w') as csvfile:
+            with open(f'{self.output_dir}/csv/transaction-{country}.csv', 'w') as csvfile:
                 csvwriter = csv.writer(csvfile)
                 csvwriter.writerow(self.csv_headers)
-            with open('output/csv/budget-{}.csv'.format(country), 'w') as csvfile:
+            with open(f'{self.output_dir}/csv/budget-{country}.csv', 'w') as csvfile:
                 csvwriter = csv.writer(csvfile)
                 csvwriter.writerow(self.csv_headers)
 
 
     def setup_organisations(self):
         for organisation in self.organisations['en'].keys():
-            with open('output/csv/activities/{}.csv'.format(organisation.replace("/", "_")), 'w') as csvfile:
+            with open(f'{self.output_dir}/csv/activities/{organisation.replace("/", "_")}.csv', 'w') as csvfile:
                 csvwriter = csv.writer(csvfile)
                 csvwriter.writerow(self.activity_csv_headers)
 
@@ -112,9 +112,9 @@ class FlattenIATIData():
             activity_data=_activity.as_csv_dict()).output()
 
 
-    def process_package(self, publisher, package):
+    def process_package(self, publisher, package, root_dir):
 
-        doc = etree.parse(os.path.join(self.iatikitcache_dir, "data", "{}".format(publisher), "{}".format(package)))
+        doc = etree.parse(os.path.join(root_dir, "{}".format(package)))
         if doc.getroot().get("version") not in ['2.01', '2.02', '2.03']: return
         self.activity_cache = model.ActivityCache()
 
@@ -128,7 +128,8 @@ class FlattenIATIData():
         activity_csvwriter.write()
 
         csvwriter = model.CSVFilesWriter(budget_transaction='transaction',
-            headers=self.csv_headers)
+            headers=self.csv_headers,
+            output_dir=self.output_dir)
         transactions = doc.xpath("//transaction")
         for transaction in transactions:
             self.process_transaction(csvwriter, transaction.getparent(), transaction)
@@ -136,7 +137,8 @@ class FlattenIATIData():
         csvwriter.write()
 
         csvwriter = model.CSVFilesWriter(budget_transaction='budget',
-            headers=self.csv_headers)
+            headers=self.csv_headers,
+            output_dir=self.output_dir)
         activities = doc.xpath("//iati-activity[budget]")
         for activity in activities:
             self.process_activity_for_budgets(csvwriter, activity)
@@ -152,12 +154,13 @@ class FlattenIATIData():
             start = time.time()
             try:
                 print("Processing {}".format(publisher))
-                packages = os.listdir(os.path.join(self.iatikitcache_dir, "data", "{}".format(publisher)))
+                packages = os.listdir(os.path.join(self.iatikitcache_dir, "data", publisher))
                 packages.sort()
                 for package in packages:
                     try:
                         if package.endswith(".xml"):
-                            self.process_package(publisher, package)
+                            self.process_package(publisher, package,
+                                os.path.join(self.iatikitcache_dir, "data", "publisher"))
                     except Exception as e:
                         print("Exception with package {}".format(package))
                         print("Exception was {}".format(e))
@@ -176,7 +179,8 @@ class FlattenIATIData():
             iatikitcache_dir=os.path.join("__iatikitcache__", "registry"),
             output='output',
             publishers=None,
-            langs=['en', 'fr']):
+            langs=['en', 'fr'],
+            run_publishers=True):
         self.iatikitcache_dir = iatikitcache_dir
         self.langs = langs
         self.csv_headers = variables.headers(langs)
@@ -184,16 +188,17 @@ class FlattenIATIData():
         self.output_dir = output
         os.makedirs(self.output_dir, exist_ok=True)
         os.makedirs(os.path.join(self.output_dir, 'csv', 'activities'), exist_ok=True)
-        if publishers is None:
-            self.publishers = os.listdir(os.path.join(self.iatikitcache_dir, "data"))
-        else:
-            self.publishers = publishers
-        self.publishers.sort()
         print("Setting up codelists...")
         self.setup_codelists(refresh_rates=refresh_rates)
         print("Setting up countries...")
         self.setup_countries()
         print("Setting up organisations...")
         self.setup_organisations()
+        if run_publishers is False: return
         print("Processing publishers...")
+        if publishers is None:
+            self.publishers = os.listdir(os.path.join(self.iatikitcache_dir, "data"))
+        else:
+            self.publishers = publishers
+        self.publishers.sort()
         self.run_for_publishers()
