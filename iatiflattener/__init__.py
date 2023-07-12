@@ -21,20 +21,20 @@ CODELIST_URL_LANG = "https://codelists.codeforiati.org/api/json/{}/{}.json"
 CODELIST_URL = "https://codelists.codeforiati.org/api/json/en/{}.json"
 
 
-# Exchange rates
-def get_exchange_rates(get_rates=True):
-    if get_rates:
-        print("Getting exchange rates data")
-        r_rates = requests.get(EXCHANGE_RATES_URL, stream=True)
-        with open("rates.csv", 'wb') as fd:
-            for chunk in r_rates.iter_content(chunk_size=128):
-                fd.write(chunk)
-        print("Reading in exchange rates data")
-    return exchangerates.CurrencyConverter(
-    update=False, source="rates.csv")
-
-
 class FlattenIATIData():
+
+
+    # Exchange rates
+    def get_exchange_rates(self, get_rates=True):
+        if get_rates:
+            print("Getting exchange rates data")
+            r_rates = requests.get(EXCHANGE_RATES_URL, stream=True)
+            with open(self.exchange_rates_filename, 'wb') as fd:
+                for chunk in r_rates.iter_content(chunk_size=128):
+                    fd.write(chunk)
+            print("Reading in exchange rates data")
+        return exchangerates.CurrencyConverter(
+        update=False, source=self.exchange_rates_filename)
 
     def setup_codelists(self, refresh_rates):
         self.activity_data = {}
@@ -53,7 +53,7 @@ class FlattenIATIData():
             publishers_req = requests.get(CODELIST_URL_LANG.format(lang, "ReportingOrganisation"))
             self.organisations[lang] = dict(map(lambda org: (org['code'], org['name']), publishers_req.json()['data']))
 
-        self.exchange_rates = get_exchange_rates(refresh_rates)
+        self.exchange_rates = self.get_exchange_rates(refresh_rates)
 
         countries_currencies_req = requests.get(COUNTRIES_CURRENCIES_URL)
         self.countries_currencies = countries_currencies_req.json()
@@ -180,7 +180,9 @@ class FlattenIATIData():
             output='output',
             publishers=None,
             langs=['en', 'fr'],
-            run_publishers=True):
+            run_publishers=True,
+            exchange_rates_filename='rates.csv'):
+        self.exchange_rates_filename = exchange_rates_filename
         self.iatikitcache_dir = iatikitcache_dir
         self.langs = langs
         self.csv_headers = variables.headers(langs)
