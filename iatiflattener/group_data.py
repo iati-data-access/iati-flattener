@@ -29,8 +29,12 @@ class GroupFlatIATIData():
             sector_groups_req = self.get_codelist_with_fallback(lang, "SectorGroup")
             reporting_org_groups_req = self.get_codelist_with_fallback(lang, "ReportingOrganisationGroup")
 
-            country_names = dict(map(lambda country: (country['code'], country['name']), country_req.json()["data"]))
-            region_names = dict(map(lambda region: (region['code'], region['name']), region_req.json()["data"]))
+            if self.country_codes:
+                country_names = dict(map(lambda country: (country['code'], country['name']), filter(lambda country: country['code'] in self.country_codes, country_req.json()["data"])))
+                region_names = dict(map(lambda region: (region['code'], region['name']), filter(lambda region: region['code'] in self.country_codes, region_req.json()["data"])))
+            else:
+                country_names = dict(map(lambda country: (country['code'], country['name']), country_req.json()["data"]))
+                region_names = dict(map(lambda region: (region['code'], region['name']), region_req.json()["data"]))
             country_names.update(region_names)
             self.country_names[lang] = country_names
             sector_names = dict(map(lambda country: (country['code'], country['name']), sector_req.json()["data"]))
@@ -186,9 +190,11 @@ class GroupFlatIATIData():
                 }, json_file)
         print("FINISHED PROCESS AT {}".format(datetime.datetime.utcnow()))
 
-    def __init__(self, langs=['en'], output_folder='output'):
+
+    def __init__(self, langs=['en'], country_codes=[], output_folder='output'):
         self.output_folder = output_folder
         self.langs = langs
+        self.country_codes = country_codes
         self.CSV_HEADERS = variables.headers(langs)
         self._DTYPES = variables.dtypes(langs)
         self.CSV_HEADER_DTYPES = dict(map(lambda csv_header: (csv_header[1], self._DTYPES[csv_header[0]]), enumerate(self.CSV_HEADERS)))
