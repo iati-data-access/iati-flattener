@@ -27,6 +27,7 @@ class GroupFlatIATIData():
             region_req = self.get_codelist_with_fallback(lang, "Region")
             sector_req = self.get_codelist_with_fallback(lang, "Sector")
             sector_groups_req = self.get_codelist_with_fallback(lang, "SectorGroup")
+            reporting_org_groups_req = self.get_codelist_with_fallback(lang, "ReportingOrganisationGroup")
 
             if self.country_codes:
                 country_names = dict(map(lambda country: (country['code'], country['name']), filter(lambda country: country['code'] in self.country_codes, country_req.json()["data"])))
@@ -56,6 +57,7 @@ class GroupFlatIATIData():
             sector_sector_categories = dict(map(lambda code: (code['codeforiati:group-code'], code['codeforiati:group-name']), sector_groups_req.json()['data']))
             self.column_codelist[lang]['sector_category'] = sector_sector_categories
             self.column_codelist[lang]['country_code'] = self.country_names[lang]
+            self.column_codelist[lang]['reporting_org_group'] = dict([(org['codeforiati:group-code'], org['codeforiati:group-name']) for org in reporting_org_groups_req.json()['data']])
 
     def make_conditions_outputs(self, codelist, dataframe):
         cl_key = codelist[0]
@@ -97,7 +99,7 @@ class GroupFlatIATIData():
     def get_dataframe(self, country_code, transaction_budget, lang):
         full_df = pd.DataFrame()
         print("Read CSV {}-{}.csv".format(transaction_budget, country_code))
-        for df in pd.read_csv("output/csv/{}-{}.csv".format(transaction_budget, country_code),
+        for df in pd.read_csv(f"{self.output_folder}/csv/{transaction_budget}-{country_code}.csv",
             dtype=self.CSV_HEADER_DTYPES,
             chunksize=100000):
             print("Reading chunk...")
@@ -143,19 +145,19 @@ class GroupFlatIATIData():
                         page = (start/output_rows)+1
                         self.write_dataframe_to_excel(
                             dataframe = df_part,
-                            filename = "output/xlsx/{}/{}-{}.xlsx".format(lang, country_code, page),
+                            filename = f"{self.output_folder}/xlsx/{lang}/{country_code}-{page}.xlsx",
                             lang = lang)
                 else:
                     self.write_dataframe_to_excel(
                         dataframe = df,
-                        filename = "output/xlsx/{}/{}.xlsx".format(lang, country_code),
+                        filename = f"{self.output_folder}/xlsx/{lang}/{country_code}.xlsx",
                         lang = lang)
 
 
     def group_data(self):
         for lang in self.langs:
-            os.makedirs('output/xlsx/{}/'.format(lang), exist_ok=True)
-        csv_files = os.listdir("output/csv/")
+            os.makedirs(f'{self.output_folder}/xlsx/{lang}/', exist_ok=True)
+        csv_files = os.listdir(f"{self.output_folder}/csv/")
         csv_files.sort()
         print("BEGINNING PROCESS AT {}".format(datetime.datetime.utcnow()))
         list_of_files = []
@@ -172,9 +174,9 @@ class GroupFlatIATIData():
             end = time.time()
             print("Processing {} took {}s".format(country_code, end-start))
         for lang in self.langs:
-            filenames = os.listdir('output/xlsx/{}'.format(lang))
+            filenames = os.listdir(f'{self.output_folder}/xlsx/{lang}')
             country_files = [os.path.splitext(filename)[0] for filename in filenames if filename.endswith(".xlsx")]
-            with open('output/xlsx/{}/index.json'.format(lang), 'w') as json_file:
+            with open(f'{self.output_folder}/xlsx/{lang}/index.json', 'w') as json_file:
                 countries = [{
                     'country_code': country_code,
                     'country_name': country_name,
@@ -188,7 +190,9 @@ class GroupFlatIATIData():
                 }, json_file)
         print("FINISHED PROCESS AT {}".format(datetime.datetime.utcnow()))
 
-    def __init__(self, langs=['en'], country_codes=[]):
+
+    def __init__(self, langs=['en'], country_codes=[], output_folder='output'):
+        self.output_folder = output_folder
         self.langs = langs
         self.country_codes = country_codes
         self.CSV_HEADERS = variables.headers(langs)
