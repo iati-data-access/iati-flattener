@@ -166,7 +166,7 @@ class FlattenIATIData():
                     try:
                         if package.endswith(".xml"):
                             self.process_package(publisher, package,
-                                os.path.join(self.iatikitcache_dir, "data", "publisher"))
+                                os.path.join(self.iatikitcache_dir, "data", publisher))
                     except Exception as e:
                         print("Exception with package {}".format(package))
                         print("Exception was {}".format(e))
