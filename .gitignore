@@ -7,4 +7,5 @@ pyenv
 .DS_Store
 rates.csv
 !iatiflattener/tests/fixtures/rates.csv
-
+.idea
+output_test
