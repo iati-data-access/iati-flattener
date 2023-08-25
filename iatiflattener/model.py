@@ -473,7 +473,7 @@ class ActivityBudget(Common):
                         'value_local': value_local,
                         'value_original': budget.value_original.value/len(quarter_range)/len(year_range),
                         'value_date': budget.value_date.value,
-                        'transaction_date': "{}-{}-01".format(year, (quarter-1)*3),
+                        'transaction_date': "{}-{:02}-01".format(year, 1+((quarter-1)*3)),
                         'exchange_rate': budget.exchange_rate.value,
                         'exchange_rate_date': budget.exchange_rate_date.value,
                         'currency_original': budget.currency_original.value,
