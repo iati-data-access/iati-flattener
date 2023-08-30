@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 
 requirements = """
 lxml>=4.6.1
+datetime-quarter==1.0.3
 requests>=2.24.0
 exchangerates>=0.3.4
 pandas>=1.1.4
@@ -14,7 +15,7 @@ iatikit>=3.3.1
 setup(
     name="iatiflattener",
     packages=find_packages(exclude=['ez_setup', 'examples']),
-    version='0.10.6',
+    version='0.10.7',
     description="A set of tools to flatten IATI data.",
     author="Mark Brough",
     author_email="mark@brough.io",

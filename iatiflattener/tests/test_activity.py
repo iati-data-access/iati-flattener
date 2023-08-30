@@ -22,8 +22,7 @@ class TestModel():
     @pytest.fixture
     def activity(self, node):
         activity_cache = model.ActivityCache()
-        _activity = model.Activity(node,
-            activity_cache, {}, ['en', 'fr'])
+        _activity = model.Activity(node, activity_cache, {}, ['en', 'fr'])
         _activity.generate()
         return _activity
 

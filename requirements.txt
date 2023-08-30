@@ -1,4 +1,5 @@
 lxml>=4.6.1
+datetime-quarter==1.0.3
 requests>=2.24.0
 exchangerates>=0.3.4
 pandas==1.1.4

@@ -2,8 +2,15 @@ import datetime
 import math
 
 
-def get_date(_date):
-    return datetime.datetime.strptime(_date, "%Y-%m-%d").date()
+def get_date(date_str: str):
+    """Returns a datetime.date object from a given string.
+
+    :param :
+    :return: date object corresponding to the string specified
+    :rtype: datetime.date
+    """
+
+    return datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
 
 
 def get_fy_fq(_date):
@@ -11,8 +18,15 @@ def get_fy_fq(_date):
     return date.year, "Q{}".format(math.ceil(date.month/3))
 
 
-def get_fy_fq_numeric(_date):
-    return _date.year, math.ceil(_date.month/3)
+def get_fy_fq_numeric(date_obj: datetime.date):
+    """Given a date it returns the year and the quarter as a tuple
+
+    :param date_obj: the date to convert
+    :type date_obj: datetime.date
+    :return: a tuple with year and quarter
+    :rtype: (year, quarter)"""
+
+    return date_obj.year, math.ceil(date_obj.month / 3)
 
 
 def get_first(args, default=None):
