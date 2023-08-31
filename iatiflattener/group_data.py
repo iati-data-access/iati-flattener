@@ -13,6 +13,7 @@ from iatiflattener.lib import variables
 
 CODELISTS_URL = "https://codelists.codeforiati.org/api/json/{}/{}.json"
 
+
 class GroupFlatIATIData():
     def get_codelist_with_fallback(self, lang, codelist_name):
         req = requests.get(CODELISTS_URL.format(lang, codelist_name))
@@ -136,6 +137,7 @@ class GroupFlatIATIData():
                 else:
                     df = df_budget
 
+            # write out the results to an Excel file, putting a maximum of 500000 rows in each file
             if df is not None:
                 num_rows = len(df)
                 output_rows = 500000
@@ -161,10 +163,14 @@ class GroupFlatIATIData():
         csv_files.sort()
         print("BEGINNING PROCESS AT {}".format(datetime.datetime.utcnow()))
         list_of_files = []
+
+        # for each country or region, call group_results
         for country_code, country_name in sorted(self.country_names[lang].items()):
             start = time.time()
             country_or_region = {True: 'region', False: 'country'}[re.match('^\d*$', country_code) is not None]
             self.group_results(country_code)
+
+            # TODO: remove, appears to be redundant
             list_of_files.append({
                 'country_code': country_code,
                 'country_name': country_name,
@@ -173,6 +179,8 @@ class GroupFlatIATIData():
             })
             end = time.time()
             print("Processing {} took {}s".format(country_code, end-start))
+
+        # write out a JSON index for each set of XLSX files (per language)
         for lang in self.langs:
             filenames = os.listdir(f'{self.output_folder}/xlsx/{lang}')
             country_files = [os.path.splitext(filename)[0] for filename in filenames if filename.endswith(".xlsx")]
