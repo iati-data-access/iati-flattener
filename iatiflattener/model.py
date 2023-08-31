@@ -1,6 +1,7 @@
 import json, datetime, csv, os
 import hashlib
 from lxml import etree
+from datequarter import DateQuarter
 
 from iatiflattener.lib.utils import get_date, get_fy_fq, get_fy_fq_numeric, get_first
 from iatiflattener.lib.iati_helpers import clean_countries, clean_sectors, get_narrative, get_org_name, get_sector_category, TRANSACTION_TYPES_RULES, get_narrative_text, filter_none
@@ -61,6 +62,7 @@ class ActivityCache():
 
 
 class CSVFilesWriter():
+
     def append(self, country, flat_transaction_budget):
         if country not in self.csv_files:
             _file = open(
@@ -396,11 +398,20 @@ class BudgetPeriod():
 
 class Budget(FinancialValues):
     def generate(self):
+        """Generates budget details from values in XML file.
+
+        :return: Returns a two-place tuple, the first item of which is a two-place tuple containing the budget period
+        start date and end date as `datetime.date`s, and the second item is a `BudgetPeriod` object.
+
+        :rtype: ((datetime.date, datetime.date), BudgetPeriod)
+        """
+
         budget_currency = self.budget_element.find('value').get('currency')
         if budget_currency is not None:
             self.currency_original = SimpleField(budget_currency)
         else:
             self.currency_original = SimpleField(self.default_currency)
+
         self.period_start = get_date(self.budget_element.find('period-start').get('iso-date'))
         self.period_end = get_date(self.budget_element.find('period-end').get('iso-date'))
         self.value_original = SimpleField(float(self.budget_element.find('value').text))
@@ -440,67 +451,88 @@ class Budget(FinancialValues):
 
 
 class ActivityBudget(Common):
+    """Reads the budget elements from an IATI activity XML file and flattens them by quarter"""
+
     def _activity_currency(self):
         return self.activity.get('default-currency')
 
     def _organisation_field(self, provider_receiver):
         return Organisation(self.activity_cache, self.organisations_cache, self.activity, provider_receiver=='provider', self.langs)
 
-    def _get_budget_periods(self, exchange_rates, budgets):
+    def _get_list_budget_periods(self, exchange_rates, budgets):
+        """Returns a list of budget periods (quarters), with the budget values, exchange rates, etc. specified
+
+        :param budgets:
+        :type budgets: a list of dictionaries
+        :return: a list of quarterly budget values; each quarterly budget item is a dictionary with the following
+        keys:
+             'fiscal_year' 'fiscal_quarter' 'fiscal_year_quarter' 'value_usd' 'value_eur'
+             'value_local' 'value_original' 'value_date' 'transaction_date' 'exchange_rate'
+             'exchange_rate_date' 'currency_original' 'original_revised'
+        :rtype: [{}]"""
+
         out = []
         for budget in budgets:
-            if (budget.value_original == 0): continue
-            period_start_fy, period_start_fq = get_fy_fq_numeric(budget.period_start)
-            period_end_fy, period_end_fq = get_fy_fq_numeric(budget.period_end)
-            year_range = range(period_start_fy, period_end_fy+1)
-            for year in year_range:
-                if (year == period_start_fy) and (year==period_end_fy):
-                    quarter_range = range(period_start_fq, period_end_fq+1)
-                elif year == period_start_fy:
-                    quarter_range = range(period_start_fq, 4+1)
-                elif year == period_end_fy:
-                    quarter_range = range(1, period_end_fq+1)
-                else:
-                    quarter_range = range(1, 4+1)
-                for quarter in quarter_range:
-                    value_local = dict([(country, (value_local/len(quarter_range)/len(year_range))) for country, value_local in budget.value_local.value.items()])
-                    out.append({
-                        'fiscal_year': year,
-                        'fiscal_quarter': "Q{}".format(quarter),
-                        'fiscal_year_quarter': "{} Q{}".format(year, quarter),
-                        'value_usd': budget.value_usd.value/len(quarter_range)/len(year_range),
-                        'value_eur': budget.value_eur.value/len(quarter_range)/len(year_range),
-                        'value_local': value_local,
-                        'value_original': budget.value_original.value/len(quarter_range)/len(year_range),
-                        'value_date': budget.value_date.value,
-                        'transaction_date': "{}-{:02}-01".format(year, 1+((quarter-1)*3)),
-                        'exchange_rate': budget.exchange_rate.value,
-                        'exchange_rate_date': budget.exchange_rate_date.value,
-                        'currency_original': budget.currency_original.value,
-                        'original_revised': budget.original_revised
-                    })
+            if budget.value_original == 0:
+                continue
+
+            start_quarter = DateQuarter.from_date(budget.period_start)
+            end_quarter = DateQuarter.from_date(budget.period_end)
+            total_number_of_quarters = (end_quarter - start_quarter) + 1  # +1 because we want it inclusive
+            for quarter in DateQuarter.between(start_quarter, (end_quarter + 1)):  # again, + 1 b/c between is exclusive
+
+                value_local = dict([(country, (value_local / total_number_of_quarters))
+                                    for country, value_local in budget.value_local.value.items()])
+
+                out.append({
+                    'fiscal_year': quarter.year(),
+                    'fiscal_quarter': "Q{}".format(quarter.quarter()),
+                    'fiscal_year_quarter': "{} Q{}".format(quarter.year(), quarter.quarter()),
+                    'value_usd': budget.value_usd.value / total_number_of_quarters,
+                    'value_eur': budget.value_eur.value / total_number_of_quarters,
+                    'value_local': value_local,
+                    'value_original': budget.value_original.value / total_number_of_quarters,
+                    'value_date': budget.value_date.value,
+                    'transaction_date': "{}-{:02}-01".format(quarter.year(), quarter.start_date().month),
+                    'exchange_rate': budget.exchange_rate.value,
+                    'exchange_rate_date': budget.exchange_rate_date.value,
+                    'currency_original': budget.currency_original.value,
+                    'original_revised': budget.original_revised
+                })
+
         return out
 
 
-    def _get_budgets(self):
+    def _read_budgets_from_xml(self):
+        """Reads the budgets from the XML file, filtering out any original budgets which have been superseded
+
+        The matching budget elements from the XML file are passed to `_get_list_budget_periods` which splits by
+        quarter and returns a list of dictionaries; this is then returned to the caller."""
+
         original_budget_els = self.activity.xpath("budget[not(@type) or @type='1']")
         revised_budget_els = self.activity.findall("budget[@type='2']")
 
-        original_budgets = dict(map(lambda budget: Budget(budget, self.activity_currency,
-            'original', self.countries, self.exchange_rates, self.currencies).value, original_budget_els))
+        original_budgets = dict(map(lambda budget: Budget(budget,
+                                                          self.activity_currency,
+                                                          'original',
+                                                          self.countries,
+                                                          self.exchange_rates,
+                                                          self.currencies).value,
+                                    original_budget_els))
         revised_budgets = dict(map(lambda budget: Budget(budget, self.activity_currency,
             'revised', self.countries, self.exchange_rates, self.currencies).value, revised_budget_els))
 
         revised_budget_start_dates = list(map(lambda budget: budget[0], revised_budgets))
         def filter_budgets(budget_item):
             for start_date in revised_budget_start_dates:
-                if (budget_item[0][0] <= start_date) and (budget_item[0][0] >= start_date): return False
+                if (budget_item[0][0] <= start_date) and (budget_item[0][0] >= start_date):
+                    return False
             return True
 
         budgets = list(dict(filter(filter_budgets, original_budgets.items())).values())
         budgets += list(revised_budgets.values())
 
-        return self._get_budget_periods(self.exchange_rates, budgets)
+        return self._get_list_budget_periods(self.exchange_rates, budgets)
 
     def generate(self):
         self.iati_identifier = self._iati_identifier()
@@ -514,7 +546,7 @@ class ActivityBudget(Common):
         self.countries = self.update_cache(self._countries(budget=True))
         if self.countries.value == False:
             return False
-        self.budgets = SimpleField(self._get_budgets())
+        self.budgets = SimpleField(self._read_budgets_from_xml())
         self.multi_country = self._multi_country()
         self.humanitarian = self._humanitarian(budget=True)
 
@@ -531,7 +563,7 @@ class ActivityBudget(Common):
         return self
 
     def __init__(self, activity, activity_cache, exchange_rates, currencies,
-            organisations_cache={}, langs=['en'], reporting_organisation_groups={}):
+                 organisations_cache={}, langs=['en'], reporting_organisation_groups={}):
         self.activity = activity
         self.activity_cache = activity_cache.get(
             self._iati_identifier().value
@@ -540,29 +572,27 @@ class ActivityBudget(Common):
         self.exchange_rates = exchange_rates
         self.organisations_cache = organisations_cache
         self.langs = langs
-        self.csv_fields = ['iati_identifier', 'title', 'reporting_org_group',
-        'reporting_org',
-        'reporting_org_type', 'budgets',
-        'countries', 'sectors', 'multi_country', 'humanitarian', 'aid_types',
-        'finance_types', 'flow_types', 'provider_org', 'provider_org_type',
-        'receiver_org', 'receiver_org_type',
-        'transaction_type', 'url']
+        self.csv_fields = ['iati_identifier', 'title', 'reporting_org_group', 'reporting_org',
+                           'reporting_org_type', 'budgets',
+                           'countries', 'sectors', 'multi_country', 'humanitarian', 'aid_types',
+                           'finance_types', 'flow_types', 'provider_org', 'provider_org_type',
+                           'receiver_org', 'receiver_org_type',
+                           'transaction_type', 'url']
         self.fields = ['iati_identifier', 'title', 'reporting_org_group',
-        'reporting_org',
-        'reporting_org_type', 'budgets',
-        'countries', 'sectors', 'multi_country', 'humanitarian', 'aid_types',
-        'finance_types', 'flow_types', 'provider_org', 'provider_org_type',
-        'receiver_org', 'receiver_org_type',
-        'transaction_type',
-        'url']
+                       'reporting_org',
+                       'reporting_org_type', 'budgets',
+                       'countries', 'sectors', 'multi_country', 'humanitarian', 'aid_types',
+                       'finance_types', 'flow_types', 'provider_org', 'provider_org_type',
+                       'receiver_org', 'receiver_org_type',
+                       'transaction_type',
+                       'url']
         self.fields_with_attributes = {
             'reporting_org': {
                 '': 'display',
                 '_type': 'type'
             }
         }
-        self.multilingual_fields = ['title', 'reporting_org',
-        'provider_org', 'receiver_org']
+        self.multilingual_fields = ['title', 'reporting_org', 'provider_org', 'receiver_org']
         self.reporting_organisation_groups = reporting_organisation_groups
 
 

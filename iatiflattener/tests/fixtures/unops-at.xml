@@ -1,0 +1,219 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<iati-activities version="2.03" generated-datetime="2022-04-29T09:55:53.753">
+	<iati-activity default-currency="USD" last-updated-datetime="2023-08-14T11:49:43.489Z" hierarchy="1" xml:lang="en">
+		<iati-identifier>41AAA-22482-001</iati-identifier>
+		<reporting-org ref="41AAA" type="40">
+			<narrative>United Nations Office for Project Services</narrative>
+		</reporting-org>
+		<title>
+			<narrative>Knowledge for Reform Action in the Western Balkans</narrative>
+		</title>
+		<description type="1">
+			<narrative>Knowledge for Reform Action in the Western Balkans</narrative>
+		</description>
+		<participating-org role="4" ref="41AAA" type="40">
+			<narrative>United Nations Office for Project Services</narrative>
+		</participating-org>
+		<participating-org role="2" ref="41AAA" type="40">
+			<narrative>United Nations Office for Project Services</narrative>
+		</participating-org>
+		<activity-status code="2">
+
+		</activity-status>
+		<activity-date iso-date="2021-04-01" type="2">
+
+		</activity-date>
+		<contact-info type="1">
+			<organisation>
+				<narrative>United Nations Office for Project Services</narrative>
+			</organisation>
+			<person-name>
+				<narrative>Cillian Domhnall OCATHAIL</narrative>
+			</person-name>
+			<telephone>4535467600</telephone>
+			<email>info@unops.org</email>
+			<mailing-address>
+				<narrative>UNOPS HQ, PO Box 2695, 2100 Copenhagen, Denmark</narrative>
+			</mailing-address>
+		</contact-info>
+		<recipient-country code="AT">
+			<narrative>Austria</narrative>
+		</recipient-country>
+		<sector code="15110" percentage="100" vocabulary="1">
+			<narrative>Government and civil society, general</narrative>
+		</sector>
+		<budget type="1">
+			<period-start iso-date="2021-04-01">
+
+			</period-start>
+			<period-end iso-date="2025-12-31">
+
+			</period-end>
+			<value currency="USD" value-date="2021-04-01">
+				9156342
+			</value>
+		</budget>
+		<transaction ref="22482-001_2021_2025">
+			<transaction-type code="4">
+
+			</transaction-type>
+			<transaction-date iso-date="2021-04-01">
+
+			</transaction-date>
+			<value currency="USD" value-date="2021-04-01">
+				1321549
+			</value>
+			<description>
+				<narrative>Expenditure for the project</narrative>
+			</description>
+			<provider-org ref="41AAA">
+				<narrative>United Nations Office for Project Services</narrative>
+			</provider-org>
+		</transaction>
+		<document-link></document-link>
+	</iati-activity>
+	<iati-activity default-currency="USD" last-updated-datetime="2023-08-14T11:49:43.489Z" hierarchy="1" xml:lang="en">
+		<iati-identifier>41AAA-23652-001</iati-identifier>
+		<reporting-org ref="41AAA" type="40">
+			<narrative>United Nations Office for Project Services</narrative>
+		</reporting-org>
+		<title>
+			<narrative>Support for the Scientific and Technical Advisory Panel (STAP) of the Global Environment Facility (GEF)</narrative>
+		</title>
+		<description type="1">
+			<narrative>Human resources, contract management, and procurement support for the Scientific and Technical Advisory Panel (STAP) of the Global Environment Facility (GEF).\n</narrative>
+		</description>
+		<participating-org role="4" ref="41AAA" type="40">
+			<narrative>United Nations Office for Project Services</narrative>
+		</participating-org>
+		<participating-org role="2" ref="41AAA" type="40">
+			<narrative>United Nations Office for Project Services</narrative>
+		</participating-org>
+		<activity-status code="2">
+
+		</activity-status>
+		<activity-date iso-date="2022-07-01" type="2">
+
+		</activity-date>
+		<contact-info type="1">
+			<organisation>
+				<narrative>United Nations Office for Project Services</narrative>
+			</organisation>
+			<person-name>
+				<narrative>Cillian Domhnall OCATHAIL</narrative>
+			</person-name>
+			<telephone>4535467600</telephone>
+			<email>info@unops.org</email>
+			<mailing-address>
+				<narrative>UNOPS HQ, PO Box 2695, 2100 Copenhagen, Denmark</narrative>
+			</mailing-address>
+		</contact-info>
+		<recipient-country code="AT">
+			<narrative>Austria</narrative>
+		</recipient-country>
+		<sector code="41010" percentage="100" vocabulary="1">
+			<narrative>General environmental protection</narrative>
+		</sector>
+		<budget type="1">
+			<period-start iso-date="2022-07-01">
+
+			</period-start>
+			<period-end iso-date="2023-09-30">
+
+			</period-end>
+			<value currency="USD" value-date="2022-07-01">
+				821871
+			</value>
+		</budget>
+		<transaction ref="23652-001_2022_2023">
+			<transaction-type code="4">
+
+			</transaction-type>
+			<transaction-date iso-date="2022-07-01">
+
+			</transaction-date>
+			<value currency="USD" value-date="2022-07-01">
+				671101
+			</value>
+			<description>
+				<narrative>Expenditure for the project</narrative>
+			</description>
+			<provider-org ref="41AAA">
+				<narrative>United Nations Office for Project Services</narrative>
+			</provider-org>
+		</transaction>
+		<document-link></document-link>
+	</iati-activity>
+	<iati-activity default-currency="USD" last-updated-datetime="2023-08-14T11:49:43.489Z" hierarchy="1" xml:lang="en">
+		<iati-identifier>41AAA-20543-003</iati-identifier>
+		<reporting-org ref="41AAA" type="40">
+			<narrative>United Nations Office for Project Services</narrative>
+		</reporting-org>
+		<title>
+			<narrative>Support for Sustainable Energy for All</narrative>
+		</title>
+		<description type="1">
+			<narrative>Sustainable Energy for All’s (SEforALL) mission is to empower leaders to broker partnerships and unlock finance to achieve universal access to sustainable energy – as a contribution to a cleaner, just and prosperous world for all.\nUNOPS offers support services to Sustainable Energy for All.</narrative>
+		</description>
+		<participating-org role="4" ref="41AAA" type="40">
+			<narrative>United Nations Office for Project Services</narrative>
+		</participating-org>
+		<participating-org role="2" ref="41AAA" type="40">
+			<narrative>United Nations Office for Project Services</narrative>
+		</participating-org>
+		<activity-status code="2">
+
+		</activity-status>
+		<activity-date iso-date="2016-06-03" type="2">
+
+		</activity-date>
+		<contact-info type="1">
+			<organisation>
+				<narrative>United Nations Office for Project Services</narrative>
+			</organisation>
+			<person-name>
+				<narrative>Cillian Domhnall OCATHAIL</narrative>
+			</person-name>
+			<telephone>4535467600</telephone>
+			<email>info@unops.org</email>
+			<mailing-address>
+				<narrative>UNOPS HQ, PO Box 2695, 2100 Copenhagen, Denmark</narrative>
+			</mailing-address>
+		</contact-info>
+		<recipient-country code="AT">
+			<narrative>Austria</narrative>
+		</recipient-country>
+		<sector code="23210" percentage="100" vocabulary="1">
+			<narrative>Energy generation, renewable sources</narrative>
+		</sector>
+		<budget type="1">
+			<period-start iso-date="2016-06-03">
+
+			</period-start>
+			<period-end iso-date="2024-12-31">
+
+			</period-end>
+			<value currency="USD" value-date="2016-06-03">
+				55985220
+			</value>
+		</budget>
+		<transaction ref="20543-003_2016_2024">
+			<transaction-type code="4">
+
+			</transaction-type>
+			<transaction-date iso-date="2016-06-03">
+
+			</transaction-date>
+			<value currency="USD" value-date="2016-06-03">
+				50890905
+			</value>
+			<description>
+				<narrative>Expenditure for the project</narrative>
+			</description>
+			<provider-org ref="41AAA">
+				<narrative>United Nations Office for Project Services</narrative>
+			</provider-org>
+		</transaction>
+		<document-link></document-link>
+	</iati-activity>
+</iati-activities>
