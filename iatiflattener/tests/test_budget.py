@@ -126,9 +126,9 @@ class TestActivityBudgetModel:
         # it should not be an even split, because the split methodology requires calculating budget by day, and
         # different quarters have different numbers of days.
         # total budget: 25653580
-        # Days in each 2022 quarter: quarter 1: 90, 91, 92, 92
+        # Days in each quarter: 90, 91, 92, 92
         # budget per day: 25653580 / 365 = ~70283.78
-        # Budget per quarter:
+        # Budget per quarter (in DKK):
 
         budget_per_day = 25653580 / 365
         budget_per_quarter_orig = [budget_per_day * day_count for day_count in [90, 91, 92, 92]]
@@ -177,3 +177,13 @@ class TestActivityBudgetModel:
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
+    @pytest.mark.parametrize("publisher", ["sr"])
+    def test_activity_budget_values_split_for_budget_with_non_standard_boundaries(self, activity_budget, publisher):
+
+        # sr has a budget which starts in the middle of a quarter
+        sr_budget_per_day = 19504521 / 307
+        sr_budget_per_quarter = [sr_budget_per_day * day_count for day_count in [32, 91, 92, 92]]
+
+        expected_values = {'sr': {'value_original': sr_budget_per_quarter}}
+
+        TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
