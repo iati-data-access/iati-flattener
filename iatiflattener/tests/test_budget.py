@@ -141,7 +141,6 @@ class TestActivityBudgetModel:
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
-
     @pytest.mark.parametrize("publisher", ["gdihub"])
     def test_activity_budget_values_split_across_multiple_years(self, activity_budget, publisher):
 
@@ -154,7 +153,6 @@ class TestActivityBudgetModel:
         expected_values = {'gdihub': {'value_original': gdi_budget_per_quarter}}
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
-
 
     @pytest.mark.parametrize("publisher", ["canada"])
     def test_activity_budget_values_split_across_multiple_years_with_leap_year(self, activity_budget, publisher):
