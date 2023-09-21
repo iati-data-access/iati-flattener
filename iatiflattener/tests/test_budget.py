@@ -66,13 +66,13 @@ class TestActivityBudgetModel:
     def test_activity_budget_sectors(self, activity_budget, publisher):
 
         expected_sectors = {'fcdo': [{'percentage': 100, 'code': '15110'}],
-                            'canada' : [{'percentage': 48.48, 'code': '15112'},
-                                        {'percentage': 5, 'code': '15150'},
-                                        {'percentage': 40, 'code': '25010'},
-                                        {'percentage': 5, 'code': '32130'},
-                                        {'percentage': 1.52, 'code': '41010'}
-                                        ]
-                                 }
+                            'canada': [{'percentage': 48.48, 'code': '15112'},
+                                       {'percentage': 5, 'code': '15150'},
+                                       {'percentage': 40, 'code': '25010'},
+                                       {'percentage': 5, 'code': '32130'},
+                                       {'percentage': 1.52, 'code': '41010'}
+                                       ]
+                            }
 
         for sector_index in range(0, len(activity_budget.sectors.value)-1):
             sector = activity_budget.sectors.value[sector_index]
@@ -83,8 +83,8 @@ class TestActivityBudgetModel:
     @pytest.mark.parametrize("publisher", ["fcdo"])
     def test_activity_budget_fiscal_year_quarter(self, activity_budget, publisher):
 
-        expected_values = {'fcdo': { 'fiscal_year' : [2007, 2008, 2009, 2010],
-                                     'fiscal_quarter' : ['Q2', 'Q2', 'Q2', 'Q2'],
+        expected_values = {'fcdo': { 'fiscal_year': [2007, 2008, 2009, 2010],
+                                     'fiscal_quarter': ['Q2', 'Q2', 'Q2', 'Q2'],
                                      'fiscal_year_quarter': ['2007 Q2', '2008 Q2', '2009 Q2', '2010 Q2'] } }
 
         for idx in range(0, len(activity_budget.budgets.value)):
@@ -107,14 +107,14 @@ class TestActivityBudgetModel:
     def test_activity_budget_values_currency_exchange(self, activity_budget, publisher):
         """Test the calculation of the budget values in the non-base currency"""
 
-        expected_values = {'fcdo': { 'value_eur': [(514717 / 0.726269155) * 0.845022816,
-                                                   (939770 / 0.726269155) * 0.845022816,
-                                                   (1276100 / 0.726269155) * 0.845022816,
-                                                   (-9077 / 0.726269155) * 0.845022816],
-                                     'value_usd': [514717 / 0.726269155,
-                                                   939770 / 0.726269155,
-                                                   1276100 / 0.726269155,
-                                                   -9077 / 0.726269155] } }
+        expected_values = {'fcdo': {'value_eur': [(514717 / 0.726269155) * 0.845022816,
+                                                  (939770 / 0.726269155) * 0.845022816,
+                                                  (1276100 / 0.726269155) * 0.845022816,
+                                                  (-9077 / 0.726269155) * 0.845022816],
+                                    'value_usd': [514717 / 0.726269155,
+                                                  939770 / 0.726269155,
+                                                  1276100 / 0.726269155,
+                                                  -9077 / 0.726269155] } }
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
@@ -122,24 +122,58 @@ class TestActivityBudgetModel:
     def test_activity_budget_values_split_within_single_year(self, activity_budget, publisher):
         """Tests the calculation of a budget entry which spans multiple quarters but only within same calendar year"""
 
-        # spans 4 quarters; even split, so construct arrays with same value repeated 4 times
-        expected_values = {'3fi': { 'value_original' : [25653580 / 4] * 4,
-                                    'value_eur' : [((25653580 / 6.82795) * 0.845022816) / 4] * 4,
-                                    'value_usd': [(25653580 / 6.82795) / 4] * 4 } }
+        # 3fi budget spans the whole calendar year for 2022, so covers 4 quarters in different financial years
+        # it should not be an even split, because the split methodology requires calculating budget by day, and
+        # different quarters have different numbers of days.
+        # total budget: 25653580
+        # Days in each 2022 quarter: quarter 1: 90, 91, 92, 92
+        # budget per day: 25653580 / 365 = ~70283.78
+        # Budget per quarter:
+
+        budget_per_day = 25653580 / 365
+        budget_per_quarter_orig = [budget_per_day * day_count for day_count in [90, 91, 92, 92]]
+        budget_per_quarter_eur = [(orig_per_q / 6.82795) * 0.845022816 for orig_per_q in budget_per_quarter_orig]
+        budget_per_quarter_usd = [orig_per_q / 6.82795 for orig_per_q in budget_per_quarter_orig]
+
+        expected_values = {'3fi': { 'value_original': budget_per_quarter_orig,
+                                    'value_eur': budget_per_quarter_eur,
+                                    'value_usd': budget_per_quarter_usd}}
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
 
-    @pytest.mark.parametrize("publisher", ["canada", "gdihub"])
+    @pytest.mark.parametrize("publisher", ["gdihub"])
     def test_activity_budget_values_split_across_multiple_years(self, activity_budget, publisher):
 
-        # both canada and gdihub have budget over standard financial year (April-March), so four budgets per year
-        # the gdihub file has one budget, the canada file has six budgets
-        expected_values = {'gdihub': { 'value_original': [202736.20 / 4] * 4 },
-                           'canada': { 'value_original': ([1979997 / 4] * 4) + ([3939997 / 4] * 4) +
-                                                         ([2409070 / 4] * 4) + ([4390716 / 4] * 4) +
-                                                         ([4275329 / 4] * 4) + ([2587224 / 4] * 4)
-                                       }
-                           }
+        # gdihub has a single budget over standard financial year (April-March), so four budgets per year
+
+        # gdihub is 2021 Q2 - 2022 Q1 inclusive: 91, 92, 92, 90
+        gdi_budget_per_day = 202736.20 / 365
+        gdi_budget_per_quarter = [gdi_budget_per_day * day_count for day_count in [91, 92, 92, 90]]
+
+        expected_values = {'gdihub': {'value_original': gdi_budget_per_quarter}}
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
+
+
+    @pytest.mark.parametrize("publisher", ["canada"])
+    def test_activity_budget_values_split_across_multiple_years_with_leap_year(self, activity_budget, publisher):
+
+        # canada has six budgets over standard financial year (April-March), so four budgets per year
+        # budgets are consecutive years, starting in 2015/16
+        # so first year (2015/16) and fifth year (2019/20) contain the leap day
+
+        total_budget_values = [1979997, 3939997, 2409070, 4390716, 4275329, 2587224]
+        is_leap_year = [True, False, False, False, True, False]
+        year_type_to_days_mapping = {True: [91, 92, 92, 91], False: [91, 92, 92, 90]}
+        budgets_per_day = [total / (366 if leap else 365) for total, leap in zip(total_budget_values, is_leap_year)]
+
+        list_years = [[budget_per_day * days_in_quarter for days_in_quarter in year_type_to_days_mapping[is_leap]]
+                      for budget_per_day, is_leap in zip(budgets_per_day, is_leap_year)]
+
+        quarterly_budgets = [item for sublist in list_years for item in sublist]
+
+        expected_values = {'canada': {'value_original': quarterly_budgets}}
+
+        TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
+
