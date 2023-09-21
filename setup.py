@@ -22,12 +22,12 @@ setup(
     url="https://github.com/iati-data-access/iati-flattener",
     license="AGPLv3+",
     install_requires=requirements.strip().splitlines(),
-    classifiers=(
+    classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
         'Programming Language :: Python :: 3.9'
-    ),
+    ],
     namespace_packages=[],
     include_package_data=True,
     zip_safe=False,
