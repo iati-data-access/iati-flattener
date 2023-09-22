@@ -23,7 +23,7 @@ class TestActivityBudgetModel:
             # and then go through testing each value (this setup allows for different keys in 'expected_values'
             # so that we can add another test case which didn't use GBP as original currency
             for value_to_check in expected_values_for_publisher:
-                assert activity_budget.budgets.value[idx][value_to_check] == expected_values_for_publisher[value_to_check][idx]
+                assert activity_budget.budgets.value[idx][value_to_check] == pytest.approx(expected_values_for_publisher[value_to_check][idx])
 
     @pytest.fixture()
     def node(self, publisher):
@@ -114,7 +114,7 @@ class TestActivityBudgetModel:
                                     'value_usd': [514717 / 0.726269155,
                                                   939770 / 0.726269155,
                                                   1276100 / 0.726269155,
-                                                  -9077 / 0.726269155] } }
+                                                  -9077 / 0.726269155]}}
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
