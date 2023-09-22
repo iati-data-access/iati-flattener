@@ -463,7 +463,7 @@ class ActivityBudget(Common):
         """Returns a list of budget periods (quarters), with the budget values, exchange rates, etc. specified
 
         :param budgets:
-        :type budgets: a list of dictionaries
+        :type budgets: a list of BudgetPeriod objects
         :return: a list of quarterly budget values; each quarterly budget item is a dictionary with the following
         keys:
              'fiscal_year' 'fiscal_quarter' 'fiscal_year_quarter' 'value_usd' 'value_eur'
@@ -476,22 +476,44 @@ class ActivityBudget(Common):
             if budget.value_original == 0:
                 continue
 
+            # calculate how many days in the budget
+            days_in_budget = (budget.period_end - budget.period_start).days + 1  # +1 because we need an inclusive count
+            budget_value_per_day = {'value_original': budget.value_original.value / days_in_budget,
+                                    'value_usd': budget.value_usd.value / days_in_budget,
+                                    'value_eur': budget.value_eur.value / days_in_budget}
+
             start_quarter = DateQuarter.from_date(budget.period_start)
             end_quarter = DateQuarter.from_date(budget.period_end)
             total_number_of_quarters = (end_quarter - start_quarter) + 1  # +1 because we want it inclusive
+
             for quarter in DateQuarter.between(start_quarter, (end_quarter + 1)):  # again, + 1 b/c between is exclusive
 
-                value_local = dict([(country, (value_local / total_number_of_quarters))
+                budget_days_in_quarter = 0
+
+                # if it's the first quarter and budget period start date is after quarter start date, calc partial days
+                if budget.period_start in quarter and budget.period_start > quarter.start_date():
+                    budget_days_in_quarter = (quarter.end_date() - budget.period_start).days + 1
+
+                # if it's the last quarter and budget period end date is before quarter end date, calc partial days
+                elif budget.period_end in quarter and budget.period_end < quarter.end_date():
+                    budget_days_in_quarter = (budget.period_end - quarter.start_date()).days + 1
+
+                # otherwise the budget period covers the whole quarter
+                else:
+                    # the days() generator cycles through all days, so is already inclusive.
+                    budget_days_in_quarter = sum(1 for _ in quarter.days())
+
+                value_local = dict([(country, (value_local / days_in_budget) * budget_days_in_quarter)
                                     for country, value_local in budget.value_local.value.items()])
 
                 out.append({
                     'fiscal_year': quarter.year(),
                     'fiscal_quarter': "Q{}".format(quarter.quarter()),
                     'fiscal_year_quarter': "{} Q{}".format(quarter.year(), quarter.quarter()),
-                    'value_usd': budget.value_usd.value / total_number_of_quarters,
-                    'value_eur': budget.value_eur.value / total_number_of_quarters,
+                    'value_usd': budget_value_per_day['value_usd'] * budget_days_in_quarter,
+                    'value_eur': budget_value_per_day['value_eur'] * budget_days_in_quarter,
                     'value_local': value_local,
-                    'value_original': budget.value_original.value / total_number_of_quarters,
+                    'value_original': budget_value_per_day['value_original'] * budget_days_in_quarter,
                     'value_date': budget.value_date.value,
                     'transaction_date': "{}-{:02}-01".format(quarter.year(), quarter.start_date().month),
                     'exchange_rate': budget.exchange_rate.value,
