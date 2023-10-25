@@ -216,3 +216,26 @@ class TestActivityBudgetModel:
         assert total_activity_budgets == 100000
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
+
+
+    @pytest.mark.parametrize("publisher", ["budget-dates-issue"])
+    def test_activity_budget_values_split_for_budget_with_dates_issue(self, activity_budget, publisher):
+
+        # activity has a budget which is all within the same quarter,
+        # but with the end date before the start date
+        # -- not sure what should happen here - perhaps raise an exception?
+        # see e.g. planned disbursements in `XI-IATI-EC_INTPA-2019/405-854`
+        od_budget_per_day = 100000
+        od_budget_per_quarter = [100000]
+
+        expected_values = {'one-day': {'value_original': od_budget_per_quarter}}
+
+        one_quarter = activity_budget.budgets.value[0]
+        assert one_quarter['fiscal_year'] == 2017
+        assert one_quarter['fiscal_quarter'] == 'Q1'
+        assert one_quarter['value_original'] == 100000
+
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == 100000
+
+        TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
