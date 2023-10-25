@@ -197,3 +197,22 @@ class TestActivityBudgetModel:
         assert total_activity_budgets == 19504521
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
+
+    @pytest.mark.parametrize("publisher", ["budget-one-day"])
+    def test_activity_budget_values_split_for_budget_with_one_day(self, activity_budget, publisher):
+
+        # activity has a one day budget
+        od_budget_per_day = 100000
+        od_budget_per_quarter = [100000]
+
+        expected_values = {'one-day': {'value_original': od_budget_per_quarter}}
+
+        one_quarter = activity_budget.budgets.value[0]
+        assert one_quarter['fiscal_year'] == 2017
+        assert one_quarter['fiscal_quarter'] == 'Q1'
+        assert one_quarter['value_original'] == 100000
+
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == 100000
+
+        TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
