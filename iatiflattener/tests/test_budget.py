@@ -239,3 +239,28 @@ class TestActivityBudgetModel:
         assert total_activity_budgets == 100000
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
+
+
+    @pytest.mark.parametrize("publisher", ["ec-intpa"])
+    def test_activity_budget_values_split_for_ec_budget_with_dates_issue(self, activity_budget, publisher):
+
+        # EC international partnerships has 0-value budgets and >0 value
+        # planned disbursements, though the latter have issues (e.g. start date
+        # often after end date)
+        # see e.g. planned disbursements in `XI-IATI-EC_INTPA-2019/405-854`
+        # there are 0 value budgets running from 2019 Q1 to 2050 Q4
+        quarters = (2050-2018)*4
+        od_budget_per_day = 0
+        od_budget_per_quarter = [0 for quarter in range(0, quarters+1)]
+
+        expected_values = {'ec-intpa': {'value_original': od_budget_per_quarter}}
+
+        one_quarter = activity_budget.budgets.value[0]
+        assert one_quarter['fiscal_year'] == 2019
+        assert one_quarter['fiscal_quarter'] == 'Q1'
+        assert one_quarter['value_original'] == 0
+
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == 0
+
+        TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
