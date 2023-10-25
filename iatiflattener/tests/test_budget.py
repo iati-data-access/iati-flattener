@@ -139,6 +139,9 @@ class TestActivityBudgetModel:
                                     'value_eur': budget_per_quarter_eur,
                                     'value_usd': budget_per_quarter_usd}}
 
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == pytest.approx(25653580)
+
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
     @pytest.mark.parametrize("publisher", ["gdihub"])
@@ -151,6 +154,9 @@ class TestActivityBudgetModel:
         gdi_budget_per_quarter = [gdi_budget_per_day * day_count for day_count in [91, 92, 92, 90]]
 
         expected_values = {'gdihub': {'value_original': gdi_budget_per_quarter}}
+
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == pytest.approx(202736.20)
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
@@ -173,6 +179,9 @@ class TestActivityBudgetModel:
 
         expected_values = {'canada': {'value_original': quarterly_budgets}}
 
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == pytest.approx(sum(total_budget_values))
+
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
     @pytest.mark.parametrize("publisher", ["sr"])
@@ -183,5 +192,8 @@ class TestActivityBudgetModel:
         sr_budget_per_quarter = [sr_budget_per_day * day_count for day_count in [32, 91, 92, 92]]
 
         expected_values = {'sr': {'value_original': sr_budget_per_quarter}}
+
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == 19504521
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
