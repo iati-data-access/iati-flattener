@@ -139,6 +139,9 @@ class TestActivityBudgetModel:
                                     'value_eur': budget_per_quarter_eur,
                                     'value_usd': budget_per_quarter_usd}}
 
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == pytest.approx(25653580)
+
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
     @pytest.mark.parametrize("publisher", ["gdihub"])
@@ -151,6 +154,9 @@ class TestActivityBudgetModel:
         gdi_budget_per_quarter = [gdi_budget_per_day * day_count for day_count in [91, 92, 92, 90]]
 
         expected_values = {'gdihub': {'value_original': gdi_budget_per_quarter}}
+
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == pytest.approx(202736.20)
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
@@ -173,6 +179,9 @@ class TestActivityBudgetModel:
 
         expected_values = {'canada': {'value_original': quarterly_budgets}}
 
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == pytest.approx(sum(total_budget_values))
+
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
     @pytest.mark.parametrize("publisher", ["sr"])
@@ -183,5 +192,75 @@ class TestActivityBudgetModel:
         sr_budget_per_quarter = [sr_budget_per_day * day_count for day_count in [32, 91, 92, 92]]
 
         expected_values = {'sr': {'value_original': sr_budget_per_quarter}}
+
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == 19504521
+
+        TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
+
+    @pytest.mark.parametrize("publisher", ["budget-one-day"])
+    def test_activity_budget_values_split_for_budget_with_one_day(self, activity_budget, publisher):
+
+        # activity has a one day budget
+        od_budget_per_day = 100000
+        od_budget_per_quarter = [100000]
+
+        expected_values = {'one-day': {'value_original': od_budget_per_quarter}}
+
+        one_quarter = activity_budget.budgets.value[0]
+        assert one_quarter['fiscal_year'] == 2017
+        assert one_quarter['fiscal_quarter'] == 'Q1'
+        assert one_quarter['value_original'] == 100000
+
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == 100000
+
+        TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
+
+
+    @pytest.mark.parametrize("publisher", ["budget-dates-issue"])
+    def test_activity_budget_values_split_for_budget_with_dates_issue(self, activity_budget, publisher):
+
+        # activity has a budget which is all within the same quarter,
+        # but with the end date before the start date
+        # -- not sure what should happen here - perhaps raise an exception?
+        # see e.g. planned disbursements in `XI-IATI-EC_INTPA-2019/405-854`
+        od_budget_per_day = 100000
+        od_budget_per_quarter = [100000]
+
+        expected_values = {'one-day': {'value_original': od_budget_per_quarter}}
+
+        one_quarter = activity_budget.budgets.value[0]
+        assert one_quarter['fiscal_year'] == 2017
+        assert one_quarter['fiscal_quarter'] == 'Q1'
+        assert one_quarter['value_original'] == 100000
+
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == 100000
+
+        TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
+
+
+    @pytest.mark.parametrize("publisher", ["ec-intpa"])
+    def test_activity_budget_values_split_for_ec_budget_with_dates_issue(self, activity_budget, publisher):
+
+        # EC international partnerships has 0-value budgets and >0 value
+        # planned disbursements, though the latter have issues (e.g. start date
+        # often after end date)
+        # see e.g. planned disbursements in `XI-IATI-EC_INTPA-2019/405-854`
+        # there are 0 value budgets running from 2019 Q1 to 2050 Q4
+        quarters = (2050-2018)*4
+        od_budget_per_day = 0
+        od_budget_per_quarter = [0 for quarter in range(0, quarters+1)]
+
+        expected_values = {'ec-intpa': {'value_original': od_budget_per_quarter}}
+
+        one_quarter = activity_budget.budgets.value[0]
+        assert one_quarter['fiscal_year'] == 2019
+        assert one_quarter['fiscal_quarter'] == 'Q1'
+        assert one_quarter['value_original'] == 0
+
+        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
+        assert total_activity_budgets == 0
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])

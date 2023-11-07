@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<iati-activities version="2.03" generated-datetime="2019-02-07T07:21:09+00:00">
+<!--Written manually-->
+  <iati-activity xml:lang="en" default-currency="USD" humanitarian="false" hierarchy="1">
+    <iati-identifier>BUDGET-DATES-ISSUE-ACTIVITY</iati-identifier>
+    <reporting-org type="23" ref="XX-IATI-TEST">
+      <narrative xml:lang="en">Test</narrative>
+    </reporting-org>
+    <title>
+      <narrative>Test</narrative>
+    </title>
+    <description type="1">
+      <narrative>This activity has a budget end date before the budget start date</narrative>
+    </description>
+    <participating-org type="90" role="4">
+      <narrative>Implementer</narrative>
+    </participating-org>
+    <activity-status code="2"/>
+    <activity-date type="2" iso-date="2019-02-04"/>
+    <recipient-country code="TZ" />
+    <sector code="92010" vocabulary="1"/>
+    <budget type="1" status="2">
+      <period-start iso-date="2017-03-31"/>
+      <period-end iso-date="2017-01-01"/>
+      <value currency="GBP" value-date="2019-02-04">100000</value>
+    </budget>
+  </iati-activity>
+</iati-activities>
