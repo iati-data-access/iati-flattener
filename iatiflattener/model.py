@@ -492,7 +492,8 @@ class ActivityBudget(Common):
 
                 # if it's the first quarter and budget period start date is after quarter start date, calc partial days
                 if budget.period_start in quarter and budget.period_start > quarter.start_date():
-                    budget_days_in_quarter = (quarter.end_date() - budget.period_start).days + 1
+                    budget_period_quarter_end_date = quarter.end_date() if quarter.end_date() < budget.period_end else budget.period_end
+                    budget_days_in_quarter = (budget_period_quarter_end_date - budget.period_start).days + 1
 
                 # if it's the last quarter and budget period end date is before quarter end date, calc partial days
                 elif budget.period_end in quarter and budget.period_end < quarter.end_date():

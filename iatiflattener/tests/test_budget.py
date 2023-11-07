@@ -202,18 +202,11 @@ class TestActivityBudgetModel:
     def test_activity_budget_values_split_for_budget_with_one_day(self, activity_budget, publisher):
 
         # activity has a one day budget
-        od_budget_per_day = 100000
-        od_budget_per_quarter = [100000]
 
-        expected_values = {'one-day': {'value_original': od_budget_per_quarter}}
-
-        one_quarter = activity_budget.budgets.value[0]
-        assert one_quarter['fiscal_year'] == 2017
-        assert one_quarter['fiscal_quarter'] == 'Q1'
-        assert one_quarter['value_original'] == 100000
-
-        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
-        assert total_activity_budgets == 100000
+        expected_values = {'budget-one-day': {'value_original': [100000],
+                                              'fiscal_year': [2017],
+                                              'fiscal_quarter': ['Q1']}}
+ 
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
@@ -223,20 +216,14 @@ class TestActivityBudgetModel:
 
         # activity has a budget which is all within the same quarter,
         # but with the end date before the start date
-        # -- not sure what should happen here - perhaps raise an exception?
+        # one possibility here would be to raise an exception
+        # but at present, have taken the view that it is best to allocate entire budget
+        # to the single quarter; that way, these values will get counted for any 
+        # extant bad data.
         # see e.g. planned disbursements in `XI-IATI-EC_INTPA-2019/405-854`
-        od_budget_per_day = 100000
         od_budget_per_quarter = [100000]
 
-        expected_values = {'one-day': {'value_original': od_budget_per_quarter}}
-
-        one_quarter = activity_budget.budgets.value[0]
-        assert one_quarter['fiscal_year'] == 2017
-        assert one_quarter['fiscal_quarter'] == 'Q1'
-        assert one_quarter['value_original'] == 100000
-
-        total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
-        assert total_activity_budgets == 100000
+        expected_values = {'budget-dates-issue': {'value_original': od_budget_per_quarter}}
 
         TestActivityBudgetModel.verify_budget_values(activity_budget, expected_values[publisher])
 
@@ -250,7 +237,6 @@ class TestActivityBudgetModel:
         # see e.g. planned disbursements in `XI-IATI-EC_INTPA-2019/405-854`
         # there are 0 value budgets running from 2019 Q1 to 2050 Q4
         quarters = (2050-2018)*4
-        od_budget_per_day = 0
         od_budget_per_quarter = [0 for quarter in range(0, quarters+1)]
 
         expected_values = {'ec-intpa': {'value_original': od_budget_per_quarter}}
@@ -258,7 +244,6 @@ class TestActivityBudgetModel:
         one_quarter = activity_budget.budgets.value[0]
         assert one_quarter['fiscal_year'] == 2019
         assert one_quarter['fiscal_quarter'] == 'Q1'
-        assert one_quarter['value_original'] == 0
 
         total_activity_budgets = sum([budget['value_original'] for budget in activity_budget.budgets.value])
         assert total_activity_budgets == 0
