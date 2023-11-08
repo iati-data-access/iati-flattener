@@ -81,17 +81,35 @@ class FlattenIATIData():
 
 
     def process_transaction(self, csvwriter, activity, transaction):
+        """Called once per <transaction> element in IATI activity XML file to process the transaction
+
+        :param activity: the parent <iati-activity> element
+        :type activity: lxml.etree._Element
+        :param transaction: a <transaction> element
+        :type transaction: lxml.etree._Element
+        """
+
+        # type(activity) is lxml.etree._Element; type(transaction) is lxml.etree._Element
         _transaction = model.Transaction(activity, transaction, self.activity_cache,
-            self.exchange_rates, self.countries_currencies, True, self.organisations, self.langs,
-            self.reporting_organisation_groups)
+                                         self.exchange_rates, self.countries_currencies,
+                                         True, self.organisations, self.langs,
+                                         self.reporting_organisation_groups)
+
+        # the generate() method returns 'self' if successful, otherwise False; so on success,
+        # `generated` refers to the same object as `_transaction`.
+        # after `generate()` has been called, its `value_local` value is a dictionary indexed by country code, where
+        # each value--e.g., generated.value_local['AT']--is the value of the entire transaction in the currency of the
+        # country specified.
         generated = _transaction.generate()
+
         if generated is not False:
-            _flat_transaction = model.FlatTransaction(_transaction, self.category_group).flatten()
-            for _part_flat_transaction in _flat_transaction:
-                transaction_csv = model.FlatTransactionBudgetCSV(
-                countries=self.countries,
-                csv_writer=csvwriter,
-                flat_transaction_budget=_part_flat_transaction).output()
+            _flat_transaction = model.FlatTransaction(_transaction, self.category_group)
+            _flattened_transaction = _flat_transaction.flatten()
+            for _part_flat_transaction in _flattened_transaction:
+                transaction_csv = model.FlatTransactionBudgetCSV(countries=self.countries,
+                                                                 csv_writer=csvwriter,
+                                                                 flat_transaction_budget=_part_flat_transaction)
+                transaction_csv.output()
 
 
     def process_activity_for_budgets(self, csvwriter, activity):
@@ -121,7 +139,13 @@ class FlattenIATIData():
 
 
     def process_package(self, publisher, package, root_dir):
-        """Read the activity elements from XML and write out flattened rows to transaction-NN.csv and budget-NN.csv"""
+        """Read the activity elements from XML and write out flattened rows to transaction-NN.csv and budget-NN.csv
+
+        :param publisher: the publisher of the package being processed
+        :type publisher: str
+        :param package: the filename of the XML file (the package) to be processed
+        :type package: str
+        """
 
         doc = etree.parse(os.path.join(root_dir, "{}".format(package)))
         if doc.getroot().get("version") not in ['2.01', '2.02', '2.03']: return
@@ -130,15 +154,21 @@ class FlattenIATIData():
         activity_csvwriter = model.ActivityCSVFilesWriter(self.output_dir, headers=self.activity_csv_headers)
         activities = doc.xpath("//iati-activity")
         for activity in activities:
+            # type(activity) is lxml.etree._Element
             self.process_activity(activity_csvwriter, activity)
 
         activity_csvwriter.write()
 
+        # csvwriter is an instance of CSVFilesWriter; csvwriter.csvfiles is a dictionary indexed by country code
+        # which contains a CSV file handle for writing to the CSV ('file'), a csv writer object ('csv'), and a list
+        # rows, which is populated below with all the rows to be added to the CSV ('rows')
         csvwriter = model.CSVFilesWriter(budget_transaction='transaction',
                                          headers=self.csv_headers,
                                          output_dir=self.output_dir)
+
         transactions = doc.xpath("//transaction")
         for transaction in transactions:
+            # transaction.getparent() gets the <iati-activity> element
             self.process_transaction(csvwriter, transaction.getparent(), transaction)
 
         csvwriter.write()
@@ -167,7 +197,7 @@ class FlattenIATIData():
                     try:
                         if package.endswith(".xml"):
                             self.process_package(publisher, package,
-                                os.path.join(self.iatikitcache_dir, "data", publisher))
+                                                 os.path.join(self.iatikitcache_dir, "data", publisher))
                     except BdbQuit:
                         raise
                     except Exception as e:

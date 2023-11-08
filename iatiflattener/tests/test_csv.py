@@ -102,7 +102,7 @@ class TestModel():
             'transaction_type': '3', 'value_original': '1232.0', 'currency_original': 'GBP',
             'value_usd': '1696.3408008150918', 'exchange_rate_date': '2021-08-31',
             'exchange_rate': '0.726269155', 'value_eur': '1433.446680400464',
-            'value_local': '0.0',
+            'value_local': '291426.5998257905',
             'transaction_date': '2010-05-27', 'country_code': 'LR', 'multi_country': '0',
             'sector_category': '150', 'sector_code': '15110', 'humanitarian': '0', 'fiscal_year': '2010',
             'fiscal_quarter': 'Q2',
@@ -116,12 +116,51 @@ class TestModel():
 
     def test_first_row_en(self, flattener, package, groupedfile_en):
         first_row = [cell.value for cell in next(groupedfile_en.worksheets[0].iter_rows(min_row=2, max_row=2))]
-        assert first_row == ['GB-1-103662-101', 'PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia', 'GB - United Kingdom', 'UK - Foreign, Commonwealth and Development Office [GB-GOV-1]', '10 - Government', 'C01 - Project-type interventions', '110 - Standard grant', '10 - ODA', 'UK - Foreign, Commonwealth and Development Office [GB-GOV-1]', 'No data', 'Adam Smith International [GB-COH-2732176]', '70 - Private Sector', '3 - Disbursement', 'LR - Liberia', 0, '150 - Government & Civil Society', '15110 - Public sector policy and administrative management', 0, 2010, 'Q2', '2010 Q2', 'https://d-portal.org/q.html?aid=GB-1-103662-101', 1696.34080081509, 1433.44668040046, 0]
+        assert first_row == ['GB-1-103662-101',
+                             'PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia',
+                             'GB - United Kingdom',
+                             'UK - Foreign, Commonwealth and Development Office [GB-GOV-1]',
+                             '10 - Government', 'C01 - Project-type interventions',
+                             '110 - Standard grant',
+                             '10 - ODA',
+                             'UK - Foreign, Commonwealth and Development Office [GB-GOV-1]',
+                             'No data',
+                             'Adam Smith International [GB-COH-2732176]',
+                             '70 - Private Sector',
+                             '3 - Disbursement',
+                             'LR - Liberia',
+                             0,
+                             '150 - Government & Civil Society',
+                             '15110 - Public sector policy and administrative management',
+                             0,
+                             2010,
+                             'Q2',
+                             '2010 Q2',
+                             'https://d-portal.org/q.html?aid=GB-1-103662-101',
+                             1696.34080081509,
+                             1433.44668040046,
+                             291426.599825791]
 
     def test_group_headers_fr(self, flattener, package, groupedfile_fr):
         headers_row = [cell.value for cell in next(groupedfile_fr.worksheets[0].iter_rows(min_row=1, max_row=1))]
-        assert headers_row == ['Identifiant de l’IITA', 'Titre', 'Groupe d’organisme déclarant', 'Organisme déclarant', 'Type d’organisme déclarant', 'Type d’aide', 'Type de financement', 'Type de flux', 'Organisme prestataire', 'Type d’organisme prestataire', 'Organisme bénéficiaire', 'Type d’organisme bénéficiaire', 'Type de transaction', 'Pays ou région bénéficiaire', 'Multipays', 'Catégorie de secteur', 'Secteur', 'Humanitaire', 'Année civile', 'Trimestre civil', 'Année et trimestre civils', 'URL', 'Valeur (USD)', 'Valeur (EUR)', 'Valeur (Monnaie locale)']
+        assert headers_row == ['Identifiant de l’IITA',
+                               'Titre', 'Groupe d’organisme déclarant', 'Organisme déclarant',
+                               'Type d’organisme déclarant', 'Type d’aide', 'Type de financement',
+                               'Type de flux', 'Organisme prestataire', 'Type d’organisme prestataire', 'Organisme bénéficiaire', 'Type d’organisme bénéficiaire', 'Type de transaction', 'Pays ou région bénéficiaire', 'Multipays', 'Catégorie de secteur', 'Secteur', 'Humanitaire', 'Année civile', 'Trimestre civil', 'Année et trimestre civils', 'URL', 'Valeur (USD)', 'Valeur (EUR)', 'Valeur (Monnaie locale)']
 
     def test_first_row_fr(self, flattener, package, groupedfile_fr):
         first_row = [cell.value for cell in next(groupedfile_fr.worksheets[0].iter_rows(min_row=2, max_row=2))]
-        assert first_row == ['GB-1-103662-101', 'PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia', 'GB - Royaume-Uni (le)', 'Royaume-Uni – Ministère des Affaires étrangères, du Commonwealth et du ' 'Développement [GB-GOV-1]', '10 - Gouvernement', 'C01 - Interventions de type projet', '110 - Dons ordinaires', '10 - APD', 'Royaume-Uni – Ministère des Affaires étrangères, du Commonwealth et du ' 'Développement [GB-GOV-1]', 'Aucune donnée', 'Adam Smith International [GB-COH-2732176]', '70 - Secteur privé', '3 - Décaissement', 'LR - Libéria (le)', 0, '150 - Gouvernement & Société Civile', '15110 - Politiques publiques et gestion administrative', 0, 2010, 'Q2', '2010 Q2', 'https://d-portal.org/q.html?aid=GB-1-103662-101', 1696.34080081509, 1433.44668040046, 0]
+        assert first_row == ['GB-1-103662-101', 'PROCOFSERVICES and P0220 for Civil Ser. Cap. Bldng. Liberia',
+                             'GB - Royaume-Uni (le)',
+                             'Royaume-Uni – Ministère des Affaires étrangères, du Commonwealth et du ' 'Développement [GB-GOV-1]',
+                             '10 - Gouvernement', 'C01 - Interventions de type projet', '110 - Dons ordinaires',
+                             '10 - APD',
+                             'Royaume-Uni – Ministère des Affaires étrangères, du Commonwealth et du ' 'Développement [GB-GOV-1]',
+                             'Aucune donnée', 'Adam Smith International [GB-COH-2732176]',
+                             '70 - Secteur privé', '3 - Décaissement', 'LR - Libéria (le)', 0,
+                             '150 - Gouvernement & Société Civile',
+                             '15110 - Politiques publiques et gestion administrative', 0, 2010, 'Q2', '2010 Q2',
+                             'https://d-portal.org/q.html?aid=GB-1-103662-101',
+                             1696.34080081509,
+                             1433.44668040046,
+                             291426.599825791]
