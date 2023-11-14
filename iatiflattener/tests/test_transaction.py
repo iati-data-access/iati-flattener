@@ -157,14 +157,14 @@ class TestModel:
         """Tests the `value_original` field on transactions for the few flattened transaction items"""
 
         expected_data = {'fcdo': {'LR': {'15110': 1232}},  # original currency here is GBP
-                         "finddiagnostics": {'AO': {'32182': (71189586 / 100) * 0.18 * 0.72,   # same as value_usd test
-                                                    '12210': (71189586 / 100) * 0.18 * 0.28},  # b/c original is USD
-                                             'AE': {'32182': (71189586 / 100) * 0.01 * 0.72,
-                                                    '12210': (71189586 / 100) * 0.01 * 0.28},
-                                             'AR': {'32182': (71189586 / 100) * 0.01 * 0.72,
-                                                    '12210': (71189586 / 100) * 0.01 * 0.28},
-                                             'AT': {'32182': (71189586 / 100) * 0.0001 * 0.72,
-                                                    '12210': (71189586 / 100) * 0.0001 * 0.28},
+                         "finddiagnostics": {'AO': {'32182': 71189586 * 0.0018 * 0.72,   # same as value_usd test
+                                                    '12210': 71189586 * 0.0018 * 0.28},  # b/c original is USD
+                                             'AE': {'32182': 71189586 * 0.0001 * 0.72,
+                                                    '12210': 71189586 * 0.0001 * 0.28},
+                                             'AR': {'32182': 71189586 * 0.0001 * 0.72,
+                                                    '12210': 71189586 * 0.0001 * 0.28},
+                                             'AT': {'32182': 71189586 * 0.000001 * 0.72,
+                                                    '12210': 71189586 * 0.000001 * 0.28},
                                              }}
 
         for country_code in expected_data[publisher]:
@@ -181,18 +181,19 @@ class TestModel:
 
         # fcdo: value_original is in GBP, so convert to US dollars, then to Liberian dollars. there is only a single
         #       country or sector, so no splitting
-        # finddiagnostics: value_original is in USD, so convert to percent, then split by country, then sector, then
-        #                  multiply by the appropriate currency for value_local (Angolan Kwanza, UAE Dirham, Argentine
-        #                  Peso, and EUR respectively)
+        # finddiagnostics: value_original is in USD, so just split by country, then
+        #                  sector, then multiply by the appropriate currency for
+        #                  value_local (Angolan Kwanza, UAE Dirham, Argentine Peso, and
+        #                  EUR respectively)
         expected_data = {'fcdo': {'LR': {'15110': (1232 / 0.726269155) * 171.7972}},
-                         "finddiagnostics": {'AO': {'32182': (71189586 / 100) * 0.18 * 0.72 * 642.44255,
-                                                    '12210': (71189586 / 100) * 0.18 * 0.28 * 642.44255},
-                                             'AE': {'32182': (71189586 / 100) * 0.01 * 0.72 * 3.6725,
-                                                    '12210': (71189586 / 100) * 0.01 * 0.28 * 3.6725},
-                                             'AR': {'32182': (71189586 / 100) * 0.01 * 0.72 * 97.64,
-                                                    '12210': (71189586 / 100) * 0.01 * 0.28 * 97.64},
-                                             'AT': {'32182': (71189586 / 100) * 0.0001 * 0.72 * 0.845022816,
-                                                    '12210': (71189586 / 100) * 0.0001 * 0.28 * 0.845022816},
+                         "finddiagnostics": {'AO': {'32182': 71189586 * 0.0018 * 0.72 * 642.44255,
+                                                    '12210': 71189586 * 0.0018 * 0.28 * 642.44255},
+                                             'AE': {'32182': 71189586 * 0.0001 * 0.72 * 3.6725,
+                                                    '12210': 71189586 * 0.0001 * 0.28 * 3.6725},
+                                             'AR': {'32182': 71189586 * 0.0001 * 0.72 * 97.64,
+                                                    '12210': 71189586 * 0.0001 * 0.28 * 97.64},
+                                             'AT': {'32182': 71189586 * 0.000001 * 0.72 * 0.845022816,
+                                                    '12210': 71189586 * 0.000001 * 0.28 * 0.845022816},
                                              }}
 
         for country_code in expected_data[publisher]:
