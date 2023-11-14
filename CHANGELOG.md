@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.10.9] - 2023-11-14
+
+### Added
+
+- Several unit tests have been added to cover budget and transaction calculations.
+
+### Fixed
+
+- Bug in calculation of value_local for some transactions: https://github.com/iati-data-access/iati-flattener/issues/9
+- Budget splitting: budgets are now split by calculating a day rate, which is then used 
+to work out the amount for each budget period. https://github.com/iati-data-access/iati-flattener/issues/16
+
 ## [0.10.8] - 2023-08-31
 
 ### Fixed
