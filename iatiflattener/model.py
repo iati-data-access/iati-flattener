@@ -50,8 +50,16 @@ class ActivityCacheActivity():
             setattr(self, field, None)
 
 
-class ActivityCache():
+class ActivityCache:
+    """Keeps a cache of ActivityCacheActivity of objects"""
+
     def get(self, iati_identifier):
+        """Gets (*or adds*) an ActivityCacheActivity from (to) the cache
+
+        :param iati_identifier: activity identifier
+        :type iati_identifier: str
+        """
+
         activity = self.data.get(iati_identifier)
         if activity is None:
             self.data[iati_identifier] = ActivityCacheActivity(iati_identifier)
@@ -122,9 +130,8 @@ class ActivityCSVFilesWriter():
         self.csv_headers = headers
 
 
-class FlatBudget():
-    def make_flattened(self, country, sector, aid_type,
-            finance_type, flow_type, budget):
+class FlatBudget:
+    def make_flattened(self, country, sector, aid_type, finance_type, flow_type, budget):
         for k, v in budget.items():
             self.flat_budget[k] = v
         self.flat_budget['country_code'] = country.get('code')
@@ -145,7 +152,9 @@ class FlatBudget():
         self.flat_budget['value_eur'] = (
             budget['value_eur'] * pct_adjustment
         )
-        self.flat_budget['value_local'] = dict([(country, (value_local * pct_adjustment)) for country, value_local in self.flat_budget['value_local'].items()])
+
+        self.flat_budget['value_local'] = dict([(country, (value_local * pct_adjustment)) for \
+                                                 country, value_local in self.flat_budget['value_local'].items()])
         return dict([(k, v) for k, v in self.flat_budget.items() if k not in ['countries', 'sectors']])
 
     def flatten(self):
@@ -183,8 +192,11 @@ class FlatBudget():
         self.flat_budget = self.budget_dict
 
 
-class FlatTransactionBudgetCSV():
+class FlatTransactionBudgetCSV:
+    """Class takes a flattened transaction/budget obj, sets 'value_local' to value for current country, writes to CSV"""
+
     def get_local_currency(self, country, flat_transaction_budget):
+        """Reduces the 'value_local' list to a single value for just the current country"""
         flat_transaction_budget['value_local'] = flat_transaction_budget['value_local'].get(country)
         return flat_transaction_budget
 
@@ -192,9 +204,14 @@ class FlatTransactionBudgetCSV():
         country = self.flat_transaction_budget['country_code']
         if country in self.countries:
             self.csv_writer.append(country=country,
-                flat_transaction_budget=self.get_local_currency(country, self.flat_transaction_budget))
+                                   flat_transaction_budget=self.get_local_currency(country, self.flat_transaction_budget))
 
     def __init__(self, countries, csv_writer, flat_transaction_budget):
+        """
+
+        :param flat_transaction_budget:
+        :type flat_transaction_budget: dictionary
+        """
         self.countries = countries
         self.csv_writer = csv_writer
         self.flat_transaction_budget = flat_transaction_budget
@@ -213,25 +230,38 @@ class ActivityCSV():
         self.activity_data = activity_data
 
 
-class FlatTransaction():
+class FlatTransaction:
     def make_flattened(self, sector, country):
+        """
+        :param sector: dictionary with sector code and percentage
+        :type sector: {'code':str, 'percentage': float}
+        :example: {'code': '32182', 'percentage': 72.0}
+
+        :param country: dictionary with country code and percentage
+        :type country: {'country': str, 'percentage': float}
+        """
         self.flat_transaction['country_code'] = country.get('code')
         self.flat_transaction['sector_code'] = sector.get('code')
         self.flat_transaction['sector_category'] = get_sector_category(sector.get('code'), self.sector_categories)
         sector_pct_adjustment = (country['percentage']/100) * (sector['percentage']/100)
-        self.flat_transaction['value_original'] = (
-            self.transaction.value_original.value * sector_pct_adjustment
-        )
-        self.flat_transaction['value_usd'] = (
-            self.transaction.value_usd.value * sector_pct_adjustment
-        )
-        self.flat_transaction['value_eur'] = (
-            self.transaction.value_eur.value * sector_pct_adjustment
-        )
-        self.flat_transaction['value_local'] = dict([(country, (value_local * sector_pct_adjustment)) for country, value_local in self.flat_transaction['value_local'].items()])
+
+        self.flat_transaction['value_original'] = (self.transaction.value_original.value * sector_pct_adjustment)
+        self.flat_transaction['value_usd'] = (self.transaction.value_usd.value * sector_pct_adjustment)
+        self.flat_transaction['value_eur'] = (self.transaction.value_eur.value * sector_pct_adjustment)
+
+        # the `value_local` dict has the total value of the transaction listed in each country's local currency; this
+        # adjusts it according to proportion of total allocated to sector/country
+        self.flat_transaction['value_local'] = dict([(country, (value_local * sector_pct_adjustment)) for
+                                                      country, value_local in self.transaction.value_local.value.items()])
+
+        # this returns a new dictionary which is self.flat_transaction but without 'countries' and 'sectors'
         return dict([(k, v) for k, v in self.flat_transaction.items() if k not in ['countries', 'sectors']])
 
     def flatten(self):
+        """
+        :return:
+        :rtype: generator
+        """
         for sector in self.transaction.sectors.value:
             for country in self.transaction.countries.value:
                 yield self.make_flattened(sector, country)
@@ -271,9 +301,7 @@ class FinancialValues():
         for country in self.countries.value:
             currency_code = self.currencies.get(country.get('code'))
             try:
-                closest_exchange_rate = self.exchange_rates.closest_rate(
-                    currency_code, self.value_date.value
-                )
+                closest_exchange_rate = self.exchange_rates.closest_rate(currency_code, self.value_date.value)
                 exchange_rate = closest_exchange_rate.get('conversion_rate')
                 value = self.value_usd.value * exchange_rate
                 out[country.get('code')] = value
@@ -637,6 +665,8 @@ class Activity(Common):
     def __init__(self, activity, activity_cache,
             organisations_cache={}, langs=['en'],
             reporting_organisation_groups={}):
+
+        # type(activity) = lxml.etree._Element
         self.activity = activity
         self.activity_cache = activity_cache.get(
             self._iati_identifier().value
@@ -721,6 +751,8 @@ class Transaction(Common):
     def __init__(self, activity, transaction, activity_cache, exchange_rates,
             currencies, limit_transaction_types=True, organisations_cache={},
             langs=['en'], reporting_organisation_groups={}):
+
+        # type(transaction) is lxml.etree._Element
         self.transaction = transaction
         self.activity = activity
         self.activity_cache = activity_cache.get(
