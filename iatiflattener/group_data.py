@@ -99,14 +99,12 @@ class GroupFlatIATIData():
 
     def get_dataframe(self, country_code, transaction_budget, lang):
         full_df = pd.DataFrame()
-        print("Read CSV {}-{}.csv".format(transaction_budget, country_code))
+        print("Read CSV {}-{}.csv (for {})".format(transaction_budget, country_code, lang))
+                
         for df in pd.read_csv(f"{self.output_folder}/csv/{transaction_budget}-{country_code}.csv",
             dtype=self.CSV_HEADER_DTYPES,
             chunksize=100000):
             print("Reading chunk...")
-            if (not "iati_identifier" in df.columns.values) or (len(df)==0):
-                print("df length is 0")
-                return
             headers_with_langs = variables.group_by_headers_with_langs([lang])
             all_relevant_headers = headers_with_langs + ['value_usd', 'value_eur', 'value_local']
             df = df[all_relevant_headers]
@@ -127,33 +125,23 @@ class GroupFlatIATIData():
         for lang in self.langs:
             df_transaction = self.get_dataframe(country_code, 'transaction', lang)
             df_budget = self.get_dataframe(country_code, 'budget', lang)
-            if (df_transaction is None) and (df_budget is None):
-                continue
-            elif (df_transaction is not None) and (df_budget is not None):
-                df = pd.concat([df_transaction, df_budget], ignore_index=True)
-            else:
-                if df_transaction is not None:
-                    df = df_transaction
-                else:
-                    df = df_budget
+            df = pd.concat([df_transaction, df_budget], ignore_index=True)
 
-            # write out the results to an Excel file, putting a maximum of 500000 rows in each file
-            if df is not None:
-                num_rows = len(df)
-                output_rows = 500000
-                if num_rows > output_rows:
-                    for start in range(0, num_rows, output_rows):
-                        df_part = df.iloc[start:start+output_rows, :]
-                        page = (start/output_rows)+1
-                        self.write_dataframe_to_excel(
-                            dataframe = df_part,
-                            filename = f"{self.output_folder}/xlsx/{lang}/{country_code}-{page}.xlsx",
-                            lang = lang)
-                else:
+            num_rows = len(df)
+            output_rows = 500000
+            if num_rows > output_rows:
+                for start in range(0, num_rows, output_rows):
+                    df_part = df.iloc[start:start+output_rows, :]
+                    page = (start/output_rows)+1
                     self.write_dataframe_to_excel(
-                        dataframe = df,
-                        filename = f"{self.output_folder}/xlsx/{lang}/{country_code}.xlsx",
+                        dataframe = df_part,
+                        filename = f"{self.output_folder}/xlsx/{lang}/{country_code}-{page}.xlsx",
                         lang = lang)
+            else:
+                self.write_dataframe_to_excel(
+                    dataframe = df,
+                    filename = f"{self.output_folder}/xlsx/{lang}/{country_code}.xlsx",
+                    lang = lang)
 
 
     def group_data(self):
