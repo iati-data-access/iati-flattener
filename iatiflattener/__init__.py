@@ -50,9 +50,13 @@ class FlattenIATIData():
         self.category_group = dict(map(lambda code: (code['codeforiati:category-code'], code['codeforiati:group-code']), sector_groups_req.json()['data']))
 
         self.organisations = collections.defaultdict()
-        for lang in self.langs:
+
+        required_languages = list(['en'] + [item for item in self.langs if item != 'en'])
+        for lang in required_languages:
             publishers_req = requests.get(CODELIST_URL_LANG.format(lang, "ReportingOrganisation"))
-            self.organisations[lang] = dict(map(lambda org: (org['code'], org['name']), publishers_req.json()['data']))
+            def get_fallback(code):
+                return self.organisations.get('en', {}).get(code)
+            self.organisations[lang] = dict(map(lambda org: (org['code'], org.get('name') or get_fallback(org['code'])), publishers_req.json()['data']))
 
         self.exchange_rates = self.get_exchange_rates(refresh_rates)
 
