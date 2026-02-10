@@ -9,13 +9,13 @@ pandas>=1.1.4
 numpy>=1.19.4
 PyExcelerate>=0.9.0
 openpyxl>=3.0.10
-iatikit>=3.3.1
+iatikit>=3.6.1
 """
 
 setup(
     name="iatiflattener",
     packages=find_packages(exclude=['ez_setup', 'examples']),
-    version='0.10.11',
+    version='0.10.12',
     description="A set of tools to flatten IATI data.",
     author="Mark Brough",
     author_email="mark@brough.io",
